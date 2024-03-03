@@ -21,11 +21,11 @@
 //   <i>Value FF-FF-FF-FF-FF-FF is not allowed,
 //   <i>LSB of first byte must be 0 (an ethernet Multicast bit).
 //   <i>Default: "1E-30-6C-A2-45-5E"
-#define ETH0_MAC_ADDR           "EE-EE-EE-EE-EE-E1"
+#define ETH0_MAC_ADDR           "EE-EE-EE-EE-EE-EE"
 
 //   <e>VLAN
 //   <i>Enable or disable Virtual LAN
-#define ETH0_VLAN_ENABLE        1
+#define ETH0_VLAN_ENABLE        0
 
 //     <o>VLAN Identifier <1-4093>
 //     <i>A unique 12-bit numeric value
@@ -40,7 +40,7 @@
 //     <s.15>IP Address
 //     <i>Static IPv4 Address in text representation
 //     <i>Default: "192.168.0.100"
-#define ETH0_IP4_ADDR           "10.48.11.181"
+#define ETH0_IP4_ADDR           "10.48.11.183"
 
 //     <s.15>Subnet mask
 //     <i>Local Subnet mask in text representation
@@ -124,7 +124,7 @@
 //     <i>When this option is enabled, local IP address, Net Mask
 //     <i>and Default Gateway are obtained automatically from
 //     <i>the DHCP Server on local LAN.
-#define ETH0_DHCP_ENABLE        1
+#define ETH0_DHCP_ENABLE        0
 
 //       <s.40>Vendor Class Identifier
 //       <i>This value is optional. If specified, it is added
@@ -207,7 +207,7 @@
 //     <e>Dynamic Host Configuration
 //     <i>When this option is enabled, local IPv6 address is
 //     <i>automatically configured.
-#define ETH0_DHCP6_ENABLE       1
+#define ETH0_DHCP6_ENABLE       0
 
 //       <o>DHCPv6 Client Mode  <0=>Stateless Mode <1=>Statefull Mode
 //       <i>Stateless DHCPv6 Client uses router advertisements

@@ -6,7 +6,7 @@ t var formUpdate = new periodicObj("ad.cgx", 500);
 t function plotADGraph() {
 t  adVal = document.getElementById("ad_value").value;
 t  numVal = parseInt(adVal, 16);
-t  voltsVal = (3.3*numVal)/4096;
+t  voltsVal = (1000*3.3*numVal)/4096;
 t  tableSize = (numVal*100/4096);
 t  document.getElementById("ad_table").style.width = (tableSize + '%');
 t  document.getElementById("ad_volts").value = (voltsVal.toFixed(3) + ' V');

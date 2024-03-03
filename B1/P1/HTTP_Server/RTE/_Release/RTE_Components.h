@@ -4,7 +4,7 @@
  *      *** Do not modify ! ***
  *
  * Project: 'HTTP_Server' 
- * Target:  'Debug' 
+ * Target:  'Release' 
  */
 
 #ifndef RTE_COMPONENTS_H
@@ -20,14 +20,11 @@
 #define RTE_CMSIS_RTOS2                 /* CMSIS-RTOS2 */
         #define RTE_CMSIS_RTOS2_RTX5            /* CMSIS-RTOS2 Keil RTX5 */
         #define RTE_CMSIS_RTOS2_RTX5_SOURCE     /* CMSIS-RTOS2 Keil RTX5 Source */
-/* Keil.ARM Compiler::Compiler:Event Recorder:DAP:1.4.0 */
-#define RTE_Compiler_EventRecorder
-          #define RTE_Compiler_EventRecorder_DAP
-/* Keil.MDK-Pro::Network:CORE:IPv4/IPv6 Debug:7.15.0 */
+/* Keil.MDK-Pro::Network:CORE:IPv4/IPv6 Release:7.15.0 */
 #define RTE_Network_Core                /* Network Core */
           #define RTE_Network_IPv4                /* Network IPv4 Stack */
           #define RTE_Network_IPv6                /* Network IPv6 Stack */
-          #define RTE_Network_Debug               /* Network Debug Version */
+          #define RTE_Network_Release             /* Network Release Version */
 /* Keil.MDK-Pro::Network:Interface:ETH:7.15.0 */
 #define RTE_Network_Interface_ETH_0     /* Network Interface ETH 0 */
 

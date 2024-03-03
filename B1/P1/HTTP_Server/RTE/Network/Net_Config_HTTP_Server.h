@@ -73,5 +73,12 @@
 //   </e>
 
 // </h>
+// Number of nonce cache entries
+#define HTTP_SERVER_NONCE_TAB_SIZE   8
+
+ 
+
+// Nonce cache timeout in seconds
+#define HTTP_SERVER_NONCE_CACHE_TOUT 60
 
 //------------- <<< end of configuration section >>> ---------------------------
