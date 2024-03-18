@@ -23,6 +23,9 @@
 /* Keil.ARM Compiler::Compiler:Event Recorder:DAP:1.4.0 */
 #define RTE_Compiler_EventRecorder
           #define RTE_Compiler_EventRecorder_DAP
+/* Keil.ARM Compiler::Compiler:I/O:STDOUT:ITM:1.2.0 */
+#define RTE_Compiler_IO_STDOUT          /* Compiler I/O: STDOUT */
+          #define RTE_Compiler_IO_STDOUT_ITM      /* Compiler I/O: STDOUT ITM */
 /* Keil.MDK-Pro::Network:CORE:IPv4/IPv6 Debug:7.15.0 */
 #define RTE_Network_Core                /* Network Core */
           #define RTE_Network_IPv4                /* Network IPv4 Stack */
@@ -39,8 +42,8 @@
 #define RTE_Network_Socket_UDP          /* Network Socket UDP */
 /* Keil::CMSIS Driver:Ethernet MAC:2.9 */
 #define RTE_Drivers_ETH_MAC0            /* Driver ETH_MAC0 */
-/* Keil::CMSIS Driver:Ethernet PHY:LAN8742A:1.3.0 */
-#define RTE_Drivers_PHY_LAN8742A        /* Driver PHY LAN8742A */
+/* Keil::CMSIS Driver:Ethernet PHY:KSZ8081RNA:6.3.0 */
+#define RTE_Drivers_PHY_KSZ8081RNA      /* Driver PHY KSZ8081RNA/RND */
 /* Keil::CMSIS Driver:SPI:2.15 */
 #define RTE_Drivers_SPI1                /* Driver SPI1 */
         #define RTE_Drivers_SPI2                /* Driver SPI2 */
