@@ -398,16 +398,6 @@
               <FileType>5</FileType>
               <FilePath>.\lcd.h</FilePath>
             </File>
-            <File>
-              <FileName>lcd3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\lcd3.c</FilePath>
-            </File>
-            <File>
-              <FileName>lcd3.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\lcd3.h</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

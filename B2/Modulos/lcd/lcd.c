@@ -19,10 +19,6 @@
 #define LCD_ROWS 4
 #define LCD_COLS 20
 
-#define  S	1000000U
-#define MS	1000U
-#define US	1U
-
 extern ARM_DRIVER_I2C Driver_I2C1;
 static ARM_DRIVER_I2C *I2Cdrv = &Driver_I2C1;
 
@@ -89,12 +85,10 @@ static void callback_i2c(uint32_t event){
 static void Get_I2C_ADDR(void){
 	uint8_t addr;
 	uint32_t flags;
-	for (addr = 1; addr < 127; addr++ ){
+	for(addr = 1; addr < 127; addr++ ){
 		I2Cdrv->MasterTransmit(addr, NULL, NULL, true);
 		flags = osThreadFlagsWait(0xFFFF, osFlagsWaitAny, osWaitForever);
-		if(flags != ARM_I2C_EVENT_ADDRESS_NACK){
-			printf("%d", addr);
-		}
+		printf("%d", flags);
 	}
 }
 
