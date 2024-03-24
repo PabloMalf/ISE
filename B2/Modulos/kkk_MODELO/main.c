@@ -52,19 +52,18 @@ int main(void){
   while(1){}
 }
 
-static int init_Th_test(void){
+int init_Th_test(void){
 	id_Th_test = osThreadNew(Th_test, NULL, NULL);
 	if(id_Th_test == NULL)
 		return(-1);
 	return(0);
 }
 
-void Th_test(void *arg){
-
-	//KKK rellena tu codigo de prueba
-	
+void Th_test(void *arg){ //Test del modulo
+	uint32_t cnt = 0;
 	while(1){
-		
+		printf("TEST del Módulo: %d\n", cnt++);
+		osDelay(1000);
 	}
 }
 

@@ -35,20 +35,6 @@ osMessageQueueId_t get_id_MsgQueue_kkk(void){
 static void Th_kkk(void *argument){
 
 	while(1){
-		
+		osThreadYield();
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
