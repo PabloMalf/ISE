@@ -1,9 +1,9 @@
-#ifndef __kkk_H
-#define __kkk_H
+#ifndef __KKK_H
+#define __KKK_H
 
 #include "cmsis_os2.h"
 
-#define MSGQUEUE_OBJECTS_kkk 4
+#define MSGQUEUE_OBJECTS_KKK 4
 
 /*
 			PERIFERICO USADO: I2C1 
@@ -12,8 +12,8 @@
 */
 
 typedef struct{
-
-} MSGQUEUE_OBJ_kkk;
+	int a;
+} MSGQUEUE_OBJ_KKK;
 
 int init_Th_kkk(void);
 osMessageQueueId_t get_id_MsgQueue_kkk(void);

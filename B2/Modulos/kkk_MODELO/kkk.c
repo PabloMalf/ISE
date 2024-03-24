@@ -1,6 +1,10 @@
 #include "kkk.h"
 #include "stm32f4xx_hal.h"
 
+//Recordarte que está cambiado el Tick del OS, ahora TODOS los wait/delay 
+// y todas las temporizaciones del OS, son en base a Microsegundos
+// estas funciones se pueden usar para osDelay(15*MS); ó osDelay(2*S);
+// denotar que poner osDelay(10*US) y poner osDelay(10) es lo mismo
 #define  S	1000000U
 #define MS	1000U
 #define US	1U
@@ -16,7 +20,7 @@ static int Init_MsgQueue_kkk(void);
 
 
 static int Init_MsgQueue_kkk(){
-	id_MsgQueue_kkk = osMessageQueueNew(MSGQUEUE_OBJECTS_kkk, sizeof(MSGQUEUE_OBJ_kkk), NULL);
+	id_MsgQueue_kkk = osMessageQueueNew(MSGQUEUE_OBJECTS_KKK, sizeof(MSGQUEUE_OBJ_KKK), NULL);
 	if(id_MsgQueue_kkk == NULL)
 		return (-1); 
 	return(0);

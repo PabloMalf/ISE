@@ -25,8 +25,11 @@ uint32_t HAL_GetTick(void){
 }
 #endif
 
+static osThreadId_t id_Th_test;
+
+static int	init_Th_test(void);
 static void Th_test(void *arg);
-static void init_Th_test(void);
+
 static void Error_Handler(void);	
 static void SystemClock_Config(void);
 
@@ -41,15 +44,15 @@ int main(void){
 
 	//start Threads 
 	init_Th_kkk();
+	init_Th_test();
 	//
 	
   osKernelStart();
 #endif
-	osThreadNew(Th_test, NULL, NULL);
   while(1){}
 }
 
-int init_Th_test(void){
+static int init_Th_test(void){
 	id_Th_test = osThreadNew(Th_test, NULL, NULL);
 	if(id_Th_test == NULL)
 		return(-1);

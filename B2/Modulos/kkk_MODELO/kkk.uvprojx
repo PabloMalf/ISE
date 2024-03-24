@@ -389,14 +389,14 @@
               <FilePath>.\main.c</FilePath>
             </File>
             <File>
-              <FileName>nfc.c</FileName>
+              <FileName>kkk.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\nfc.c</FilePath>
+              <FilePath>.\kkk.c</FilePath>
             </File>
             <File>
-              <FileName>nfc.h</FileName>
+              <FileName>kkk.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\nfc.h</FilePath>
+              <FilePath>.\kkk.h</FilePath>
             </File>
           </Files>
         </Group>
