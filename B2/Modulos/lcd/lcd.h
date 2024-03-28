@@ -13,14 +13,14 @@
 
 */
 
-typedef enum {ON = 0, OFF = 1}back_light_t;
+typedef enum {ON = 0x08, OFF = 0x00}lcd_state_t;
 
 typedef struct{
-	char L0 [20];
-	char L1 [20];
-	char L2 [20];
-	char L3 [20];
-	back_light_t back_light;
+	lcd_state_t state;
+	char L0 [21]; //DO NOT USE STRINGS LARGER THAN 20 CHARACTERS U NEED TO ALLOW TO FIT '\0'
+	char L1 [21];
+	char L2 [21];
+	char L3 [21];
 } MSGQUEUE_OBJ_LCD;
 
 int init_Th_lcd(void);

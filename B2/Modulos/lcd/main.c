@@ -59,16 +59,22 @@ int init_Th_test(void){
 }
 
 void Th_test(void *arg){
-	MSGQUEUE_OBJ_LCD msg_lcd;
-	uint32_t h,m,s = 0;
+	MSGQUEUE_OBJ_LCD msg_lcd = {ON};
+	uint32_t h = 17,m = 53,s = 0;
 	
 	while(1){
-		if(s==5) msg_lcd.back_light = OFF;
-		if(s==10) msg_lcd.back_light = ON;
-		sprintf(msg_lcd.L0, " ISE 2024");
-		sprintf(msg_lcd.L1, "HELLO WORLD");
-		sprintf(msg_lcd.L1, "25/03/2024  %02d:%02d:%02d", h,m,s++);
+		sprintf(msg_lcd.L0, "ISE 2024");
+		sprintf(msg_lcd.L1, "Hello World");
+		sprintf(msg_lcd.L2, "25/03/2024  %02d:%02d:%02d", h,m,s);
+		sprintf(msg_lcd.L3, "Turn OFF in: %02d segs", (10-(s%10)));
 		osMessageQueuePut(get_id_MsgQueue_lcd(), &msg_lcd, 0U, 0U);
+		
+		if((m == 59)&&(s == 59))	h += (h != 23) ? 1 : -23;
+		if (s == 59)							m += (m != 59) ? 1 : -59;
+															s += (s != 59) ? 1 : -59;
+		
+		if(!(s%10)) msg_lcd.state = (msg_lcd.state ? OFF : ON);
+		
 		osDelay(1000);
 	}
 }
