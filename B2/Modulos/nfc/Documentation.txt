@@ -1,0 +1,216 @@
+void Init(void){
+	Initialize RC522
+	
+	Parameters: None
+	
+	Return value: None
+}
+
+
+Status_t Compare(uint8_t* CardID, uint8_t* CompareID){
+	Compare 2 RFID ID's Useful if you have known ID (database with allowed IDs), to compare detected card with with your ID
+
+	Parameters:
+ 	- uint8_t* CardID: Pointer to 5bytes detected card ID
+ 	- uint8_t* CompareID: Pointer to 5bytes your ID
+
+	Returns: MI_OK if IDs are the same, or MI_ERR if not
+}
+
+ 
+Status_t Check(uint8_t* id){
+ 	Check for RFID card existance
+
+ 	Parameters:
+ 	- uint8_t* id: Pointer to 5bytes long memory to store valid card id in.
+		ID is valid only if card is detected, so when function returns MI_OK
+
+	Returns: MI_OK if card is detected
+}
+
+
+uint8_t	RC522_SPI_Transfer(uint8_t data){
+	A common function used by Write_MFRC522 and Read_MFRC522
+	
+	Parameters:
+	- uint8_t data: the value to be written
+
+	Returns: a byte of data read from the module
+}
+ 
+
+void Write_Reg(uint8_t addr, uint8_t val){
+	To a certain MFRC522 register to write a byte of data
+	
+	Parameters:  
+		- uint8_t addr: register address
+		- uint8_t val: the value to be written
+
+	Return: None
+}
+
+
+uint8_t	Read_Reg(uint8_t addr){
+	From a certain MFRC522 read a byte of data register
+	
+	Parameters:
+		- uint8_t addr: register address
+ 
+	Returns: a byte of data read from the module
+}
+ 
+
+void SetBitMask(uint8_t reg, uint8_t mask){
+	Set RC522 register bit
+	
+	Parameters:
+		- uint8_t reg: register address
+		- uint8_t maskmask: set value
+		
+	Return: None
+}
+
+
+void ClearBitMask(uint8_t reg, uint8_t mask){
+	Clear RC522 register bit
+	
+	Parameters:
+	- uint8_t reg: register address
+	- uint8_t mask: clear bit value
+
+	Return value: None
+}
+
+
+void AntennaOn(void){
+	Open antennas, each time you start or shut down the natural barrier between the transmitter should be at least 1ms interval
+ 
+	Parameters: None
+	
+	Return value: None
+}
+
+ 
+void AntennaOff(void){
+	Close antennas, each time you start or shut down the natural barrier between the transmitter should be at least 1ms interval
+ 
+	Parameters: None
+
+	Return value: None
+}
+
+ 
+void Reset(void){
+	Reset RC522
+	
+	Parameters: None
+	
+	Return value: None
+}
+
+ 
+Status_t Request(uint8_t reqMode, uint8_t* TagType){
+	Find cards, read the card type number
+	
+	Parameters:
+		- uint8_t reqMode: find cards way
+		- uint8_t* TagType: Return Card Type
+			0x4400 = Mifare_UltraLight
+			0x0400 = Mifare_One(S50)
+			0x0200 = Mifare_One(S70)
+			0x0800 = Mifare_Pro(X)
+			0x4403 = Mifare_DESFire
+			
+	Return: MI_OK if successful 
+}
+
+
+Status_t ToCard(uint8_t command, uint8_t *sendData, uint8_t sendLen, uint8_t *backData, uint16_t *backLen){
+	RC522 and ISO14443 card communication
+
+	Parameters:
+		- uint8_t commandMF522: command word,
+		- uint8_t *sendData: RC522 sent to the card by the data
+		- uint8_t sendLen: Length of data sent
+		- uint8_t *backData: Received the card returns data
+		- uint16_t *backLen: Return data bit length
+		
+	Return: MI_OK if succesfull
+}
+
+ 
+Status_t Anticoll(uint8_t *serNum){
+	Anti-collision detection, reading selected card serial number card
+	
+	Parameters:
+		- uint8_t *serNum: returns 4 bytes card serial number, the first 5 bytes for the checksum byte
+		
+	Return: MI_OK if succesfull
+}
+
+ 
+void CalulateCRC(uint8_t *pIndata, uint8_t len, uint8_t *pOutData){
+	CRC calculation
+	
+	Parameters:
+		- uint8_t *pIndata: To read the CRC data
+		- uint8_t len: the data length, pOutData
+		- uint8_t *pOutData: CRC calculation results
+	
+	Return: None
+}
+
+
+uint8_t SelectTag(uint8_t *serNum){
+	Selection card, read the card memory capacity
+
+	Parameters:
+		- uint8_t *serNum: Incoming card serial number
+	
+	Return value: the successful return of card capacity
+}
+ 
+
+Status_t Auth(uint8_t authMode, uint8_t BlockAddr, uint8_t *Sectorkey, uint8_t *serNum){
+	Verify card password
+
+	Parameters:
+		- uint8_t authMode: Password Authentication Mode
+			0x60 = A key authentication
+			0x61 = Authentication Key B
+		- uint8_t BlockAdd: Block address
+		- uint8_t *Sectorkey: Sector password
+		- uint8_t *serNum: Card serial number, 4-byte
+		
+	Return: MI_OK if succesfull
+}
+ 
+
+Status_t Read(uint8_t blockAddr, uint8_t *recvData){
+	Read block data
+
+	Parameters:
+		- uint8_t blockAddr: block address
+		- uint8_t *recvData: read block data
+		
+	Return: MI_OK if succesfull
+}
+ 
+
+Status_t Write(uint8_t blockAddr, uint8_t *writeData){
+	Write block data
+	Parameters:
+		- uint8_t blockAddr: block address
+		- uint8_t *writeData: to 16-byte data block write
+		
+	Return: MI_OK if succesfull
+}
+
+
+void Halt(void){
+	Command card into hibernation
+	
+	Parameters: None
+	
+	Return: None
+} 

@@ -389,19 +389,19 @@
               <FilePath>.\main.c</FilePath>
             </File>
             <File>
-              <FileName>nfc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\nfc.h</FilePath>
-            </File>
-            <File>
               <FileName>nfc.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\nfc.c</FilePath>
             </File>
             <File>
-              <FileName>Docu.txt</FileName>
+              <FileName>nfc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Docu.txt</FilePath>
+              <FilePath>.\nfc.h</FilePath>
+            </File>
+            <File>
+              <FileName>Documentation.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Documentation.txt</FilePath>
             </File>
           </Files>
         </Group>

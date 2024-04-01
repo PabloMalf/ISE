@@ -60,13 +60,18 @@ int init_Th_test(void){
 }
 
 void Th_test(void *arg){
+	MSGQUEUE_OBJ_NFC msg_nfc;
+	
 	uint32_t cnt = 0;
 	//KKK rellena tu codigo de prueba
-	printf("a");
+	
 	while(1){
-		printf("%d\n", cnt);
-		cnt++;
+		printf("a: %d\n", cnt++);
 		osDelay(1000);
+//		osMessageQueueGet(get_id_MsgQueue_nfc, &msg_nfc, 0U, osWaitForever);
+//		for(cnt = 0; cnt < sizeof(msg_nfc.sNum); cnt++){
+//			printf("%d", msg_nfc.sNum[cnt]);
+//		}
 	}
 }
 
