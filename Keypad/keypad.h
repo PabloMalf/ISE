@@ -28,7 +28,7 @@
 
 
 typedef struct{
-	int a;
+	char  k;
 } MSGQUEUE_OBJ_KEYPAD;
 
 int init_Th_keypad(void);

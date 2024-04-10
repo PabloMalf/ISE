@@ -13,7 +13,7 @@ static int Init_MsgQueue_keypad(void);
 static void	GPIO_Init(void);
 
 static void read_keypad(void);
-static char key;
+
 
 static int Init_MsgQueue_keypad(){
 	id_MsgQueue_keypad = osMessageQueueNew(MSGQUEUE_OBJECTS_KEYPAD, sizeof(MSGQUEUE_OBJ_KEYPAD), NULL);
@@ -49,14 +49,15 @@ void GPIO_Init(){
 			 PD6 -> R4
 			 PD7 -> C1*/
 
-  GPIO_InitStruct.Pin = COL1_PIN | COL2_PIN |COL3_PIN;
+  GPIO_InitStruct.Pin = COL1_PIN | COL2_PIN | COL3_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;//GPIO_PULLUP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   GPIO_InitStruct.Pin = ROW1_PIN | ROW2_PIN |
 	                      ROW3_PIN | ROW4_PIN;	 
-	GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP ;// GPIO_MODE_INPUT GPIO_MODE_OUTPUT_PP
+	GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP ;
   GPIO_InitStruct.Pull  = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
@@ -65,6 +66,8 @@ void GPIO_Init(){
 
 
 void read_keypad(void){
+	
+	char key=0;
 	/* Row 1 LOW and alls other Rows HIGH*/
 	HAL_GPIO_WritePin (GPIOD, ROW1_PIN, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin (GPIOD, ROW2_PIN, GPIO_PIN_SET);
@@ -74,16 +77,19 @@ void read_keypad(void){
 	if (!HAL_GPIO_ReadPin(GPIOD, COL1_PIN)) {
 	 while (!HAL_GPIO_ReadPin(GPIOD, COL1_PIN));
 		key='1';
+		osMessageQueuePut(id_MsgQueue_keypad, &key, 0, 0);
 	 }
 	
 	else if (!HAL_GPIO_ReadPin(GPIOD, COL2_PIN)) {
 	 while (!HAL_GPIO_ReadPin(GPIOD, COL2_PIN));
 		key='2';
+		osMessageQueuePut(id_MsgQueue_keypad, &key, 0, 0);
 	 }
 	
 	else if(!HAL_GPIO_ReadPin(GPIOD, COL3_PIN)) {
 	 while (!HAL_GPIO_ReadPin(GPIOD, COL3_PIN));
 		key='3';
+		osMessageQueuePut(id_MsgQueue_keypad, &key, 0, 0);
 	 }
 
 	/* Row 2 LOW and alls other Rows HIGH*/
@@ -95,16 +101,19 @@ void read_keypad(void){
 	if (!HAL_GPIO_ReadPin(GPIOD, COL1_PIN)) {
 	 while (!HAL_GPIO_ReadPin(GPIOD, COL1_PIN));
 		key='4';
-	 }
+		osMessageQueuePut(id_MsgQueue_keypad, &key, 0, 0);
+	}
 	
   else if (!HAL_GPIO_ReadPin(GPIOD, COL2_PIN)) {
 	 while (!HAL_GPIO_ReadPin(GPIOD, COL2_PIN));
 		key='5';
-	 }
+		osMessageQueuePut(id_MsgQueue_keypad, &key, 0, 0);
+	}
 	
   else if (!HAL_GPIO_ReadPin(GPIOD, COL3_PIN)) {
 	 while (!HAL_GPIO_ReadPin(GPIOD, COL3_PIN));
 		key='6';
+		osMessageQueuePut(id_MsgQueue_keypad, &key, 0, 0);
 	 }	 
   
 	 /* Row 3 LOW and alls other Rows HIGH*/
@@ -116,16 +125,19 @@ void read_keypad(void){
 	if (!HAL_GPIO_ReadPin(GPIOD, COL1_PIN)) {
 	 while (!HAL_GPIO_ReadPin(GPIOD, COL1_PIN));
 		key='7';
+		osMessageQueuePut(id_MsgQueue_keypad, &key, 0, 0);
 	 }
 	
   else if (!HAL_GPIO_ReadPin(GPIOD, COL2_PIN)) {
 	 while (!HAL_GPIO_ReadPin(GPIOD, COL2_PIN));
 		key='8';
+		osMessageQueuePut(id_MsgQueue_keypad, &key, 0, 0);
 	 }
 	
   else if (!HAL_GPIO_ReadPin(GPIOD, COL3_PIN)) {
 	 while (!HAL_GPIO_ReadPin(GPIOD, COL3_PIN));
 		key='9';
+		osMessageQueuePut(id_MsgQueue_keypad, &key, 0, 0);
 	 }
 	
 	/* Row 1 LOW and alls other Rows HIGH*/
@@ -137,16 +149,19 @@ void read_keypad(void){
 	if (!HAL_GPIO_ReadPin(GPIOD, COL1_PIN)) {
 	 while (!HAL_GPIO_ReadPin(GPIOD, COL1_PIN));
 		key='*';
+		osMessageQueuePut(id_MsgQueue_keypad, &key, 0, 0);
 	 }
 	
   else if (!HAL_GPIO_ReadPin(GPIOD, COL2_PIN)) {
 	 while (!HAL_GPIO_ReadPin(GPIOD, COL2_PIN));
 		key='0';
+		osMessageQueuePut(id_MsgQueue_keypad, &key, 0, 0);
 	 }
 	
   else if(!HAL_GPIO_ReadPin(GPIOD, COL3_PIN)) {
 	 while (!HAL_GPIO_ReadPin(GPIOD, COL3_PIN));
 		key='#';
+		osMessageQueuePut(id_MsgQueue_keypad, &key, 0, 0);
 	 }
 	
 }
@@ -156,9 +171,7 @@ static __NO_RETURN void Th_keypad(void *argument){
 
 	while(1){
 		read_keypad();
-	 	printf(" key: %c", key);
-		osDelay(250);
-	
+		osDelay(100);
 	  osThreadYield(); // suspend thread 
 	}
 }

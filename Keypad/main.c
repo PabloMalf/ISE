@@ -44,7 +44,7 @@ int main(void){
 
 	//start Threads 
 	init_Th_keypad();
-	//init_Th_test();
+	init_Th_test();
 	//
 	
   osKernelStart();
@@ -60,10 +60,10 @@ int init_Th_test(void){
 }
 
 void Th_test(void *arg){ //Test del modulo
-	uint32_t cnt = 0;
+	char key;
 	while(1){
-		printf("TEST del Módulo: %d\n", cnt++);
-		osDelay(1000);
+		if (osOK == osMessageQueueGet(get_id_MsgQueue_keypad(), &key, NULL, osWaitForever))
+	 	printf("Key: %c\n", key);
 	}
 }
 
