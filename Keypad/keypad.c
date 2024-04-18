@@ -3,15 +3,17 @@
 #include "stdio.h"
 
 
+/*** Thread Keypad ***/
 static osThreadId_t id_Th_keypad;
-static osMessageQueueId_t id_MsgQueue_keypad;
-
-
-int init_Th_keypad(void);
 static void Th_keypad(void *arg);
-static int Init_MsgQueue_keypad(void);
-static void	GPIO_Init(void);
+int init_Th_keypad(void);
 
+/*** Queue Keypad ***/
+static osMessageQueueId_t id_MsgQueue_keypad;
+static int Init_MsgQueue_keypad(void);
+
+/*** Functions Keypad ***/
+static void	GPIO_Init(void);
 static void read_keypad(void);
 
 
@@ -175,4 +177,3 @@ static __NO_RETURN void Th_keypad(void *argument){
 	  osThreadYield(); // suspend thread 
 	}
 }
-
