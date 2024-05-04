@@ -25,10 +25,13 @@ uint32_t HAL_GetTick(void){
 }
 #endif
 
-static osThreadId_t id_Th_test;
+static osThreadId_t id_Th_testWR;
+static int	init_Th_testWR(void);
+static void Th_testWR(void *arg);
 
-static int	init_Th_test(void);
-static void Th_test(void *arg);
+static osThreadId_t id_Th_testRD;
+static int	init_Th_testRD(void);
+static void Th_testRD(void *arg);
 
 static void Error_Handler(void);	
 static void SystemClock_Config(void);
@@ -44,7 +47,8 @@ int main(void){
 
 	//start Threads 
 	init_Th_ttf();
-	init_Th_test();
+	//init_Th_testWR();
+	init_Th_testRD();
 	//
 	
   osKernelStart();
@@ -52,19 +56,36 @@ int main(void){
   while(1){}
 }
 
-int init_Th_test(void){
-	id_Th_test = osThreadNew(Th_test, NULL, NULL);
-	if(id_Th_test == NULL)
+int init_Th_testWR(void){
+	id_Th_testWR = osThreadNew(Th_testWR, NULL, NULL);
+	if(id_Th_testWR == NULL)
 		return(-1);
 	return(0);
 }
 
-void Th_test(void *arg){ 
-	uint8_t num=0;
+void Th_testWR(void *arg){ 
+	MSGQUEUE_OBJ_TTF msg_ttf;
 	while(1){
-		num++;
-		osMessageQueuePut(get_id_MsgQueue_ttf(), &num, 0, 0);
+		msg_ttf.state=WR;
+		sprintf(msg_ttf.name, "ISE 2024");
+		osMessageQueuePut(get_id_MsgQueue_ttf(), &msg_ttf, 0, 0);
 		osDelay(1000);
+	}
+}
+
+int init_Th_testRD(void){
+	id_Th_testRD = osThreadNew(Th_testRD, NULL, NULL);
+	if(id_Th_testRD == NULL)
+		return(-1);
+	return(0);
+}
+
+void Th_testRD(void *arg){ 
+	MSGQUEUE_OBJ_TTF msg_ttf;
+	while(1){
+		msg_ttf.state=RD;
+		osMessageQueuePut(get_id_MsgQueue_ttf(), &msg_ttf, 0, 0);
+		osDelay(2000);
 	}
 }
 

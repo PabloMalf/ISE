@@ -11,6 +11,7 @@ static osMessageQueueId_t id_MsgQueue_ttf;
 int init_Th_ttf(void);
 static void Th_ttf(void *arg);
 static int Init_MsgQueue_ttf(void);
+static void write_data(void);
 
 int init_Th_ttf(void){
 	id_Th_ttf = osThreadNew(Th_ttf, NULL, NULL);
@@ -30,26 +31,75 @@ osMessageQueueId_t get_id_MsgQueue_ttf(void){
 	return id_MsgQueue_ttf;
 }
 
-static void Th_ttf(void *arguments){	
-	uint8_t num;
-	char data[] = "Hey que pasa jaja ";
-	fsStatus stat;
-	FILE *f;
+//static void write_data(void){
+//	char data[] = "Que locura joselu ";
+//	fsStatus stat;
+//	FILE *f;
+//	
+//	stat = finit ("M0:");
+//	if (stat == fsOK) {
+//		stat = fmount ("M0:");
+//		if (stat == fsOK) {
+//			f = fopen ("M0:/test.txt","a+");
+//			if (f != NULL) {
+//				//fflush (stdout);
+//				fwrite(data, sizeof(char), strlen(data), f);
+//				fclose(f);
+//			}
+//		}
+//	}
+//	
+//	stat=funmount("M0:");
+//	stat=funinit("M0:");
+//	
+//}
 
+
+static void Th_ttf(void *arguments){	
+  fsStatus stat;
+	FILE *f;
+  MSGQUEUE_OBJ_TTF msg_ttf;
+	char dataRD[100];
 	while(1){
-		if (osOK == osMessageQueueGet(get_id_MsgQueue_ttf(), &num, NULL, osWaitForever)){
-		 stat = finit ("M0:");
-			if (stat == fsOK) {
-				stat = fmount ("M0:");
-				if (stat == fsOK) {
-								f = fopen ("M0:/test.txt","a+");
-					if (f != NULL) {
-				    fflush (stdout);
-						fwrite(data, sizeof(char), strlen(data), f);
-						fclose(f);
-				  }
-			  }
-		  }
+		if (osOK == osMessageQueueGet(get_id_MsgQueue_ttf(), &msg_ttf, NULL, osWaitForever)){
+			 if(msg_ttf.state==WR){
+		   	//write_data();
+				 	stat = finit ("M0:");
+					if (stat == fsOK) {
+						stat = fmount ("M0:");
+						if (stat == fsOK) {
+							f = fopen ("M0:/test.txt","a+");
+							if (f != NULL) {
+								//fflush (stdout);
+								fwrite(msg_ttf.name, sizeof(char), strlen(msg_ttf.name), f);
+								fclose(f);
+							}
+						}
+					}
+					
+					stat=funmount("M0:");
+					stat=funinit("M0:");
+			 }
+		
+			 else if(msg_ttf.state==RD){
+		   	//write_data();
+				 	stat = finit ("M0:");
+					if (stat == fsOK) {
+						stat = fmount ("M0:");
+						if (stat == fsOK) {
+							f = fopen ("M0:/test.txt","r");
+							if (f != NULL) {
+								//fflush (stdout);
+								fgets(dataRD, sizeof(dataRD), f);
+								fclose(f);
+							}
+						}
+					}
+					
+					stat=funmount("M0:");
+					stat=funinit("M0:");
+			 }
 	  }
+		
   }
 }
