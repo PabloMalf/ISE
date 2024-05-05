@@ -160,6 +160,26 @@
           <WinNumber>1</WinNumber>
           <ItemText>key</ItemText>
         </Ww>
+        <Ww>
+          <count>2</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>row_case</ItemText>
+        </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>COL1</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>COL1</ItemText>
+        </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>flag,0x0A</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -172,12 +192,12 @@
           <WinNumber>2</WinNumber>
           <ItemText>key</ItemText>
         </Ww>
+        <Ww>
+          <count>2</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>COL3</ItemText>
+        </Ww>
       </WatchWindow2>
-      <ScvdPack>
-        <Filename>C:\Users\Luis\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\RTX5.scvd</Filename>
-        <Type>ARM.CMSIS.5.8.0</Type>
-        <SubType>1</SubType>
-      </ScvdPack>
       <ScvdPack>
         <Filename>C:\Users\Luis\AppData\Local\Arm\Packs\Keil\ARM_Compiler\1.7.2\EventRecorder.scvd</Filename>
         <Type>Keil.ARM_Compiler.1.7.2</Type>
