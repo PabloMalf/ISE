@@ -132,7 +132,7 @@ void init_RTC(void){
 	
   HAL_RTC_Init(&RtcHandle);
   init_SNTP();
-	osTimerStart(tim_id_3min, 180000U);
+	
 }
 
 void RTC_Show()
@@ -166,7 +166,7 @@ static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
   
    HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BIN);
 
-   stimestructure.Hours = ts.tm_hour + 1 ;
+   stimestructure.Hours = ts.tm_hour + 2 ;
    stimestructure.Minutes = ts.tm_min;
    stimestructure.Seconds = ts.tm_sec;
    stimestructure.TimeFormat = RTC_HOURFORMAT_24;
@@ -182,9 +182,10 @@ static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
 
 
 static void Th_RTC(void *argument){
+  netInitialize();
 	init_RTC();
 	Init_timers();
-	netInitialize();
+	osTimerStart(tim_id_3min, 180000U);
 	while(1){
 	  RTC_Show();
     osDelay (1000);
