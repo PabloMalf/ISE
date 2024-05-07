@@ -14,4 +14,14 @@ typedef struct{
 int init_Th_ttf(void);
 osMessageQueueId_t get_id_MsgQueue_ttf(void);
 
+typedef struct{
+	char idTarjeta[6];
+	char fechaHora [19];
+	char tipoAcceso ;
+} entrada;
+
+#define MAX_USU 10
+
+
+
 #endif

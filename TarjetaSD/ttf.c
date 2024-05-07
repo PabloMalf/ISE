@@ -5,6 +5,8 @@
 
 static osThreadId_t id_Th_ttf;
 static osMessageQueueId_t id_MsgQueue_ttf;
+static entrada entradas[MAX_USU]; // maximo por ahora de 10 entradas
+char basura [2];
 
 #define MSGQUEUE_OBJECTS_TTF 4
 
@@ -59,7 +61,8 @@ static void Th_ttf(void *arguments){
   fsStatus stat;
 	FILE *f;
   MSGQUEUE_OBJ_TTF msg_ttf;
-	char dataRD[100];
+	//char dataRD[100]; // por ahora no lo usamos
+	
 	while(1){
 		if (osOK == osMessageQueueGet(get_id_MsgQueue_ttf(), &msg_ttf, NULL, osWaitForever)){
 			 if(msg_ttf.state==WR){
@@ -90,7 +93,18 @@ static void Th_ttf(void *arguments){
 							f = fopen ("M0:/test.txt","r");
 							if (f != NULL) {
 								//fflush (stdout);
-								fgets(dataRD, sizeof(dataRD), f);
+								//fgets(dataRD, sizeof(dataRD), f);
+								//while((caracter = fgetc(f)) != EOF)
+								int i=0; // variable para recorrer todos las entradas
+								while((!feof(f))|| i<MAX_USU) // sale cuando llegue al final o cuando ya no pueda meter mas usuarios 
+	              {	
+									fread(&entradas[i].idTarjeta, sizeof(char), 6, f);
+									fread(&entradas[i].fechaHora, sizeof(char), 19, f);
+									fread(&entradas[i].tipoAcceso, sizeof(char), 1, f);
+									
+									fread(&basura, sizeof(char), 2, f);
+									i++;
+	              }
 								fclose(f);
 							}
 						}

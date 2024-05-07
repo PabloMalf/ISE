@@ -152,9 +152,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>69</LineNumber>
+          <LineNumber>108</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134251384</Address>
+          <Address>134251860</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -163,25 +163,106 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>.\ttf.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\TarjetaSD\ttf.c\69</Expression>
+          <Expression>\\TarjetaSD\ttf.c\108</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>85</LineNumber>
+          <LineNumber>103</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
+          <Address>134251804</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
+          <BreakIfRCount>1</BreakIfRCount>
           <Filename>.\ttf.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\TarjetaSD\ttf.c\103</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>102</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134251778</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\ttf.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\TarjetaSD\ttf.c\102</Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>101</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134251754</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\ttf.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\TarjetaSD\ttf.c\101</Expression>
+        </Bp>
+        <Bp>
+          <Number>4</Number>
+          <Type>0</Type>
+          <LineNumber>93</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134251738</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\ttf.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\TarjetaSD\ttf.c\93</Expression>
+        </Bp>
+        <Bp>
+          <Number>5</Number>
+          <Type>0</Type>
+          <LineNumber>92</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134251734</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\ttf.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\TarjetaSD\ttf.c\92</Expression>
         </Bp>
       </Breakpoint>
+      <WatchWindow1>
+        <Ww>
+          <count>0</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>id</ItemText>
+        </Ww>
+        <Ww>
+          <count>1</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>fechaHora</ItemText>
+        </Ww>
+        <Ww>
+          <count>2</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>tipoAcceso</ItemText>
+        </Ww>
+      </WatchWindow1>
       <WatchWindow2>
         <Ww>
           <count>0</count>
@@ -202,6 +283,26 @@
           <count>3</count>
           <WinNumber>2</WinNumber>
           <ItemText>dataRD</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>tipoAcceso</ItemText>
+        </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>entradas</ItemText>
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>basura</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>i</ItemText>
         </Ww>
       </WatchWindow2>
       <ScvdPack>

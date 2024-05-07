@@ -67,7 +67,7 @@ void Th_testWR(void *arg){
 	MSGQUEUE_OBJ_TTF msg_ttf;
 	while(1){
 		msg_ttf.state=WR;
-		sprintf(msg_ttf.name, "ISE 2024");
+		sprintf(msg_ttf.name, "Hola que pasa");
 		osMessageQueuePut(get_id_MsgQueue_ttf(), &msg_ttf, 0, 0);
 		osDelay(1000);
 	}
