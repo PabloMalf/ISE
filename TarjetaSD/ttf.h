@@ -4,10 +4,10 @@
 #include "cmsis_os2.h"
 #include "stm32f4xx_hal.h"
 
-typedef enum {WR = 0x08, RD = 0x00}lcd_state_t;
+typedef enum {WR = 0x08, RD = 0x00}ttf_state_t;
 
 typedef struct{
-	lcd_state_t state;
+	ttf_state_t state;
 	char name [20];
 } MSGQUEUE_OBJ_TTF;
 
