@@ -43,7 +43,7 @@ int main(void){
   osKernelInitialize ();
 
 	//start Threads 
-	init_Th_keypad();
+	init_Th_key();
 	init_Th_test();
 	//
 	
@@ -61,9 +61,10 @@ int init_Th_test(void){
 
 void Th_test(void *arg){ //Test del modulo
 	char key;
+	osThreadFlagsSet(get_id_Th_key(), KEY_FLAG_START);
 	while(1){
-		if (osOK == osMessageQueueGet(get_id_MsgQueue_keypad(), &key, NULL, osWaitForever))
-	 	printf("Key: %c\n", key);
+		if (osOK == osMessageQueueGet(get_id_MsgQueue_key(), &key, NULL, osWaitForever))
+			printf("Key: %c\n", key);
 	}
 }
 

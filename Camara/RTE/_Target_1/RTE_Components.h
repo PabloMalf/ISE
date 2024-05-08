@@ -16,7 +16,7 @@
  */
 #define CMSIS_device_header "stm32f4xx.h"
 
-/* ARM::CMSIS:RTOS2:Keil RTX5:Library:5.5.3 */
+/* ARM::CMSIS:RTOS2:Keil RTX5:Library:5.5.4 */
 #define RTE_CMSIS_RTOS2                 /* CMSIS-RTOS2 */
         #define RTE_CMSIS_RTOS2_RTX5            /* CMSIS-RTOS2 Keil RTX5 */
 /* Keil.ARM Compiler::Compiler:Event Recorder:DAP:1.5.1 */
@@ -29,13 +29,6 @@
 #define RTE_Drivers_I2C1                /* Driver I2C1 */
         #define RTE_Drivers_I2C2                /* Driver I2C2 */
         #define RTE_Drivers_I2C3                /* Driver I2C3 */
-/* Keil::CMSIS Driver:SPI:2.18 */
-#define RTE_Drivers_SPI1                /* Driver SPI1 */
-        #define RTE_Drivers_SPI2                /* Driver SPI2 */
-        #define RTE_Drivers_SPI3                /* Driver SPI3 */
-        #define RTE_Drivers_SPI4                /* Driver SPI4 */
-        #define RTE_Drivers_SPI5                /* Driver SPI5 */
-        #define RTE_Drivers_SPI6                /* Driver SPI6 */
 /* Keil::Device:STM32Cube Framework:Classic:1.8.1 */
 #define RTE_DEVICE_FRAMEWORK_CLASSIC
 /* Keil::Device:STM32Cube HAL:Common:1.8.1 */

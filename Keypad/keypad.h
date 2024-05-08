@@ -5,7 +5,6 @@
 #include "stm32f4xx_hal.h"
 
 
-#define MSGQUEUE_OBJECTS_KEYPAD 4
 
 /* PERIFERICO USADO: GPIO
 	 PINOUT USED:  
@@ -18,20 +17,15 @@
 			 PD7 -> C1				 
 */
 
-#define ROW1_PIN GPIO_PIN_1
-#define ROW2_PIN GPIO_PIN_3
-#define ROW3_PIN GPIO_PIN_4
-#define ROW4_PIN GPIO_PIN_6
-#define COL1_PIN GPIO_PIN_7
-#define COL2_PIN GPIO_PIN_0
-#define COL3_PIN GPIO_PIN_5
-
+#define KEY_FLAG_START			1U << 0
+#define KEY_FLAG_OFF		1U << 1
 
 typedef struct{
-	char  k;
-} MSGQUEUE_OBJ_KEYPAD;
+	char key;
+} MSGQUEUE_OBJ_KEY;
 
-int init_Th_keypad(void);
-osMessageQueueId_t get_id_MsgQueue_keypad(void);
+int init_Th_key(void);
+osThreadId_t get_id_Th_key(void);
+osMessageQueueId_t get_id_MsgQueue_key(void);
 
 #endif

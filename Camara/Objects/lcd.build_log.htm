@@ -22,30 +22,37 @@ Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
 C:\Users\Luis\Documents\UPM\12_semestre\ISE\BT2\camara\Camara\Camera.uvprojx
-Project File Date:  04/25/2024
+Project File Date:  05/07/2024
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Target 1'
 compiling camera.c...
-camera.c(372): error:  #167: argument of type "uint32_t *" is incompatible with parameter of type "uint32_t"
-  		HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t *)destAddress, 160 * 120/2);
-camera.c(318): warning:  #177-D: function "Camera_Read"  was declared but never referenced
-  static int32_t Camera_Read (uint8_t reg, uint8_t *val) {
-camera.c: 1 warning, 1 error
-".\Objects\lcd.axf" - 1 Error(s), 1 Warning(s).
+camera.c(319): warning:  #550-D: variable "statusMT1"  was set but never used
+  	int32_t statusMT1;
+camera.c(320): warning:  #177-D: variable "statusGS1"  was declared but never referenced
+  	int32_t statusGS1;
+camera.c(322): warning:  #550-D: variable "statusMT2"  was set but never used
+  	int32_t statusMT2;
+camera.c(323): warning:  #177-D: variable "statusGB2"  was declared but never referenced
+   	int32_t statusGB2;
+camera.c(324): warning:  #177-D: variable "status1"  was declared but never referenced
+  	int32_t status1;
+camera.c: 5 warnings, 0 errors
+linking...
+Program Size: Code=22784 RO-data=988 RW-data=34844 ZI-data=6220  
+".\Objects\lcd.axf" - 0 Error(s), 5 Warning(s).
 
 <h2>Software Packages used:</h2>
 
 Package Vendor: ARM
-                http://www.keil.com/pack/ARM.CMSIS.5.8.0.pack
-                ARM.CMSIS.5.8.0
+                http://www.keil.com/pack/ARM.CMSIS.5.9.0.pack
+                ARM.CMSIS.5.9.0
                 CMSIS (Common Microcontroller Software Interface Standard)
    * Component: I2C Version: 2.4.0
-   * Component: SPI Version: 2.3.0
    * Component: RTOS2 Version: 2.1.3
-   * Component: CORE Version: 5.5.0
-   * Component: Keil RTX5 Variant: Library Version: 5.5.3
+   * Component: CORE Version: 5.6.0
+   * Component: Keil RTX5 Variant: Library Version: 5.5.4
 
 Package Vendor: Keil
                 https://www.keil.com/pack/Keil.ARM_Compiler.1.7.2.pack
@@ -59,7 +66,6 @@ Package Vendor: Keil
                 Keil.STM32F4xx_DFP.2.17.1
                 STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
    * Component: I2C Version: 2.12
-   * Component: SPI Version: 2.18
    * Component: Classic Version: 1.8.1
    * Component: Common Version: 1.8.1
    * Component: Cortex Version: 1.8.1
@@ -84,10 +90,10 @@ Package Vendor: Keil
   .\RTE\Compiler
   .\RTE\Device\STM32F429ZITx
   .\RTE\_Target_1
-  C:\Users\Luis\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include
-  C:\Users\Luis\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Driver\Include
-  C:\Users\Luis\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\Include
-  C:\Users\Luis\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Include
+  C:\Users\Luis\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include
+  C:\Users\Luis\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Driver\Include
+  C:\Users\Luis\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\RTOS2\Include
+  C:\Users\Luis\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\RTOS2\RTX\Include
   C:\Users\Luis\AppData\Local\Arm\Packs\Keil\ARM_Compiler\1.7.2\Include
   C:\Users\Luis\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include
   C:\Users\Luis\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\STM32F4xx_HAL_Driver\Inc
@@ -97,36 +103,33 @@ Package Vendor: Keil
    * Component: ::CMSIS Driver:I2C:2.4.0 (API)
       Include file:  CMSIS\Driver\Include\Driver_I2C.h
 
-   * Component: ::CMSIS Driver:SPI:2.3.0 (API)
-      Include file:  CMSIS\Driver\Include\Driver_SPI.h
-
    * Component: ::CMSIS:RTOS2:2.1.3 (API)
       Include file:  CMSIS\RTOS2\Include\cmsis_os2.h
 
    * Component: ::Device:STM32Cube Framework:1.1.0 (API)
 
-   * Component: ARM::CMSIS:CORE:5.5.0
+   * Component: ARM::CMSIS:CORE:5.6.0
 
-   * Component: ARM::CMSIS:RTOS2:Keil RTX5:Library:5.5.3
-      Include file:  CMSIS\RTOS2\RTX\Include\rtx_os.h
-      Include file:  CMSIS\RTOS2\RTX\Config\RTX_Config.h
-      Source file:   CMSIS\RTOS2\RTX\Template\Timer.c
-      Source file:   CMSIS\RTOS2\RTX\Template\main.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Mutex.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Thread.c
-      Source file:   CMSIS\RTOS2\RTX\Config\RTX_Config.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Events.c
+   * Component: ARM::CMSIS:RTOS2:Keil RTX5:Library:5.5.4
       Source file:   CMSIS\RTOS2\RTX\Template\MsgQueue.c
-      Source file:   CMSIS\RTOS2\RTX\Source\rtx_lib.c
-      Library file:  CMSIS\RTOS2\RTX\Library\ARM\RTX_CM4F.lib
+      Source file:   CMSIS\RTOS2\RTX\Template\Mutex.c
+      Source file:   CMSIS\RTOS2\RTX\Config\RTX_Config.c
+      Include file:  CMSIS\RTOS2\RTX\Config\RTX_Config.h
+      Source file:   CMSIS\RTOS2\RTX\Template\main.c
       Source file:   CMSIS\RTOS2\RTX\Template\MemPool.c
-      Source file:   CMSIS\RTOS2\RTX\Template\svc_user.c
+      Include file:  CMSIS\RTOS2\RTX\Include\rtx_os.h
+      Source file:   CMSIS\RTOS2\RTX\Template\Events.c
       Source file:   CMSIS\RTOS2\RTX\Template\Semaphore.c
+      Source file:   CMSIS\RTOS2\RTX\Template\svc_user.c
+      Source file:   CMSIS\RTOS2\RTX\Source\rtx_lib.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Thread.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Timer.c
+      Library file:  CMSIS\RTOS2\RTX\Library\ARM\RTX_CM3.lib
 
    * Component: Keil.ARM Compiler::Compiler:Event Recorder:DAP:1.5.1
+      Include file:  Include\EventRecorder.h
       Source file:   Source\EventRecorder.c
       Include file:  Config\EventRecorderConf.h
-      Include file:  Include\EventRecorder.h
 
    * Component: Keil.ARM Compiler::Compiler:I/O:STDOUT:ITM:1.2.0
       Source file:   Source\retarget_io.c
@@ -134,19 +137,16 @@ Package Vendor: Keil
    * Component: Keil::CMSIS Driver:I2C:2.12
       Source file:   CMSIS\Driver\I2C_STM32F4xx.c
 
-   * Component: Keil::CMSIS Driver:SPI:2.18
-      Source file:   CMSIS\Driver\SPI_STM32F4xx.c
-
    * Component: Keil::Device:STM32Cube Framework:Classic:1.8.1
-      Include file:  MDK\Templates\Inc\stm32f4xx_hal_conf.h
+      Include file:  CMSIS\Driver\Config\RTE_Device.h
+      Include file:  MDK\Templates\Inc\stm32f4xx_it.h
+      Source file:   MDK\Templates\Src\stm32f4xx_it.c
+      Include file:  MDK\Templates\Inc\main.h
       Include file:  MDK\Templates_LL\Inc\main.h
       Source file:   MDK\Templates_LL\Src\main.c
-      Source file:   MDK\Templates\Src\stm32f4xx_it.c
+      Include file:  MDK\Templates\Inc\stm32f4xx_hal_conf.h
       Source file:   MDK\Templates\Src\main.c
       Source file:   MDK\Templates\Src\stm32f4xx_hal_msp.c
-      Include file:  MDK\Templates\Inc\stm32f4xx_it.h
-      Include file:  CMSIS\Driver\Config\RTE_Device.h
-      Include file:  MDK\Templates\Inc\main.h
 
    * Component: Keil::Device:STM32Cube HAL:Common:1.8.1
       Include file:  Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h
@@ -156,8 +156,8 @@ Package Vendor: Keil
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c
 
    * Component: Keil::Device:STM32Cube HAL:DCMI:1.8.1
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dcmi.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dcmi_ex.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dcmi.c
 
    * Component: Keil::Device:STM32Cube HAL:DMA:1.8.1
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma.c
@@ -167,32 +167,31 @@ Package Vendor: Keil
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c
 
    * Component: Keil::Device:STM32Cube HAL:I2C:1.8.1
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c_ex.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c.c
 
    * Component: Keil::Device:STM32Cube HAL:PWR:1.8.1
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c
 
    * Component: Keil::Device:STM32Cube HAL:RCC:1.8.1
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.c
 
    * Component: Keil::Device:STM32Cube HAL:SPI:1.8.1
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c
 
    * Component: Keil::Device:STM32Cube HAL:TIM:1.8.1
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c
 
    * Component: Keil::Device:Startup:2.6.3
-      Source file:   MDK\Device\Source\ARM\STM32F42xxx_43xxx_OPT.s
-      Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f429xx.s
       Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
       Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
+      Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f429xx.s
+      Source file:   MDK\Device\Source\ARM\STM32F42xxx_43xxx_OPT.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c
-Target not created.
-Build Time Elapsed:  00:00:04
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>
