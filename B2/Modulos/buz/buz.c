@@ -1,5 +1,7 @@
 #include "buz.h"
 
+#define MSGQUEUE_OBJECTS_BUZ 4
+
 static osThreadId_t id_Th_buz;
 static osMessageQueueId_t id_MsgQueue_buz;
 

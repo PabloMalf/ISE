@@ -436,7 +436,7 @@ static void			Halt(void){
 static void Th_nfc(void *arg){
 	uint8_t CardID[5];
 	uint8_t MyID[5] = {
-		0x43, 0x95, 0xf, 0xb6, 0x7b	/* My card on my keys */
+		0x43, 0x95, 0x3f, 0x1c, 0xf5	/* My card on my keys */
 	};
 	
 	Init();

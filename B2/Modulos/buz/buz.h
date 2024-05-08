@@ -4,8 +4,6 @@
 #include "cmsis_os2.h"
 #include "stm32f4xx_hal.h"
 
-#define MSGQUEUE_OBJECTS_BUZ 4
-
 /*
 			TIM3
 			PINOUT USED:

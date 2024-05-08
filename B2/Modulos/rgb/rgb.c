@@ -1,7 +1,6 @@
 #include "rgb.h"
 
-//I WANT TO CONTROL AN RGB ON A 255,255,255 COLOR SCALE USING PWM AND NOT THE OUTPUT COMPARE FUNCTION
-// the pins are defined in the header file
+#define MSGQUEUE_OBJECTS_RGB 4
 
 static osThreadId_t id_Th_rgb;
 static osMessageQueueId_t id_MsgQueue_rgb;

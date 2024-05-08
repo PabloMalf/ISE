@@ -1,5 +1,7 @@
 *.marti
+*.Luis
 *.uvoptx*
+*.uvguix*
 *.map
 *.axf
 *.htm

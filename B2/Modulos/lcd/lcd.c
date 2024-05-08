@@ -6,6 +6,8 @@
 
 #define SLAVE_ADDRESS_LCD 0x27
 
+#define MSGQUEUE_OBJECTS_LCD 4
+
 extern ARM_DRIVER_I2C						Driver_I2C1; 
 static ARM_DRIVER_I2C *I2Cdrv = &Driver_I2C1;
 

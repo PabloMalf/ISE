@@ -3,8 +3,6 @@
 
 #include "cmsis_os2.h"
 
-#define MSGQUEUE_OBJECTS_LCD 4
-
 /*
 			I2C2
 			PINOUT USED:
