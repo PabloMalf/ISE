@@ -4,22 +4,24 @@
 #include "cmsis_os2.h"
 #include "stm32f4xx_hal.h"
 
-typedef enum {WR = 0x08, RD = 0x00}ttf_state_t;
+typedef enum {WR = 0x08, RD = 0x00}cmd_t;
 
 typedef struct{
-	ttf_state_t state;
-	char name [20];
-} MSGQUEUE_OBJ_TTF;
+	cmd_t cmd;
+	char data [50];
+} MSGQUEUE_OBJ_TTF_MOSI;
 
 int init_Th_ttf(void);
-osMessageQueueId_t get_id_MsgQueue_ttf(void);
+osMessageQueueId_t get_id_MsgQueue_ttf_miso(void);
+osMessageQueueId_t get_id_MsgQueue_ttf_mosi(void);
 
 typedef struct{
-	char idTarjeta[6];
-	char fechaHora [19];
-	char tipoAcceso ;
-} entrada;
+	char data [50];
+} MSGQUEUE_OBJ_TTF_MISO;
 
 #define MAX_USU 10
+
+
+
 
 #endif
