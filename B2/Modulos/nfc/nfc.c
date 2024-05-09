@@ -118,7 +118,6 @@ static void callback_spi(uint32_t event);
 //
 static void			Init(void);
 static Status_t	Check(uint8_t* id);
-static Status_t	Compare(uint8_t* CardID, uint8_t* CompareID);
 //
 static uint8_t	RC522_SPI_Transfer(uint8_t data);
 static void			Write_Reg(uint8_t addr, uint8_t val);
