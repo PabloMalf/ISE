@@ -152,22 +152,35 @@ static void clear(void){
 //}
 
 static void Th_lcd(void *argument){
-	MSGQUEUE_OBJ_LCD msg_lcd;
+	MSGQUEUE_OBJ_LCD msg;
+	MSGQUEUE_OBJ_LCD lcd;
 	init_lcd();	
-	
+	clear();//kkk
 	while(1){
-		if(osOK == osMessageQueueGet(id_MsgQueue_lcd, &msg_lcd, NULL, osWaitForever)){
-			back_light = msg_lcd.state;
-			clear();
+		if(osOK == osMessageQueueGet(id_MsgQueue_lcd, &msg, NULL, osWaitForever)){
+			back_light = msg.state;
+			//clear(); kkk
 			if(back_light){
-				set_cursor(0, 0);
-				send_string(msg_lcd.L0);
-				set_cursor(1, 0);
-				send_string(msg_lcd.L1);
-				set_cursor(2, 0);
-				send_string(msg_lcd.L2);
-				set_cursor(3, 0);
-				send_string(msg_lcd.L3);
+				if(strcmp(msg.L0, lcd.L0)){
+					set_cursor(0, 0);
+					send_string(msg.L0);
+					strcpy(lcd.L0, msg.L0);
+				}
+				if(strcmp(msg.L1, lcd.L1)){
+					set_cursor(1, 0);
+					send_string(msg.L1);
+					strcpy(lcd.L1, msg.L1);
+				}
+				if(strcmp(msg.L2, lcd.L2)){
+					set_cursor(2, 0);
+					send_string(msg.L2);
+					strcpy(lcd.L2, msg.L2);
+				}
+				if(strcmp(msg.L3, lcd.L3)){
+					set_cursor(3, 0);
+					send_string(msg.L3);
+					strcpy(lcd.L3, msg.L3);
+				}
 			}
 		}
 	}
