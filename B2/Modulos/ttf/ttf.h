@@ -16,11 +16,8 @@ osMessageQueueId_t get_id_MsgQueue_ttf_miso(void);
 osMessageQueueId_t get_id_MsgQueue_ttf_mosi(void);
 
 typedef struct{
-	char data [50];
+  char adtos[50][20];
 } MSGQUEUE_OBJ_TTF_MISO;
-
-#define MAX_USU 10
-
 
 
 
