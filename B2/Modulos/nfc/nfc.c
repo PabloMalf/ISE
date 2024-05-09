@@ -230,16 +230,6 @@ static Status_t Check(uint8_t* id){
 	return status;
 }
 
-static Status_t Compare(uint8_t* CardID, uint8_t* CompareID){
-	uint8_t i;
-	for (i = 0; i < 5; i++) {
-		if (CardID[i] != CompareID[i]) {
-			return MI_ERR;
-		}
-	}
-	return MI_OK;
-}
-
 //
 static void			Write_Reg(uint8_t addr, uint8_t val){
 	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_15,GPIO_PIN_RESET);	// CS LOW
@@ -434,23 +424,19 @@ static void			Halt(void){
 
 //Thread
 static void Th_nfc(void *arg){
-	uint8_t CardID[5];
-	uint8_t MyID[5] = {
-		0x43, 0x95, 0x3f, 0x1c, 0xf5	/* My card on my keys */
-	};
-	
+	uint32_t flags;
+	MSGQUEUE_OBJ_NFC msg;
 	Init();
 
 	while(1){
-		if(Check(CardID) == MI_OK){
-			if(Compare(CardID, MyID) == MI_OK) {
-				printf("Hola de nuevo\n");
-			} else {
-				printf("Primera vez?\n");
+		flags = osThreadFlagsWait(NFC_FLAG_ON, osFlagsWaitAny, osWaitForever);
+		memset(msg.sNum, 0x00, sizeof(msg.sNum));
+		while(!(flags & NFC_FLAG_OFF)){
+			if(Check(msg.sNum) == MI_OK){
+				osMessageQueuePut(id_MsgQueue_nfc, &msg , 0U, 0U);
 			}
-			printf("0x%02x 0x%02x 0x%02x 0x%02x 0x%02x \n\n", CardID[0], CardID[1], CardID[2], CardID[3], CardID[4]);	
+			flags = osThreadFlagsGet();
 		}
-		osThreadYield();
 	}
 }
 
