@@ -47,7 +47,7 @@ int main(void){
 
 	//start Threads 
 	init_Th_ttf();
-	//init_Th_testWR();
+	init_Th_testWR();
 	init_Th_testRD();
 	//
 	
@@ -64,12 +64,13 @@ int init_Th_testWR(void){
 }
 
 void Th_testWR(void *arg){ 
-	MSGQUEUE_OBJ_TTF msg_ttf;
+	MSGQUEUE_OBJ_TTF_MOSI msg_ttf;
 	while(1){
-		msg_ttf.state=WR;
-		sprintf(msg_ttf.name, "Hola que pasa");
-		osMessageQueuePut(get_id_MsgQueue_ttf(), &msg_ttf, 0, 0);
-		osDelay(1000);
+		osDelay(5000);
+		msg_ttf.cmd=WR;
+		sprintf(msg_ttf.data, "9876543210");
+		osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf, 0, 0);
+		
 	}
 }
 
@@ -81,11 +82,15 @@ int init_Th_testRD(void){
 }
 
 void Th_testRD(void *arg){ 
-	MSGQUEUE_OBJ_TTF msg_ttf;
+	MSGQUEUE_OBJ_TTF_MOSI msg_ttf;
+	MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso_main;
 	while(1){
-		msg_ttf.state=RD;
-		osMessageQueuePut(get_id_MsgQueue_ttf(), &msg_ttf, 0, 0);
-		osDelay(2000);
+		
+		msg_ttf.cmd=RD;
+		osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf, NULL, osWaitForever);
+		
+		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso_main, NULL, osWaitForever);
+		osDelay(20000);
 	}
 }
 
