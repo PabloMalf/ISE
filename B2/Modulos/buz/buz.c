@@ -30,13 +30,13 @@ osMessageQueueId_t get_id_MsgQueue_buz(void){
 static void init_buz(TIM_HandleTypeDef *htim, TIM_OC_InitTypeDef *hsoc){
   static GPIO_InitTypeDef sgpio = {0};
 	
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	sgpio.Pin= GPIO_PIN_7;
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+	sgpio.Pin= GPIO_PIN_0;
 	sgpio.Mode= GPIO_MODE_AF_PP;
   sgpio.Alternate= GPIO_AF2_TIM3;
 	sgpio.Pull= GPIO_NOPULL;
   sgpio.Speed= GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &sgpio);
+  HAL_GPIO_Init(GPIOB, &sgpio);
 	
 	__HAL_RCC_TIM3_CLK_ENABLE();
 	htim->Instance= TIM3;
@@ -50,7 +50,7 @@ static void init_buz(TIM_HandleTypeDef *htim, TIM_OC_InitTypeDef *hsoc){
 	hsoc->OCPolarity = TIM_OCPOLARITY_HIGH;
 	hsoc->OCFastMode = TIM_OCFAST_DISABLE;
 	hsoc->Pulse = 0; // 0% (volume)
-	HAL_TIM_PWM_ConfigChannel(htim, hsoc, TIM_CHANNEL_2);
+	HAL_TIM_PWM_ConfigChannel(htim, hsoc, TIM_CHANNEL_3);
 }
 
 //Una funcion que cambie la frecuencia del sonido del buzzer
@@ -58,7 +58,7 @@ static void set_tone(TIM_HandleTypeDef *htim, TIM_OC_InitTypeDef *hsoc, uint32_t
 	htim->Init.Period = 100000 / freq - 1;
 	hsoc->Pulse = ((htim->Init.Period) * (volume > 10 ? 10 : volume)) / 100;
 	HAL_TIM_PWM_Init(htim);
-	HAL_TIM_PWM_ConfigChannel(htim, hsoc, TIM_CHANNEL_2);
+	HAL_TIM_PWM_ConfigChannel(htim, hsoc, TIM_CHANNEL_3);
 }
 
 static void Th_buz(void *argument){
@@ -70,9 +70,9 @@ static void Th_buz(void *argument){
 	while(1){
 		if(osOK == osMessageQueueGet(id_MsgQueue_buz, &msg_buz, NULL, osWaitForever)){
 			set_tone(&htim3, &hsoc3, msg_buz.frequency_hz, msg_buz.volume);
-			HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+			HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
 			osDelay(msg_buz.duration_ms);
-			HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_2);
+			HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_3);
 		}
 	}
 }

@@ -16,6 +16,7 @@ static int Init_MsgQueue_rgb(){
 	return(0);
 }
 
+
 int init_Th_rgb(void){
 	id_Th_rgb = osThreadNew(Th_rgb, NULL, NULL);
 	if(id_Th_rgb == NULL)

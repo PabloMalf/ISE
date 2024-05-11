@@ -6,7 +6,7 @@
 
 #define NFC_FLAG_ON		1U << 0
 
-#define NFC_TIMEOUT_MS 5000U
+#define NFC_TIMEOUT_MS 8000U
 
 typedef struct{
 	uint8_t sNum [5];

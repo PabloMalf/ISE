@@ -32,6 +32,7 @@ static void RTC_CalendarConfig(void);
 static void RTC_Show(void);
 static void Init_timers (void);
 
+
 static void Timer_Callback_3min (void const *arg) {
 	 init_SNTP(); // Cada 3 min se llama al servidor SNTP
 }
@@ -49,8 +50,7 @@ int init_Th_rtc(void){
 	return(0);
 }
 
-void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc)
-{
+void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc){
   RCC_OscInitTypeDef        RCC_OscInitStruct;
   RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct;
 
@@ -70,8 +70,8 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc)
   __HAL_RCC_RTC_ENABLE();
 }
 
-void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc)
-{
+
+void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc){
   __HAL_RCC_RTC_DISABLE();
 
   HAL_PWR_DisableBkUpAccess();
@@ -79,23 +79,18 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc)
   
 }
 
-static void RTC_CalendarConfig(void)
-{
 
-  /*##-1- Configure the Date #################################################*/
-  /* Set Date: Tuesday February 18th 2014 */
+static void RTC_CalendarConfig(void){
+
   sdatestructure.Year = -148;
-  sdatestructure.Month = RTC_MONTH_APRIL; //RTC_MONTH_FEBRUARY
+  sdatestructure.Month = RTC_MONTH_APRIL;
   sdatestructure.Date = 0x14;
   sdatestructure.WeekDay = RTC_WEEKDAY_TUESDAY;
   
   HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BCD);
 
-
-  /*##-2- Configure the Time #################################################*/
-  /* Set Time: 02:00:00 */
-  stimestructure.Hours = 0x23; //23
-  stimestructure.Minutes = 0x59; //59
+  stimestructure.Hours = 0x23;
+  stimestructure.Minutes = 0x59;
   stimestructure.Seconds = 0x00;
   stimestructure.TimeFormat = RTC_HOURFORMAT12_PM;
   stimestructure.DayLightSaving = RTC_DAYLIGHTSAVING_NONE ;
@@ -103,10 +98,9 @@ static void RTC_CalendarConfig(void)
 
   HAL_RTC_SetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BCD);
 
-
-  /*##-3- Writes a data in a RTC Backup data Register1 #######################*/
   HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2);
 }
+
 
 static void init_rtc(void){
   RtcHandle.Instance = RTC; 
@@ -121,14 +115,10 @@ static void init_rtc(void){
   HAL_RTC_Init(&RtcHandle);
 	RTC_CalendarConfig();
   init_SNTP();
-	
 }
 
 
-
-
-static void RTC_Show()
-{
+static void RTC_Show(){
   HAL_RTC_GetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BIN);
   HAL_RTC_GetDate(&RtcHandle, &sdatestructure, RTC_FORMAT_BIN);
 	
@@ -138,57 +128,35 @@ static void RTC_Show()
 	g_time.hour = stimestructure.Hours;
 	g_time.min= stimestructure.Minutes;
 	g_time.sec = stimestructure.Seconds;
-
 }
+
 
 static void init_SNTP (void) {
   netStatus status = netSNTPc_GetTime (NULL, time_callback);
 }
 
+
 static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
   if (seconds != 0) {
-   ts = *localtime(&seconds);
-   sdatestructure.Year = ts.tm_year - 100;
-   sdatestructure.Month = ts.tm_mon + 1;
-   sdatestructure.Date = ts.tm_mday;
-   sdatestructure.WeekDay = ts.tm_wday;
-  
-   HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BIN);
+		ts = *localtime(&seconds);
+		sdatestructure.Year = ts.tm_year - 100;
+		sdatestructure.Month = ts.tm_mon + 1;
+		sdatestructure.Date = ts.tm_mday;
+		sdatestructure.WeekDay = ts.tm_wday;
+		
+		HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BIN);
 
-   stimestructure.Hours = ts.tm_hour + 2 ;
-   stimestructure.Minutes = ts.tm_min;
-   stimestructure.Seconds = ts.tm_sec;
-   stimestructure.TimeFormat = RTC_HOURFORMAT_24;
-   stimestructure.DayLightSaving = ts.tm_isdst ;
-   stimestructure.StoreOperation = RTC_STOREOPERATION_RESET;
-   
-	 HAL_RTC_SetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BIN);
+		stimestructure.Hours = ts.tm_hour + 2 ;
+		stimestructure.Minutes = ts.tm_min;
+		stimestructure.Seconds = ts.tm_sec;
+		stimestructure.TimeFormat = RTC_HOURFORMAT_24;
+		stimestructure.DayLightSaving = ts.tm_isdst ;
+		stimestructure.StoreOperation = RTC_STOREOPERATION_RESET;
+		 
+		HAL_RTC_SetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BIN);
 	
-  HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2);
+		HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2);
   }
-	
-//	else{
-//	sdatestructure.Year = 4 ;
-//  sdatestructure.Month = RTC_MONTH_MAY;
-//  sdatestructure.Date = 13;
-//  sdatestructure.WeekDay = RTC_WEEKDAY_TUESDAY;
-//  
-//  HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BCD);
-
-
-//  stimestructure.Hours = 3;
-//  stimestructure.Minutes = 30;
-//  stimestructure.Seconds = 3;
-//  stimestructure.TimeFormat = RTC_HOURFORMAT12_AM;
-//  stimestructure.DayLightSaving = RTC_DAYLIGHTSAVING_NONE ;
-//  stimestructure.StoreOperation = RTC_STOREOPERATION_RESET;
-
-//  HAL_RTC_SetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BCD);
-
-
-//  HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2);
-//		
-	//}
 }
 
 
@@ -200,6 +168,5 @@ static void Th_rtc(void *argument){
 	while(1){
 	  RTC_Show();
     osDelay (1000);
-	  osThreadYield();
 	}
 }

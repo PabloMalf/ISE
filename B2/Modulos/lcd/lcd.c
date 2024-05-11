@@ -110,12 +110,18 @@ static void send_data(char data){
 	printf("Error: %d \tFlags: %d \tData: %x\n", error, flags, data);
 }
 
+
 static void send_string(char *str){
-	while(*str){
-		send_data(*str++);
+	int len = strlen(str);
+	int i;
+	for(i = 0; i < len; i++){
+		send_data(str[i]);
 	}
-	printf("");
+	for(i = len; i < 20; i++){
+		send_data(' ');
+	}
 }
+
 
 static void set_cursor(int row, int col){
 	
@@ -160,7 +166,11 @@ static void Th_lcd(void *argument){
 		if(osOK == osMessageQueueGet(id_MsgQueue_lcd, &msg, NULL, osWaitForever)){
 			back_light = msg.state;
 			//clear(); kkk
-			if(back_light){
+			if(!back_light){
+				send_data(0);
+				clear();
+			}
+			else{
 				if(strcmp(msg.L0, lcd.L0)){
 					set_cursor(0, 0);
 					send_string(msg.L0);
