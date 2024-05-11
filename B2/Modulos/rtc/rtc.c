@@ -25,7 +25,6 @@ static osThreadId_t id_Th_rtc;
 static void Th_rtc(void *arg);
 int init_Th_rtc(void);
 
-// Functions
 static void init_rtc(void);
 static void init_SNTP(void);
 static void RTC_CalendarConfig(void);
@@ -81,8 +80,7 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc){
 
 
 static void RTC_CalendarConfig(void){
-
-  sdatestructure.Year = -148;
+  sdatestructure.Year = 0x14;
   sdatestructure.Month = RTC_MONTH_APRIL;
   sdatestructure.Date = 0x14;
   sdatestructure.WeekDay = RTC_WEEKDAY_TUESDAY;
@@ -113,7 +111,14 @@ static void init_rtc(void){
   __HAL_RTC_RESET_HANDLE_STATE(&RtcHandle);
 	
   HAL_RTC_Init(&RtcHandle);
-	RTC_CalendarConfig();
+	
+  if (HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1) != 0x32F2)
+  {
+    RTC_CalendarConfig();
+  }
+	else
+    __HAL_RCC_CLEAR_RESET_FLAGS();
+	
   init_SNTP();
 }
 
