@@ -445,7 +445,6 @@ static void			Halt(void){
 static void Th_nfc(void *arg){
 	uint32_t flags;
 	MSGQUEUE_OBJ_NFC msg;
-	Status_t status;
 	Init();
 
 	while(1){
