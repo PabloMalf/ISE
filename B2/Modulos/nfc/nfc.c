@@ -1,7 +1,8 @@
 #include "nfc.h"
 #include <stdio.h>
-#include "string.h"
 #include "Driver_SPI.h"
+
+#define NFC_FLAG_OFF	1U << 1
 
 #define MSGQUEUE_OBJECTS_NFC 4
 
@@ -108,12 +109,15 @@ ARM_DRIVER_SPI* SPIdrv = &Driver_SPI1;
 
 static osThreadId_t id_Th_nfc;
 static osMessageQueueId_t id_MsgQueue_nfc;
+static osTimerId_t tim_id_auto_off;
 
 //Os
 int init_Th_nfc(void);
 osMessageQueueId_t get_id_MsgQueue_nfc(void);
 static int Init_MsgQueue_nfc(void);
 static void callback_spi(uint32_t event);
+static void Timer_Callback(void);
+static void Init_Tims (void);
 
 //
 static void			Init(void);
@@ -142,6 +146,10 @@ int init_Th_nfc(void){
 	return(Init_MsgQueue_nfc());
 }
 
+osThreadId_t get_id_Th_nfc(void){
+	return id_Th_nfc;
+}
+
 osMessageQueueId_t get_id_MsgQueue_nfc(void){
 	return id_MsgQueue_nfc;
 }
@@ -155,6 +163,17 @@ static int Init_MsgQueue_nfc(void){
 
 static void callback_spi(uint32_t event){
 	osThreadFlagsSet(id_Th_nfc, event);
+}
+
+
+static void Timer_Callback(void){
+	osThreadFlagsSet(tim_id_auto_off, NFC_FLAG_OFF);
+}
+
+
+static void Init_Tims (void){
+	uint32_t exec = 1U;
+  tim_id_auto_off = osTimerNew((osTimerFunc_t)&Timer_Callback, osTimerOnce, &exec, NULL);
 }
 
 //
@@ -174,6 +193,7 @@ static uint8_t RC522_SPI_Transfer(uint8_t data){
 
 static void Init(void){
 	static GPIO_InitTypeDef GPIO_InitStruct;
+	Init_Tims(); //osTimers
 	/*CS*/
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -425,17 +445,22 @@ static void			Halt(void){
 static void Th_nfc(void *arg){
 	uint32_t flags;
 	MSGQUEUE_OBJ_NFC msg;
+	Status_t status;
 	Init();
 
 	while(1){
-		flags = osThreadFlagsWait(NFC_FLAG_ON, osFlagsWaitAny, osWaitForever);
-		memset(msg.sNum, 0x00, sizeof(msg.sNum));
-		while(!(flags & NFC_FLAG_OFF)){
-			if(Check(msg.sNum) == MI_OK){
-				osMessageQueuePut(id_MsgQueue_nfc, &msg , 0U, 0U);
-			}
+		osThreadFlagsWait(NFC_FLAG_ON, osFlagsWaitAny, osWaitForever);
+		osTimerStart(tim_id_auto_off, NFC_TIMEOUT_MS);
+
+		while((Check(msg.sNum) != MI_OK) && !(flags & NFC_FLAG_OFF)){
 			flags = osThreadFlagsGet();
 		}
+		
+		if(!(flags & NFC_FLAG_OFF)){
+			osMessageQueuePut(id_MsgQueue_nfc, &msg, 0U, 0U);
+		}
+		
+		flags = 0x00;
 	}
 }
 

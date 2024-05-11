@@ -42,10 +42,8 @@ int main(void){
 #ifdef RTE_CMSIS_RTOS2
   osKernelInitialize ();
 
-	//start Threads 
 	init_Th_nfc();
-	//init_Th_test();
-	//
+	init_Th_test();
 	
   osKernelStart();
 #endif
@@ -60,18 +58,23 @@ int init_Th_test(void){
 }
 
 void Th_test(void *arg){
-	MSGQUEUE_OBJ_NFC msg_nfc;
+	MSGQUEUE_OBJ_NFC msg;
+	uint8_t i;
 	
-	uint32_t cnt = 0;
-	//KKK rellena tu codigo de prueba
 	
 	while(1){
-		printf("a: %d\n", cnt++);
+		osThreadFlagsSet(get_id_Th_nfc(), NFC_FLAG_ON);
 		osDelay(1000);
-//		osMessageQueueGet(get_id_MsgQueue_nfc, &msg_nfc, 0U, osWaitForever);
-//		for(cnt = 0; cnt < sizeof(msg_nfc.sNum); cnt++){
-//			printf("%d", msg_nfc.sNum[cnt]);
-//		}
+		if(osOK == osMessageQueueGet(get_id_MsgQueue_nfc(), &msg, 0U, NFC_TIMEOUT_MS)){
+			printf("ID: ");
+			for(i = 0; i < sizeof(msg.sNum); i++){
+				printf("%d" ,msg.sNum[i]);
+			}
+			printf("\n");
+		}
+		else{
+			printf("TO\n");
+		}
 	}
 }
 
