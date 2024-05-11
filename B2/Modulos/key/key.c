@@ -19,8 +19,8 @@ const char char_teclas [NUM_ROW] [NUM_COL] = {{'1', '2', '3'},
 																							{'7', '8', '9'},
 																							{'*', '0', '#'}};
 
-const uint32_t PIN_ROW [NUM_ROW] = {GPIO_PIN_1, GPIO_PIN_3, GPIO_PIN_4, GPIO_PIN_6};
-const uint32_t PIN_COL [NUM_COL] = {GPIO_PIN_7, GPIO_PIN_0, GPIO_PIN_5};
+const uint32_t PIN_ROW [NUM_ROW] = {GPIO_PIN_1, GPIO_PIN_3, GPIO_PIN_4, GPIO_PIN_0};
+const uint32_t PIN_COL [NUM_COL] = {GPIO_PIN_7, GPIO_PIN_6, GPIO_PIN_5};
 
 static osTimerId_t tim_id_Rebotes;
 static osTimerId_t tim_id_Muestreo;
@@ -72,19 +72,19 @@ static void GPIO_Init(void){
 
   __HAL_RCC_GPIOD_CLK_ENABLE();
   
-  GPIO_InitStruct.Pin = GPIO_PIN_7 | GPIO_PIN_0 | GPIO_PIN_5;
+  GPIO_InitStruct.Pin = GPIO_PIN_7 | GPIO_PIN_6 | GPIO_PIN_5;
 	GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  GPIO_InitStruct.Pin = GPIO_PIN_1 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_6;	 
+  GPIO_InitStruct.Pin = GPIO_PIN_1 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_0;	 
 	GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP ;
   GPIO_InitStruct.Pull  = GPIO_PULLUP;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 	
-	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+	//HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
 

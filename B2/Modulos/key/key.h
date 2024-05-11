@@ -8,12 +8,12 @@
 
 /* PERIFERICO USADO: GPIO
 	 PINOUT USED:  
-			 PD0 -> C2
+			 PD0 -> R4
 			 PD1 -> R1			
 			 PD3 -> R2	
 			 PD4 -> R3	
 			 PD5 -> C3				 
-			 PD6 -> R4
+			 PD6 -> C2
 			 PD7 -> C1				 
 */
 
