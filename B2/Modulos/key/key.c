@@ -1,6 +1,7 @@
 #include "key.h"
 #include "stm32f4xx_hal.h"
 #include "stdio.h"
+#include "irq.h"
 
 #define MSGQUEUE_OBJECTS_KEY 4
 
@@ -25,7 +26,7 @@ static osTimerId_t tim_id_Rebotes;
 static osTimerId_t tim_id_Muestreo;
 static osTimerId_t tim_id_KeyOn;
 
-static osThreadId_t id_Th_key;
+osThreadId_t id_Th_key;
 static void Th_key(void *arg);
 
 static osMessageQueueId_t id_MsgQueue_key;
@@ -37,7 +38,7 @@ static void Timer_Callback_Muestreo(void);
 static void Timer_Callback_KeyOn(void);
 
 static uint8_t col_on = 0;
-static uint8_t teclapulsada = 0;
+uint8_t teclapulsada = 0;
 
 
 osMessageQueueId_t get_id_MsgQueue_key(void){
@@ -86,24 +87,6 @@ static void GPIO_Init(void){
 	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
-
-
-void EXTI0_IRQHandler(void){
-	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
-}
-
-
-void EXTI9_5_IRQHandler(void){
-	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_7);
-	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
-}
-
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-	if(teclapulsada==0)
-	osThreadFlagsSet(id_Th_key, FLAG_IRQ);
-}
-
 
 static void Init_Tims (void){                   
   uint32_t exec = 1U;
