@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>HSE_VALUE=8000000</Define>
               <Undefine></Undefine>
-              <IncludePath>.\Modulos\buz;.\Modulos\cam;.\Modulos\key;.\Modulos\lcd;.\Modulos\nfc;.\Modulos\rgb;.\Modulos\rtc;.\Modulos\srv;.\Modulos\ttf</IncludePath>
+              <IncludePath>.\Modulos\buz;.\Modulos\cam;.\Modulos\key;.\Modulos\irq;.\Modulos\lcd;.\Modulos\nfc;.\Modulos\rgb;.\Modulos\rtc;.\Modulos\srv;.\Modulos\ttf</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -412,6 +412,11 @@
               <FileName>key.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Modulos\key\key.c</FilePath>
+            </File>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Modulos\irq\irq.c</FilePath>
             </File>
             <File>
               <FileName>lcd.c</FileName>

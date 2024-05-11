@@ -6,6 +6,7 @@
 #include "buz.h"
 #include "cam.h"
 #include "key.h"
+#include "irq.h"
 #include "lcd.h"
 #include "nfc.h"
 #include "rgb.h"
