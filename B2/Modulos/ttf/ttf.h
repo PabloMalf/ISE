@@ -8,7 +8,7 @@ typedef enum {WR = 0x08, RD = 0x00}cmd_t;
 
 typedef struct{
 	cmd_t cmd;
-	char data [50];
+	char data [5][24];
 } MSGQUEUE_OBJ_TTF_MOSI;
 
 int init_Th_ttf(void);
@@ -16,7 +16,7 @@ osMessageQueueId_t get_id_MsgQueue_ttf_miso(void);
 osMessageQueueId_t get_id_MsgQueue_ttf_mosi(void);
 
 typedef struct{
-  char adtos[50][20];
+  char adtos[50][24];
 } MSGQUEUE_OBJ_TTF_MISO;
 
 

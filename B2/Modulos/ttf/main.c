@@ -1,5 +1,6 @@
 #include "main.h"
 #include <stdio.h>
+#include <string.h>
 
 #ifdef _RTE_
 #include "RTE_Components.h"
@@ -36,6 +37,31 @@ static void Th_testRD(void *arg);
 static void Error_Handler(void);	
 static void SystemClock_Config(void);
 
+typedef enum{PERMITIDO, DENEGADO, DESCONOCIDO} tipo_acceso_t;
+
+typedef struct{
+	uint8_t sec;
+	uint8_t min;
+	uint8_t hour;
+	uint8_t day;
+	uint8_t month;
+	uint8_t year;
+} mytime_t;
+
+typedef struct{
+	char nombre [15];
+	uint8_t sNum[5];
+}INFO_PERSONA_T;
+
+typedef struct{
+	mytime_t fecha;
+	tipo_acceso_t acceso;
+	INFO_PERSONA_T persona;
+}INFO_REGISTRO_T;
+
+static void WR_Register(INFO_REGISTRO_T registro);
+
+
 int main(void){
   HAL_Init();
 
@@ -48,7 +74,7 @@ int main(void){
 	//start Threads 
 	init_Th_ttf();
 	init_Th_testWR();
-	init_Th_testRD();
+	//init_Th_testRD();
 	//
 	
   osKernelStart();
@@ -63,14 +89,45 @@ int init_Th_testWR(void){
 	return(0);
 }
 
+static void WR_Register(INFO_REGISTRO_T registro){
+	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi;
+	msg_ttf_mosi.cmd=WR;
+	sprintf(msg_ttf_mosi.data[0], "%02d/%02d/%02d",registro.fecha.day,registro.fecha.month,registro.fecha.year);
+	sprintf(msg_ttf_mosi.data[1], "%02d:%02d:%02d",registro.fecha.hour,registro.fecha.min,registro.fecha.sec);
+	sprintf(msg_ttf_mosi.data[2], "%s",registro.persona.nombre);
+	sprintf(msg_ttf_mosi.data[3], "%02X %02X %02X %02X %02X",registro.persona.sNum[0], registro.persona.sNum[1],
+		                                                                   registro.persona.sNum[2], registro.persona.sNum[3],
+		                                                                   registro.persona.sNum[4]);
+	sprintf(msg_ttf_mosi.data[4], "%d",registro.acceso);
+		
+	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
+}
+
 void Th_testWR(void *arg){ 
-	MSGQUEUE_OBJ_TTF_MOSI msg_ttf;
+	
+	INFO_REGISTRO_T registro;
+	registro.fecha.day=8;
+	registro.fecha.month=8;
+	registro.fecha.year=22;
+	
+	registro.fecha.hour=12;
+	registro.fecha.min=12;
+	registro.fecha.sec=12;
+	
+	registro.persona.sNum[0]= 0x24;
+	registro.persona.sNum[1]= 0xD6;
+	registro.persona.sNum[2]= 0x26;
+	registro.persona.sNum[3]= 0x27;
+	registro.persona.sNum[4]= 0x66;
+	
+	registro.acceso= PERMITIDO;
+	
+  strcpy(registro.persona.nombre, "Francisco");
+	
 	while(1){
 		osDelay(5000);
-		msg_ttf.cmd=WR;
-		sprintf(msg_ttf.data, "9876543210");
-		osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf, 0, 0);
-		
+		WR_Register(registro);
+	
 	}
 }
 
