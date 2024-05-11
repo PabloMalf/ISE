@@ -25,7 +25,6 @@ static osThreadId_t id_Th_rtc;
 static void Th_rtc(void *arg);
 int init_Th_rtc(void);
 
-// Functions
 static void init_rtc(void);
 static void init_SNTP(void);
 static void RTC_CalendarConfig(void);
@@ -82,18 +81,13 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc)
 static void RTC_CalendarConfig(void)
 {
 
-  /*##-1- Configure the Date #################################################*/
-  /* Set Date: Tuesday February 18th 2014 */
-  sdatestructure.Year = -148;
-  sdatestructure.Month = RTC_MONTH_APRIL; //RTC_MONTH_FEBRUARY
+  sdatestructure.Year = 0x14;//-148;
+  sdatestructure.Month = RTC_MONTH_APRIL;
   sdatestructure.Date = 0x14;
   sdatestructure.WeekDay = RTC_WEEKDAY_TUESDAY;
   
   HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BCD);
 
-
-  /*##-2- Configure the Time #################################################*/
-  /* Set Time: 02:00:00 */
   stimestructure.Hours = 0x23; //23
   stimestructure.Minutes = 0x59; //59
   stimestructure.Seconds = 0x00;
@@ -104,7 +98,6 @@ static void RTC_CalendarConfig(void)
   HAL_RTC_SetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BCD);
 
 
-  /*##-3- Writes a data in a RTC Backup data Register1 #######################*/
   HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2);
 }
 
@@ -119,7 +112,14 @@ static void init_rtc(void){
   __HAL_RTC_RESET_HANDLE_STATE(&RtcHandle);
 	
   HAL_RTC_Init(&RtcHandle);
-	RTC_CalendarConfig();
+	
+  if (HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1) != 0x32F2)
+  {
+    RTC_CalendarConfig();
+  }
+	else
+    __HAL_RCC_CLEAR_RESET_FLAGS();
+	
   init_SNTP();
 	
 }
@@ -166,29 +166,6 @@ static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
 	
   HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2);
   }
-	
-//	else{
-//	sdatestructure.Year = 4 ;
-//  sdatestructure.Month = RTC_MONTH_MAY;
-//  sdatestructure.Date = 13;
-//  sdatestructure.WeekDay = RTC_WEEKDAY_TUESDAY;
-//  
-//  HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BCD);
-
-
-//  stimestructure.Hours = 3;
-//  stimestructure.Minutes = 30;
-//  stimestructure.Seconds = 3;
-//  stimestructure.TimeFormat = RTC_HOURFORMAT12_AM;
-//  stimestructure.DayLightSaving = RTC_DAYLIGHTSAVING_NONE ;
-//  stimestructure.StoreOperation = RTC_STOREOPERATION_RESET;
-
-//  HAL_RTC_SetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BCD);
-
-
-//  HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2);
-//		
-	//}
 }
 
 
