@@ -12,7 +12,11 @@
 			TIM1_CH3	->	PE13  -> B
 */
 
-typedef uint8_t MSGQUEUE_OBJ_RGB[3];
+typedef struct{ 
+	uint8_t r;
+	uint8_t g;
+	uint8_t b;
+} MSGQUEUE_OBJ_RGB;
 
 int init_Th_rgb(void);
 osMessageQueueId_t get_id_MsgQueue_rgb(void);

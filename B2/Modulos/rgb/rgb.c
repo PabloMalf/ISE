@@ -71,9 +71,9 @@ static void Th_rgb(void *argument){
 
 	while(1){
 		if (osOK == osMessageQueueGet(id_MsgQueue_rgb, &msg_rgb, NULL, osWaitForever)){
-			__HAL_TIM_SET_COMPARE(&htim, TIM_CHANNEL_1, msg_rgb[0]); //r
-			__HAL_TIM_SET_COMPARE(&htim, TIM_CHANNEL_2, msg_rgb[1]); //g
-			__HAL_TIM_SET_COMPARE(&htim, TIM_CHANNEL_3, msg_rgb[2]); //b
+			__HAL_TIM_SET_COMPARE(&htim, TIM_CHANNEL_1, msg_rgb.r); //r
+			__HAL_TIM_SET_COMPARE(&htim, TIM_CHANNEL_2, msg_rgb.g); //g
+			__HAL_TIM_SET_COMPARE(&htim, TIM_CHANNEL_3, msg_rgb.b); //b
 		}
 	}
 }

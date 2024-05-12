@@ -64,39 +64,39 @@ void Th_test(void *arg){
   uint8_t time = 5;
 
 	while(1){ //The test gotta swipe all the rgb spectrum with all the colors
-    for(msg_rgb[1] = 0; msg_rgb[1] < 255; msg_rgb[1]++){
+    for(msg_rgb.g = 0; msg_rgb.g < 255; msg_rgb.g++){
       osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0, 0);
       osDelay(time);
     }
-    for(msg_rgb[0] = 0; msg_rgb[0] < 255; msg_rgb[0]++){
+    for(msg_rgb.r = 0; msg_rgb.r < 255; msg_rgb.r++){
       osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0, 0);
       osDelay(time);
     }
-    for(msg_rgb[2] = 0; msg_rgb[2] < 255; msg_rgb[2]++){
+    for(msg_rgb.b = 0; msg_rgb.b < 255; msg_rgb.b++){
       osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0, 0);
       osDelay(time);
     }
-    for (msg_rgb[0] = 255; msg_rgb[0] > 0; msg_rgb[0]--){
+    for (msg_rgb.r = 255; msg_rgb.r > 0; msg_rgb.r--){
       osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0, 0);
       osDelay(time);
     }
-    for (msg_rgb[2] = 255; msg_rgb[2] > 0; msg_rgb[2]--){
+    for (msg_rgb.b = 255; msg_rgb.b > 0; msg_rgb.b--){
       osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0, 0);
       osDelay(time);
     }
-    for (msg_rgb[1] = 255; msg_rgb[1] > 0; msg_rgb[1]--){
+    for (msg_rgb.g = 255; msg_rgb.g > 0; msg_rgb.g--){
       osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0, 0);
       osDelay(time);
     }
-    for (msg_rgb[0] = 0; msg_rgb[0] < 255; msg_rgb[0]++){
+    for (msg_rgb.r = 0; msg_rgb.r < 255; msg_rgb.r++){
       osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0, 0);
       osDelay(time);
     }
-    for (msg_rgb[2] = 0; msg_rgb[2] < 255; msg_rgb[2]++){
+    for (msg_rgb.b = 0; msg_rgb.b < 255; msg_rgb.b++){
       osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0, 0);
       osDelay(time);
     }
-    for (msg_rgb[1] = 0; msg_rgb[1] < 255; msg_rgb[1]++){
+    for (msg_rgb.g = 0; msg_rgb.g < 255; msg_rgb.g++){
       osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0, 0);
       osDelay(time);
     }
