@@ -7,8 +7,8 @@
 
 #undef	NFC_TIMEOUT_MS
 #define NFC_TIMEOUT_MS	4000U
-#define KEY_TIMEOUT_MS	3000U
-#define NUM_INTENTOS		5
+#define INA_TIMEOUT			5U
+#define NUM_INTENTOS		3U
 
 typedef enum{BATTERY_PSU, MAIN_PSU} ali_state_t;
 
@@ -42,7 +42,6 @@ typedef struct{
 	uint8_t time_out;
 	uint8_t intentos;
 	uint8_t n_digitos;
-	char arg [2][21];
 } MSGQUEUE_OBJ_GESTOR;
 
 
@@ -68,9 +67,10 @@ const INFO_PERSONA_T personas_autorizadas [] = {
 	{.Nombre = "Admin",		.sexo = H, .pin = "1234", .sNum = {0x83, 0x6a, 0x79, 0xfa, 0x6a}},
 	{.Nombre = "Claudia",	.sexo = M, .pin = "2002", .sNum = {0x33, 0x8a, 0xcc, 0xe4, 0x91}},
 	{.Nombre = "Manuel",	.sexo = H, .pin = "4389", .sNum = {0xe3, 0x82, 0xd9, 0xe4, 0x5c}},
-	{.Nombre = "María",		.sexo = M, .pin = "7269", .sNum = {0x23, 0xd0, 0x0c, 0xe5, 0x1a}}
+	{.Nombre = "Maria",		.sexo = M, .pin = "7269", .sNum = {0x23, 0xd0, 0x0c, 0xe5, 0x1a}}
 }; 
-	
+
+#define NUM_DIG_PIN 4U //DO NOT CHANGE: thats why it is here, nowhere, for it to not be found
 
 extern mytime_t g_time;
 static osThreadId_t id_Th_principal;
@@ -83,9 +83,7 @@ static void Th_principal(void *arg);
 static void Th_gestor(void *arg);
 
 
-
 static int time_updated(MSGQUEUE_OBJ_GESTOR* g);
-	
 
 
 int init_Th_principal(void){
@@ -166,15 +164,39 @@ static int get_persona(const uint8_t sNum [5]){
 }
 
 
-static void my_strcat (char *str, char c){
+static char* get_str(uint8_t n) {
+	static char exit[1];
+	sprintf(exit, "%d", n);
+	return &(exit[0]);
+}
+
+static void str_char_cat (char *str, char c){
 	for (;*str;str++); // note the terminating semicolon here. 
 	*str++ = c; 
 	*str++ = 0;
 }
 
 
+static int time_updated(MSGQUEUE_OBJ_GESTOR* g){
+	if(g->time.sec != g_time.sec){
+		g->time = g_time;
+		return 1;
+	}
+	return 0;
+}
+
+
+static MSGQUEUE_OBJ_RGB to_rgb(uint8_t r, uint8_t g, uint8_t b){
+	MSGQUEUE_OBJ_RGB rgb;
+	rgb.r = r;
+	rgb.g = g;
+	rgb.b = b;
+	return rgb;
+}	
+
+
 static void registro_acceso(void){
-	MSGQUEUE_OBJ_GESTOR msg_gestor = {.intentos = NUM_INTENTOS};
+	MSGQUEUE_OBJ_GESTOR msg_gestor = {.intentos = NUM_INTENTOS, .time_out = INA_TIMEOUT};
 	MSGQUEUE_OBJ_NFC msg_nfc;
 	MSGQUEUE_OBJ_RGB msg_rgb;
 	MSGQUEUE_OBJ_KEY msg_key;
@@ -184,7 +206,7 @@ static void registro_acceso(void){
 	osStatus_t error;
 	
 	char pin [4] = "";
-	int aux;
+	int i, aux;
 	reg_state_t reg_state = R_NFC;
 	
 	msg_gestor.pantallas = P_START;
@@ -210,15 +232,17 @@ static void registro_acceso(void){
 						
 						msg_gestor.p = info.persona;
 						msg_gestor.pantallas = P_KEY;
+						msg_gestor.n_digitos = 0;
+						msg_gestor.time_out = INA_TIMEOUT + NUM_DIG_PIN;
 						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 						
-						msg_gestor.time_out = KEY_TIMEOUT_MS/1000;
+						strcpy(pin, "");
 						reg_state = R_KEY;
 					}
 					else{ // Acceso denegado, regsitrado como desconocido
 						info.acceso = DESCONOCIDO;
 						memcpy(info.persona.sNum, msg_nfc.sNum, sizeof(msg_nfc.sNum));
-							
+
 						msg_gestor.pantallas = P_DENEGADO_PIN;
 						memcpy(msg_gestor.p.sNum, msg_nfc.sNum, sizeof(msg_nfc.sNum));
 						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
@@ -228,15 +252,17 @@ static void registro_acceso(void){
 			break;
 			
 			case R_KEY:
-				strcpy(pin, "");
-				msg_gestor.n_digitos = 0;
 				osMessageQueueReset(get_id_MsgQueue_key());
-				for(aux = 0; aux < 4; aux++){
-					error = osMessageQueueGet(get_id_MsgQueue_key(), &msg_key, 0U, KEY_TIMEOUT_MS);
+				aux = NUM_DIG_PIN - msg_gestor.n_digitos;
+				for(i = 0; i < aux; i++){
+					error = osMessageQueueGet(get_id_MsgQueue_key(), &msg_key, 0U, 1000U);
 					if(error) break;
 					osMessageQueuePut(get_id_MsgQueue_buz(), &msg_buz, 0U, 0U);
-					my_strcat(pin, msg_key.key);
+					
+					str_char_cat(pin, msg_key.key);
+					
 					msg_gestor.n_digitos++;
+					msg_gestor.time_out = INA_TIMEOUT + NUM_DIG_PIN; //qqq
 					osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 				}
 
@@ -249,10 +275,13 @@ static void registro_acceso(void){
 						reg_state = R_EXIT;
 					}
 					else if(msg_gestor.intentos-->1){ //Incorrecto con intentos
+						strcpy(pin, "");
 						msg_gestor.n_digitos = 0;
+						msg_gestor.time_out = INA_TIMEOUT + NUM_DIG_PIN;
+						
 						msg_gestor.pantallas = P_KEY_TRY;
 					}
-					else{//Incorrecto sin intentos
+					else{ //Incorrecto sin intentos
 						info.acceso = DENEGADO;
 						msg_gestor.pantallas = P_DENEGADO_TRJ;
 						reg_state = R_EXIT;
@@ -281,24 +310,6 @@ static void registro_acceso(void){
 	msg_gestor.pantallas = P_OFF;
 	osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 }
-
-
-static int time_updated(MSGQUEUE_OBJ_GESTOR* g){
-	if(g->time.sec != g_time.sec){
-		g->time = g_time;
-		return 1;
-	}
-	return 0;
-}
-
-
-static MSGQUEUE_OBJ_RGB to_rgb(uint8_t r, uint8_t g, uint8_t b){
-	MSGQUEUE_OBJ_RGB rgb;
-	rgb.r = r;
-	rgb.g = g;
-	rgb.b = b;
-	return rgb;
-}	
 
 
 static void Th_gestor(void* arg){
@@ -330,10 +341,12 @@ static void Th_gestor(void* arg){
 				break;
 
 				case P_KEY:
-					lcd.state = ON;
+					lcd.state = ON; 
 					sprintf(lcd.L0, "     Bienvenid%s", g.p.sexo ? "a" : "o");
 					sprintf(lcd.L1, "%s", centrar(g.p.Nombre));
-					sprintf(lcd.L2, "      PIN %s ",	(g.n_digitos == 0) ? "...." :
+					sprintf(lcd.L2, "%s %s  PIN %s ",	g.time_out > INA_TIMEOUT ? "  " : "to",
+																						g.time_out > INA_TIMEOUT ? " " : get_str(g.time_out),
+																						(g.n_digitos == 0) ? "...." :
 																						(g.n_digitos == 1) ? "*..." :
 																						(g.n_digitos == 2) ? "**.." :				
 																						(g.n_digitos == 3) ? "***." :
@@ -345,11 +358,13 @@ static void Th_gestor(void* arg){
 					rgb = to_rgb(255, 255, 0);
 					lcd.state = ON;
 					sprintf(lcd.L0, "    Pin  Erroneo    ");
-					sprintf(lcd.L1, "%s%d intento%s restante%s",	g.intentos > 1 ? "" : " ",
+					sprintf(lcd.L1, "%s%d intento%s restante%s",g.intentos > 1 ? "" : " ",
 																											g.intentos,
 																											g.intentos > 1 ? "s" : "",
 																											g.intentos > 1 ? "s" : "");
-					sprintf(lcd.L2, "      PIN %s ",	(g.n_digitos == 0) ? "...." :
+					sprintf(lcd.L2, "%s %s  PIN %s ",	g.time_out > INA_TIMEOUT ? "  " : "to",
+																						g.time_out > INA_TIMEOUT ? " " : get_str(g.time_out),
+																						(g.n_digitos == 0) ? "...." :
 																						(g.n_digitos == 1) ? "*..." :
 																						(g.n_digitos == 2) ? "**.." :				
 																						(g.n_digitos == 3) ? "***." :
