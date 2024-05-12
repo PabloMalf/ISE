@@ -10,9 +10,9 @@
 
 typedef enum{BATTERY_PSU, MAIN_PSU} ali_state_t;
 
-typedef enum{P_OFF, P_START, P_KEY, P_KEY_TRY, P_KEY_W8, P_DENEGADO_1, P_DENEGADO_2, P_PERMITIDO, P_DESCONOCIDO} pantallas_t;
+typedef enum{P_OFF, P_START, P_KEY, P_KEY_TRY, P_DENEGADO_PIN, P_DENEGADO_TRJ, P_DENEGADO_TIM, P_PERMITIDO, P_DESCONOCIDO} pantallas_t;
 
-typedef enum{R_NFC, R_KEY, R_END, R_EXIT} reg_state_t;
+typedef enum{R_NFC, R_KEY, R_EXIT} reg_state_t;
 
 typedef enum{PERMITIDO, DENEGADO, DESCONOCIDO} tipo_acceso_t;
 
@@ -35,11 +35,11 @@ typedef struct{
 
 typedef struct{
 	mytime_t time;
-	MSGQUEUE_OBJ_LCD lcd;
 	pantallas_t pantallas;
 	INFO_PERSONA_T p;
+	uint8_t time_out;
 	uint8_t intentos;
-	uint8_t ndig_pin;//QQQ
+	uint8_t n_digitos;
 	char arg [2][21];
 } MSGQUEUE_OBJ_GESTOR;
 
@@ -175,7 +175,6 @@ static void my_strcat (char *str, char c){
 
 static void registro_acceso(void){
 	MSGQUEUE_OBJ_GESTOR msg_gestor = {.intentos = 3};
-	MSGQUEUE_OBJ_LCD msg_lcd;
 	MSGQUEUE_OBJ_NFC msg_nfc;
 	MSGQUEUE_OBJ_RGB msg_rgb = {.r=0, .g=255, .b=0};
 	MSGQUEUE_OBJ_KEY msg_key;
@@ -200,7 +199,7 @@ static void registro_acceso(void){
 					
 					msg_gestor.pantallas = P_DESCONOCIDO;
 					osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
-					msg_rgb.b = 255;
+					msg_rgb.r = 255;
 					osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0U, 0U);
 					reg_state = R_EXIT;
 				}
@@ -208,18 +207,19 @@ static void registro_acceso(void){
 					aux = get_persona(msg_nfc.sNum);
 					if(aux != -1){ // Acceso autorizado
 						info.persona = personas_autorizadas[aux];
+						
 						msg_gestor.p = info.persona;
 						msg_gestor.pantallas = P_KEY;
-						strcpy(msg_gestor.arg[0], centrar(info.persona.Nombre));
-						sprintf(msg_gestor.arg[1], "....");
 						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
+						
+						msg_gestor.time_out = KEY_TIMEOUT_MS/1000;
 						reg_state = R_KEY;
 					}
 					else{ // Acceso denegado, regsitrado como desconocido
 						info.acceso = DESCONOCIDO;
 						memcpy(info.persona.sNum, msg_nfc.sNum, sizeof(msg_nfc.sNum));
 							
-						msg_gestor.pantallas = P_DENEGADO_1;
+						msg_gestor.pantallas = P_DENEGADO_PIN;
 						memcpy(msg_gestor.p.sNum, msg_nfc.sNum, sizeof(msg_nfc.sNum));
 						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 						reg_state = R_EXIT;
@@ -229,45 +229,45 @@ static void registro_acceso(void){
 			
 			case R_KEY:
 				strcpy(pin, "");
-				msg_gestor.ndig_pin = 0;
-				osThreadFlagsSet(get_id_Th_key(), KEY_FLAG_ON);
+				msg_gestor.n_digitos = 0;
+				osMessageQueueReset(get_id_MsgQueue_key());
 				for(aux = 0; aux < 4; aux++){
 					error = osMessageQueueGet(get_id_MsgQueue_key(), &msg_key, 0U, KEY_TIMEOUT_MS);
 					if(error) break;
 					osMessageQueuePut(get_id_MsgQueue_buz(), &msg_buz, 0U, 0U);
 					my_strcat(pin, msg_key.key);
-					msg_gestor.ndig_pin++;
+					msg_gestor.n_digitos++;
 					osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 				}
-				osThreadFlagsSet(get_id_Th_key(), KEY_FLAG_OFF);
+
 				osThreadYield();
 				
 				if(!error){ //PIN completo
 					if(!memcmp(info.persona.pin, pin, sizeof(pin))){ //Correcto
 						info.acceso = PERMITIDO;
-						osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0U, 0U);
+						msg_gestor.pantallas = P_PERMITIDO;
 						reg_state = R_EXIT;
-						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 					}
 					else if(msg_gestor.intentos-->1){ //Incorrecto con intentos
+						msg_gestor.n_digitos = 0;
 						msg_gestor.pantallas = P_KEY_TRY;
-						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 					}
 					else{//Incorrecto sin intentos
-						msg_gestor.pantallas = P_DENEGADO_2;
 						info.acceso = DENEGADO;
-						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
-						
+						msg_gestor.pantallas = P_DENEGADO_TRJ;
+						reg_state = R_EXIT;
 					}
 				}
-				else{ //PIN incompleto
-					msg_gestor.pantallas = P_KEY_W8; //QQQ
-					osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
+				else{ //PIN incompleto TIME OUT
+					msg_gestor.time_out--;
+					if(!msg_gestor.time_out){
+						info.acceso = DENEGADO;
+						msg_gestor.pantallas = P_DENEGADO_TIM;
+						reg_state = R_EXIT;
+					}
 				}
-			break;
-			
-			case R_END:
 				
+				osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 			break;
 			
 			case R_EXIT: break; //Nothing needed
@@ -291,101 +291,121 @@ static int time_updated(MSGQUEUE_OBJ_GESTOR* g){
 	return 0;
 }
 
+static MSGQUEUE_OBJ_RGB to_rgb(uint8_t r, uint8_t g, uint8_t b){
+	MSGQUEUE_OBJ_RGB rgb;
+	rgb.r = r;
+	rgb.g = g;
+	rgb.b = b;
+	return rgb;
+}	
+
 
 static void Th_gestor(void* arg){
 	MSGQUEUE_OBJ_GESTOR g;
+	MSGQUEUE_OBJ_LCD lcd;
+	MSGQUEUE_OBJ_RGB rgb;
+	
 	g.time.sec = 33; //Evitar que rtc inicie mismo valor, Maria va por ti
 	g.pantallas = P_START;
 	time_updated(&g);
 	osThreadYield();
 	
 	while(1){
-		if(time_updated(&g) || (osOK == osMessageQueueGet(id_MsgQueue_gestor, &g, 0U, 0U))){
+		
+		if((osOK == osMessageQueueGet(id_MsgQueue_gestor, &g, 0U, 0U)) || time_updated(&g)){
 			osMessageQueueReset(id_MsgQueue_gestor);
 			switch(g.pantallas){
 				case P_OFF:
-					g.lcd.state = OFF;
-					osMessageQueuePut(get_id_MsgQueue_lcd(), &(g.lcd), 0U, 0U);
+					rgb = to_rgb(0, 0, 0);
+					osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb, 0U, 0U);
+					lcd.state = OFF;
+					osMessageQueuePut(get_id_MsgQueue_lcd(), &lcd, 0U, 0U);
 					osMessageQueueGet(id_MsgQueue_gestor, &g, 0U, osWaitForever); //kkk orden ejecucuion multicondicion
 				break;
 				
 				case P_START:
-					g.lcd.state = ON;
-					sprintf(g.lcd.L0, "SISTEMA DE SEGURIDAD");
-					sprintf(g.lcd.L1, "     Por favor,     ");
-					sprintf(g.lcd.L2, "   Identifiquese    ");
-					sprintf(g.lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
+					lcd.state = ON;
+					sprintf(lcd.L0, "Sistema de Seguridad");
+					sprintf(lcd.L1, "     Por favor,     ");
+					sprintf(lcd.L2, "   Identifiquese    ");
+					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
 
 				case P_KEY:
-					g.lcd.state = ON;
-					sprintf(g.lcd.L0, "     Bienvenid%s", g.p.sexo ? "a" : "o");
-					sprintf(g.lcd.L1, "%s", centrar(g.p.Nombre));
-					sprintf(g.lcd.L2, "      PIN %s ",(g.ndig_pin == 0) ? "...." :
-																						(g.ndig_pin == 1) ? "*..." :
-																						(g.ndig_pin == 2) ? "**.." :				
-																						(g.ndig_pin == 3) ? "***." :
-																																"****");
-					sprintf(g.lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
+					lcd.state = ON;
+					sprintf(lcd.L0, "     Bienvenid%s", g.p.sexo ? "a" : "o");
+					sprintf(lcd.L1, "%s", centrar(g.p.Nombre));
+					sprintf(lcd.L2, "      PIN %s ",	(g.n_digitos == 0) ? "...." :
+																						(g.n_digitos == 1) ? "*..." :
+																						(g.n_digitos == 2) ? "**.." :				
+																						(g.n_digitos == 3) ? "***." :
+																																 "****");
+					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
 				
 				case P_KEY_TRY:
-					g.lcd.state = ON;
-					sprintf(g.lcd.L0, "intente again");//qqq
-					sprintf(g.lcd.L1, "%d", g.intentos);
-					sprintf(g.lcd.L2, "      PIN %s ",(g.ndig_pin == 0) ? "...." :
-																						(g.ndig_pin == 1) ? "*..." :
-																						(g.ndig_pin == 2) ? "**.." :				
-																						(g.ndig_pin == 3) ? "***." :
-																																"****");
-					sprintf(g.lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
+					rgb = to_rgb(255, 255, 0);
+					lcd.state = ON;
+					sprintf(lcd.L0, "    Pin  Erroneo    ");
+					sprintf(lcd.L1, "%s%d intento%s restante%s",	g.intentos > 1 ? "" : " ",
+																											g.intentos,
+																											g.intentos > 1 ? "s" : "",
+																											g.intentos > 1 ? "s" : "");
+					sprintf(lcd.L2, "      PIN %s ",	(g.n_digitos == 0) ? "...." :
+																						(g.n_digitos == 1) ? "*..." :
+																						(g.n_digitos == 2) ? "**.." :				
+																						(g.n_digitos == 3) ? "***." :
+																																 "****");
+					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
 				
-				case P_KEY_W8:
-					g.lcd.state = ON;
-					sprintf(g.lcd.L0, "TIEMPO");
-					sprintf(g.lcd.L1, "");
-					sprintf(g.lcd.L2, "      PIN %s ",(g.ndig_pin == 0) ? "...." :
-																						(g.ndig_pin == 1) ? "*..." :
-																						(g.ndig_pin == 2) ? "**.." :				
-																						(g.ndig_pin == 3) ? "***." :
-																																"****");
-					sprintf(g.lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
+				case P_DENEGADO_PIN:
+					rgb = to_rgb(255, 0, 0);
+					lcd.state = ON; 
+					sprintf(lcd.L0, "  Acceso  Denegado  ");
+					sprintf(lcd.L1, "Tarjeta  desconocida");
+					sprintf(lcd.L2, " ID: %02x %02x %02x %02x %02x ", g.p.sNum[0], g.p.sNum[1], g.p.sNum[2], g.p.sNum[3], g.p.sNum[4] );
+					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
 				
-				case P_DENEGADO_1:
-					g.lcd.state = ON; 
-					sprintf(g.lcd.L0, "  Acceso  Denegado  ");
-					sprintf(g.lcd.L1, "Tarjeta  desconocida");
-					sprintf(g.lcd.L2, " ID: %02x %02x %02x %02x %02x ", g.p.sNum[0], g.p.sNum[1], g.p.sNum[2], g.p.sNum[3], g.p.sNum[4] );
-					sprintf(g.lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
+				case P_DENEGADO_TRJ:
+					rgb = to_rgb(255, 0, 0);
+					lcd.state = ON;
+					sprintf(lcd.L0, "  Acceso  Denegado  ");
+					sprintf(lcd.L1, "    Pin  Erroneo    ");
+					sprintf(lcd.L2, "      Alcachofa     ");
+					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
 				
-				case P_DENEGADO_2:
-					g.lcd.state = ON;
-					sprintf(g.lcd.L0, "  Acceso  Denegado  ");
-					sprintf(g.lcd.L1, "    Pin  Erróneo    ");
-					sprintf(g.lcd.L2, "      ALCACHOFA     ");
-					sprintf(g.lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
+				case P_DENEGADO_TIM:
+					rgb = to_rgb(255, 0, 0);
+					lcd.state = ON;
+					sprintf(lcd.L0, "  Acceso  Denegado  ");
+					sprintf(lcd.L1, "  Usuari%s Inactiv%s  ", g.p.sexo ? "a" : "o", g.p.sexo ? "a" : "o");
+					sprintf(lcd.L2, "      Pimientos     ");
+					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
 				
 				case P_PERMITIDO:
-					g.lcd.state = ON;
-					sprintf(g.lcd.L0, "  Acceso Permitido  ");
-					sprintf(g.lcd.L1, "     Bienvenid%s", g.p.sexo ? "a" : "o");
-					sprintf(g.lcd.L2, "%s", centrar(g.p.Nombre));
-					sprintf(g.lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
+					rgb = to_rgb(0, 255, 0);
+					lcd.state = ON;
+					sprintf(lcd.L0, "  Acceso Permitido  ");
+					sprintf(lcd.L1, "     Bienvenid%s", g.p.sexo ? "a" : "o");
+					sprintf(lcd.L2, "%s", centrar(g.p.Nombre));
+					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
 				
 				case P_DESCONOCIDO:
-					g.lcd.state = ON;
-					sprintf(g.lcd.L0, "Desconocido ");
-					sprintf(g.lcd.L1, "");
-					sprintf(g.lcd.L2, "");
-					sprintf(g.lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
+					rgb = to_rgb(255, 0, 0);
+					lcd.state = ON;
+					sprintf(lcd.L0, "  Acceso  Denegado  ");
+					sprintf(lcd.L1, "    Desconocido     ");
+					sprintf(lcd.L2, "     Zanahoria      ");
+					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
 			}
-			osMessageQueuePut(get_id_MsgQueue_lcd(), &(g.lcd), 0U, 0U);
+			osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb, 0U, 0U);
+			osMessageQueuePut(get_id_MsgQueue_lcd(), &lcd, 0U, 0U);
 		} else osThreadYield();
 	}
 }
