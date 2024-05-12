@@ -3,10 +3,12 @@
 #include <stdio.h>
 #include <string.h>
 
-//kkk change ip Net_Conifg_ETH_0
-//kkk change buzz pin 7 
+//SSS change ip Net_Conifg_ETH_0
 
-#define KEY_TIMEOUT_MS 4000U
+#undef	NFC_TIMEOUT_MS
+#define NFC_TIMEOUT_MS	4000U
+#define KEY_TIMEOUT_MS	3000U
+#define NUM_INTENTOS		5
 
 typedef enum{BATTERY_PSU, MAIN_PSU} ali_state_t;
 
@@ -46,7 +48,7 @@ typedef struct{
 
 typedef struct{
 	MSGQUEUE_OBJ_BUZ buz;
-	//MSGQUEUE_OBJ_CAM cam;
+	//MSGQUEUE_OBJ_CAM cam; //XD
 	MSGQUEUE_OBJ_KEY key;
 	MSGQUEUE_OBJ_NFC nfc;
 	MSGQUEUE_OBJ_RGB rgb;
@@ -72,7 +74,6 @@ const INFO_PERSONA_T personas_autorizadas [] = {
 
 extern mytime_t g_time;
 static osThreadId_t id_Th_principal;
-static osThreadId_t id_Th_gestor;
 static osMessageQueueId_t id_MsgQueue_gestor;
 
 
@@ -134,8 +135,7 @@ static void mode_main_psu(data_t* d){ //kkk
 	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 	
 	while(1){
-		if(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15)) return; //Go to sleep
-		//kkk
+		if(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15)) return; //Go to main and sleep
 	}
 }
 
@@ -174,9 +174,9 @@ static void my_strcat (char *str, char c){
 
 
 static void registro_acceso(void){
-	MSGQUEUE_OBJ_GESTOR msg_gestor = {.intentos = 3};
+	MSGQUEUE_OBJ_GESTOR msg_gestor = {.intentos = NUM_INTENTOS};
 	MSGQUEUE_OBJ_NFC msg_nfc;
-	MSGQUEUE_OBJ_RGB msg_rgb = {.r=0, .g=255, .b=0};
+	MSGQUEUE_OBJ_RGB msg_rgb;
 	MSGQUEUE_OBJ_KEY msg_key;
 	MSGQUEUE_OBJ_BUZ msg_buz = {750, 200, 5};
 	INFO_REGISTRO_T info;
@@ -275,7 +275,7 @@ static void registro_acceso(void){
 	}
 	time_updated(&msg_gestor);
 	info.fecha = msg_gestor.time;
-	//kkk gestionar base de datos
+	//SSS gestionar base de datos
 	osDelay(4000);
 
 	msg_gestor.pantallas = P_OFF;
@@ -290,6 +290,7 @@ static int time_updated(MSGQUEUE_OBJ_GESTOR* g){
 	}
 	return 0;
 }
+
 
 static MSGQUEUE_OBJ_RGB to_rgb(uint8_t r, uint8_t g, uint8_t b){
 	MSGQUEUE_OBJ_RGB rgb;
@@ -317,10 +318,7 @@ static void Th_gestor(void* arg){
 			switch(g.pantallas){
 				case P_OFF:
 					rgb = to_rgb(0, 0, 0);
-					osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb, 0U, 0U);
 					lcd.state = OFF;
-					osMessageQueuePut(get_id_MsgQueue_lcd(), &lcd, 0U, 0U);
-					osMessageQueueGet(id_MsgQueue_gestor, &g, 0U, osWaitForever); //kkk orden ejecucuion multicondicion
 				break;
 				
 				case P_START:
@@ -415,18 +413,21 @@ static void Th_principal(void *argument){
 	data_t d;
 	init_pin_ali();
 	
-	id_Th_gestor = osThreadNew(Th_gestor, NULL, NULL);
+	osThreadNew(Th_gestor, NULL, NULL);
 	id_MsgQueue_gestor = osMessageQueueNew(1, sizeof(MSGQUEUE_OBJ_GESTOR), NULL);
 	
 	osThreadYield();
 	
-	d.ali_state = MAIN_PSU;
+	d.ali_state = MAIN_PSU;//KKK
 	//d.ali_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) ? MAIN_PSU : BATTERY_PSU;
 
 	switch(d.ali_state){
 		case MAIN_PSU:
 			//mode_main_psu(&d); kkk
-			registro_acceso();
+			while(1){
+				registro_acceso();
+				osDelay(5000);
+			}
 		break;
 		
 		case BATTERY_PSU:
