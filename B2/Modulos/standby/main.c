@@ -25,16 +25,12 @@ uint32_t HAL_GetTick(void){
 }
 #endif
 
-static osThreadId_t id_Th_test;
-
-static int	init_Th_test(void);
-static void Th_test(void *arg);
-
 static void Error_Handler(void);	
 static void SystemClock_Config(void);
 static void StandbyMode_Measure(void);
 
-  uint32_t cnt=0;
+typedef enum{MAIN_PSU, BATTERY_PSU} ali_state_t;
+uint8_t var=0;
 
 static void StandbyMode_Measure(void)
 {
@@ -62,7 +58,41 @@ static void StandbyMode_Measure(void)
   HAL_PWR_EnterSTANDBYMode();  
 }
 
+static void GPIO_Init(void){
+	static GPIO_InitTypeDef  GPIO_InitStruct;
 
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  GPIO_InitStruct.Pin = GPIO_PIN_15;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+	
+	  __HAL_RCC_GPIOA_CLK_ENABLE();
+  GPIO_InitStruct.Pin = GPIO_PIN_0;
+	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+	
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+
+}
+
+void EXTI0_IRQHandler(void){
+	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+}
+
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+	if(GPIO_Pin==GPIO_PIN_0){
+		var=1;	
+	}
+	
+}
+
+
+void 	Th_principal(void *arg);
 
 int main(void){
   HAL_Init();
@@ -73,6 +103,7 @@ int main(void){
 	/* Configure LED1 and LED2 */
   BSP_LED_Init(LED1);
   BSP_LED_Init(LED2);
+	BSP_LED_Init(LED3);
 
 /* Enable Power Clock */
   __HAL_RCC_PWR_CLK_ENABLE();
@@ -81,11 +112,10 @@ int main(void){
   if(__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET)
   {
     __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
-
+		
     /* Exit Ethernet Phy from low power mode */
     //ETH_PhyExitFromPowerDownMode();
-
-
+		
   }
   /* Ethernet PHY must be in low power mode in order to have the lowest current consumption */
   //ETH_PhyEnterPowerDownMode();
@@ -93,9 +123,7 @@ int main(void){
 #ifdef RTE_CMSIS_RTOS2
   osKernelInitialize ();
 
-	//start Threads 
-	init_Th_test();
-	//
+	osThreadNew(Th_principal, NULL, NULL);
 	
   osKernelStart();
 #endif
@@ -104,27 +132,39 @@ int main(void){
     }
 }
 
-int init_Th_test(void){
-	id_Th_test = osThreadNew(Th_test, NULL, NULL);
-	if(id_Th_test == NULL)
-		return(-1);
-	return(0);
-}
 
-void Th_test(void *arg){ //Test del modulo
-
+void mode_main_psu(void){
 	while(1){
-      BSP_LED_Toggle(LED1);
-			osDelay(500);
-			cnt++;
-			if(cnt==10){
-			  cnt=0;
-			  BSP_LED_Toggle(LED2);
-			  StandbyMode_Measure();
-		  }
-
-	}
+		if(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15)) return; //go sleep
+		BSP_LED_Toggle(LED3);
+		osDelay(1000);
+		
+		if(var==1){
+		var=0;
+			 BSP_LED_Toggle(LED2);
+			osDelay(1000);
+			BSP_LED_Toggle(LED2);	
+	  }
+  }
 }
+
+void Th_principal(void*arg){
+	ali_state_t ali_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) ? MAIN_PSU : BATTERY_PSU;
+	GPIO_Init();
+	switch(ali_state){
+		case MAIN_PSU:
+			mode_main_psu();	
+		break;
+		
+		case BATTERY_PSU:
+			BSP_LED_Toggle(LED2);
+			osDelay(1000);
+			BSP_LED_Toggle(LED2);
+		break;
+	}
+	 StandbyMode_Measure();
+}
+
 
 static void SystemClock_Config(void){
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
