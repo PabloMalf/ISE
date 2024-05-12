@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>HSE_VALUE=8000000</Define>
               <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <IncludePath>..\irq</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -394,19 +394,9 @@
               <FilePath>.\key.c</FilePath>
             </File>
             <File>
-              <FileName>key.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\key.h</FilePath>
-            </File>
-            <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\irq.c</FilePath>
-            </File>
-            <File>
-              <FileName>irq.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\irq.h</FilePath>
+              <FilePath>..\irq\irq.c</FilePath>
             </File>
           </Files>
         </Group>
