@@ -22,7 +22,7 @@ typedef enum{R_NFC, R_KEY, R_EXIT} reg_state_t;
 
 typedef enum{PERMITIDO, DENEGADO, DESCONOCIDO} tipo_acceso_t;
 
-typedef enum{H, M, poco} sexo_t;
+typedef enum{H, M, X, poco} sexo_t;
 
 typedef struct{
 	char Nombre [15];
@@ -48,7 +48,6 @@ typedef struct{
 	uint8_t n_digitos;
 } MSGQUEUE_OBJ_GESTOR;
 
-
 typedef struct{
 	MSGQUEUE_OBJ_BUZ buz;
 	//MSGQUEUE_OBJ_CAM cam; //XD
@@ -68,15 +67,14 @@ static MSGQUEUE_OBJ_SRV msg_srv = {.adtos = {
 		{"22:30:31"}, {"15/05/2024"}, {"----"},    {"----"},      {"desconocido"}
 }};
 
-
 const INFO_PERSONA_T personas_autorizadas [] = {
-	{.Nombre = "Admin",		.sexo = H, .pin = "*##*", .sNum = {0x83, 0x6a, 0x79, 0xfa, 0x6a}},
+	{.Nombre = "Admin",		.sexo = X, .pin = "*##*", .sNum = {0x83, 0x6a, 0x79, 0xfa, 0x6a}},
 	{.Nombre = "Claudia",	.sexo = M, .pin = "2002", .sNum = {0x33, 0x8a, 0xcc, 0xe4, 0x91}},
 	{.Nombre = "Manuel",	.sexo = H, .pin = "4389", .sNum = {0xe3, 0x82, 0xd9, 0xe4, 0x5c}},
 	{.Nombre = "Maria",		.sexo = M, .pin = "7269", .sNum = {0x23, 0xd0, 0x0c, 0xe5, 0x1a}}
 }; 
 
-#define NUM_DIG_PIN 4U //DO NOT CHANGE: thats why it is here, nowhere, for it to not be found
+#define NUM_DIG_PIN 4U //DO NOT CHANGE: thats why it is here, nowhere, for it to not be found as my mark
 
 extern mytime_t g_time;
  osThreadId_t id_Th_principal;
@@ -102,7 +100,6 @@ static void StandbyMode_Measure(void){
   HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
   HAL_PWR_EnterSTANDBYMode();  
 }
-
 
 int init_Th_principal(void){
 	const osThreadAttr_t attr = {.stack_size = 4096};
@@ -241,7 +238,6 @@ static void mode_main_psu(void){
   }
 }
 
-
 static void registro_acceso(void){
 	MSGQUEUE_OBJ_GESTOR msg_gestor = {.intentos = NUM_INTENTOS, .time_out = INA_TIMEOUT};
 	MSGQUEUE_OBJ_NFC msg_nfc;
@@ -364,7 +360,6 @@ static void registro_acceso(void){
 	osDelay(500);
 }
 
-
 static void Th_gestor(void* arg){
 	MSGQUEUE_OBJ_GESTOR g = {.pantallas = P_OFF};
 	MSGQUEUE_OBJ_LCD lcd = {.state = OFF};
@@ -394,7 +389,9 @@ static void Th_gestor(void* arg){
 
 				case P_KEY:
 					lcd.state = ON; 
-					sprintf(lcd.L0, "     Bienvenid%s", g.p.sexo ? "a" : "o");
+					sprintf(lcd.L0, "     Bienvenid%s", g.p.sexo==M ? "a" : 
+																							g.p.sexo==H ? "o" :
+																														"x");
 					sprintf(lcd.L1, "%s", centrar(g.p.Nombre));
 					sprintf(lcd.L2, "%s %s  PIN %s ",	g.time_out > INA_TIMEOUT ? "  " : "to",
 																						g.time_out > INA_TIMEOUT ? " " : get_str(g.time_out),
@@ -446,16 +443,23 @@ static void Th_gestor(void* arg){
 					rgb = to_rgb(255, 0, 0);
 					lcd.state = ON;
 					sprintf(lcd.L0, "  Acceso  Denegado  ");
-					sprintf(lcd.L1, "  Usuari%s Inactiv%s  ", g.p.sexo ? "a" : "o", g.p.sexo ? "a" : "o");
-					sprintf(lcd.L2, "      Pimientos     ");
+					sprintf(lcd.L1, "  Usuari%s Inactiv%s  ", g.p.sexo==M ? "a" : 
+																										g.p.sexo==H ? "o" :
+																																	"x" , 
+																										g.p.sexo==M ? "a" : 
+																										g.p.sexo==H ? "o" :
+																																	"x");
+					sprintf(lcd.L2, " DeSpIeRtA CrAcK :) ");
 					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
-				
+
 				case P_PERMITIDO:
 					rgb = to_rgb(0, 255, 0);
 					lcd.state = ON;
 					sprintf(lcd.L0, "  Acceso Permitido  ");
-					sprintf(lcd.L1, "     Bienvenid%s", g.p.sexo ? "a" : "o");
+					sprintf(lcd.L1, "     Bienvenid%s", g.p.sexo==M ? "a" : 
+																							g.p.sexo==H ? "o" :
+																														"x" );
 					sprintf(lcd.L2, "%s", centrar(g.p.Nombre));
 					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
