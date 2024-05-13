@@ -361,14 +361,13 @@ static void registro_acceso(void){
 }
 
 static void Th_gestor(void* arg){
-	MSGQUEUE_OBJ_GESTOR g = {.pantallas = P_OFF};
+	MSGQUEUE_OBJ_GESTOR g = {.pantallas = P_OFF, .time.sec = 01, .time.min = 59, .time.hour =23, .time.day = 14, .time.month = 5, .time.year = 0024};
 	MSGQUEUE_OBJ_LCD lcd = {.state = OFF};
 	MSGQUEUE_OBJ_RGB rgb;
 	
-	g.time.sec = 33; //Evitar que rtc inicie mismo valor, Maria va por ti
 	osMessageQueuePut(get_id_MsgQueue_lcd(), &lcd, 0U, 0U);
-	
-	time_updated(&g);//KKK POSIBLE QUITAR ¿?
+	osThreadYield();
+	time_updated(&g);
 	
 	while(1){
 		if((osOK == osMessageQueueGet(id_MsgQueue_gestor, &g, 0U, 0U)) || time_updated(&g)){

@@ -127,7 +127,7 @@ static void RTC_Show(){
   HAL_RTC_GetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BIN);
   HAL_RTC_GetDate(&RtcHandle, &sdatestructure, RTC_FORMAT_BIN);
 	
-	g_time.year = 2000 + sdatestructure.Year;
+	g_time.year = 0 + sdatestructure.Year;
 	g_time.month = sdatestructure.Month;
 	g_time.day = sdatestructure.Date;
 	g_time.hour = stimestructure.Hours;
