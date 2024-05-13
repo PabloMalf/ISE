@@ -109,14 +109,7 @@ int main(void){
   __HAL_RCC_PWR_CLK_ENABLE();
 
   /* Check and handle if the system was resumed from Standby mode */ 
-  if(__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET)
-  {
-    __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
-		
-    /* Exit Ethernet Phy from low power mode */
-    //ETH_PhyExitFromPowerDownMode();
-		
-  }
+  
   /* Ethernet PHY must be in low power mode in order to have the lowest current consumption */
   //ETH_PhyEnterPowerDownMode();
 

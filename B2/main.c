@@ -34,10 +34,15 @@ int main(void){
   SystemClock_Config();
   SystemCoreClockUpdate();
 
+	if(__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET){
+    __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+    /* Exit Ethernet Phy from low power mode */
+    //ETH_PhyExitFromPowerDownMode();
+  }
+	
 #ifdef RTE_CMSIS_RTOS2
   osKernelInitialize ();
 
-	//start Threads 
 	init_Th_principal();
 	
   osKernelStart();

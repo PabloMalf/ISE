@@ -5,10 +5,14 @@
 
 //SSS change ip Net_Conifg_ETH_0
 
+//KKK PB13 RELE
+
 #undef	NFC_TIMEOUT_MS
-#define NFC_TIMEOUT_MS	4000U
+#define NFC_TIMEOUT_MS	6000U
 #define INA_TIMEOUT			5U
 #define NUM_INTENTOS		3U
+
+#define FLAG_ACCESO     1U << 7
 
 typedef enum{BATTERY_PSU, MAIN_PSU} ali_state_t;
 
@@ -55,16 +59,18 @@ typedef struct{
 	MSGQUEUE_OBJ_TTF_MISO ttf_miso;
 }msg_t;
 
-
-typedef struct{
-	ali_state_t ali_state;
-	char reg_error_msg [21];
-	msg_t msg;
-}data_t; 
+static MSGQUEUE_OBJ_SRV msg_srv = {.adtos = {
+		{"12:12:12"}, {"11/05/2024"}, {"Admin"},   {"111111111"}, {"permitido"},
+		{"13:44:23"}, {"12/05/2024"}, {"Claudia"}, {"222222222"}, {"denegado"},
+		{"13:45:11"}, {"12/05/2024"}, {"Maria"},   {"333333333"}, {"permitido"},
+		{"22:40:11"}, {"14/05/2024"}, {"----"},    {"----"},      {"desconocido"},
+		{"13:45:11"}, {"14/05/2024"}, {"Manuel"},  {"444444444"}, {"permitido"},
+		{"22:30:31"}, {"15/05/2024"}, {"----"},    {"----"},      {"desconocido"}
+}};
 
 
 const INFO_PERSONA_T personas_autorizadas [] = {
-	{.Nombre = "Admin",		.sexo = H, .pin = "1234", .sNum = {0x83, 0x6a, 0x79, 0xfa, 0x6a}},
+	{.Nombre = "Admin",		.sexo = H, .pin = "*##*", .sNum = {0x83, 0x6a, 0x79, 0xfa, 0x6a}},
 	{.Nombre = "Claudia",	.sexo = M, .pin = "2002", .sNum = {0x33, 0x8a, 0xcc, 0xe4, 0x91}},
 	{.Nombre = "Manuel",	.sexo = H, .pin = "4389", .sNum = {0xe3, 0x82, 0xd9, 0xe4, 0x5c}},
 	{.Nombre = "Maria",		.sexo = M, .pin = "7269", .sNum = {0x23, 0xd0, 0x0c, 0xe5, 0x1a}}
@@ -73,7 +79,7 @@ const INFO_PERSONA_T personas_autorizadas [] = {
 #define NUM_DIG_PIN 4U //DO NOT CHANGE: thats why it is here, nowhere, for it to not be found
 
 extern mytime_t g_time;
-static osThreadId_t id_Th_principal;
+ osThreadId_t id_Th_principal;
 static osMessageQueueId_t id_MsgQueue_gestor;
 
 
@@ -82,8 +88,20 @@ int init_Th_principal(void);
 static void Th_principal(void *arg);
 static void Th_gestor(void *arg);
 
-
 static int time_updated(MSGQUEUE_OBJ_GESTOR* g);
+static void StandbyMode_Measure(void);
+static void registro_acceso(void);
+
+static void StandbyMode_Measure(void){
+  __HAL_RCC_PWR_CLK_ENABLE();
+  HAL_PWR_EnableBkUpAccess();
+  __HAL_RCC_BACKUPRESET_FORCE();
+  __HAL_RCC_BACKUPRESET_RELEASE();
+  HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN1);
+  __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+  HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
+  HAL_PWR_EnterSTANDBYMode();  
+}
 
 
 int init_Th_principal(void){
@@ -99,42 +117,39 @@ int init_Th_principal(void){
 	int nfc = init_Th_nfc();
 	int rgb = init_Th_rgb();
 	int rtc = init_Th_rtc();
-	//int srv = init_Th_buz();//
-	//int ttf = init_Th_buz();//
+	//int srv = init_Th_srv();//---
+	//int ttf = init_Th_ttf();//
 	
 	return(0);
 }
 
 
-static void init_pin_ali(void){
+static void GPIO_Init(void){
 	GPIO_InitTypeDef sgpio = {0};
 
-	//PIN_ALI_STATE
+	//ALI_STATE
 	__HAL_RCC_GPIOB_CLK_ENABLE();
-	sgpio.Mode = GPIO_MODE_OUTPUT_PP;
+	sgpio.Mode = GPIO_MODE_INPUT;
 	sgpio.Pull = GPIO_NOPULL;
 	sgpio.Speed = GPIO_SPEED_FREQ_HIGH;
 	sgpio.Pin = GPIO_PIN_15;
 	HAL_GPIO_Init(GPIOB, &sgpio);
 
-	//PIN_IRQ MOV SOLO, NO PENSADO WKUP KKK
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	sgpio.Mode = GPIO_MODE_IT_FALLING;
+	//RELE
+	__HAL_RCC_GPIOD_CLK_ENABLE();
+	sgpio.Mode = GPIO_MODE_OUTPUT_PP;
 	sgpio.Pull = GPIO_PULLDOWN;
+	sgpio.Speed = GPIO_SPEED_FREQ_HIGH;
+	sgpio.Pin = GPIO_PIN_14;
+	HAL_GPIO_Init(GPIOD, &sgpio);
+	
+	//IRQ MOV
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	sgpio.Mode = GPIO_MODE_IT_RISING;
+	sgpio.Pull = GPIO_NOPULL;
 	sgpio.Speed = GPIO_SPEED_FREQ_HIGH;
 	sgpio.Pin = GPIO_PIN_0;
 	HAL_GPIO_Init(GPIOA, &sgpio);
-}
-
-
-static void mode_main_psu(data_t* d){ //kkk
-	
-	//init SV
-	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-	
-	while(1){
-		if(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15)) return; //Go to main and sleep
-	}
 }
 
 
@@ -195,6 +210,38 @@ static MSGQUEUE_OBJ_RGB to_rgb(uint8_t r, uint8_t g, uint8_t b){
 }	
 
 
+static void post_sv(void){
+	MSGQUEUE_OBJ_RGB rgb;
+	osMessageQueuePut(get_id_MsgQueue_srv(), &msg_srv, 0U, 0U);
+	rgb = to_rgb(0, 0, 255);
+	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb, 0U, 0U);
+	osDelay(100);
+	rgb = to_rgb(0, 0, 0);
+	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb, 0U, 0U);
+}
+
+
+static void mode_main_psu(void){
+	uint32_t flags;
+	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+	post_sv();
+	
+	while(1){
+		if(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15)) return; //go sleep
+		flags = osThreadFlagsGet();
+		
+		if(flags & FLAG_ACCESO){
+			//flags = 0x0000;
+			osThreadFlagsClear(FLAG_ACCESO);
+			HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+			registro_acceso();
+			post_sv();
+			HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		}
+  }
+}
+
+
 static void registro_acceso(void){
 	MSGQUEUE_OBJ_GESTOR msg_gestor = {.intentos = NUM_INTENTOS, .time_out = INA_TIMEOUT};
 	MSGQUEUE_OBJ_NFC msg_nfc;
@@ -222,7 +269,7 @@ static void registro_acceso(void){
 					msg_gestor.pantallas = P_DESCONOCIDO;
 					osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 					msg_rgb.r = 255;
-					osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0U, 0U);
+					osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0U, 0U); //EEE 
 					reg_state = R_EXIT;
 				}
 				else{
@@ -234,7 +281,7 @@ static void registro_acceso(void){
 						msg_gestor.pantallas = P_KEY;
 						msg_gestor.n_digitos = 0;
 						msg_gestor.time_out = INA_TIMEOUT + NUM_DIG_PIN;
-						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
+						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U); //EEE
 						
 						strcpy(pin, "");
 						reg_state = R_KEY;
@@ -245,7 +292,7 @@ static void registro_acceso(void){
 
 						msg_gestor.pantallas = P_DENEGADO_PIN;
 						memcpy(msg_gestor.p.sNum, msg_nfc.sNum, sizeof(msg_nfc.sNum));
-						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
+						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);//EEE
 						reg_state = R_EXIT;
 					}
 				}
@@ -262,7 +309,7 @@ static void registro_acceso(void){
 					str_char_cat(pin, msg_key.key);
 					
 					msg_gestor.n_digitos++;
-					msg_gestor.time_out = INA_TIMEOUT + NUM_DIG_PIN; //qqq
+					msg_gestor.time_out = INA_TIMEOUT + NUM_DIG_PIN;
 					osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 				}
 
@@ -296,34 +343,39 @@ static void registro_acceso(void){
 					}
 				}
 				
-				osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
+				osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U); //EEE
 			break;
 			
 			case R_EXIT: break; //Nothing needed
 		}
+		//osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0U, 0U); //EEE 
 	}
+	
 	time_updated(&msg_gestor);
 	info.fecha = msg_gestor.time;
 	//SSS gestionar base de datos
-	osDelay(4000);
-
+	
+	if(info.acceso == PERMITIDO) HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+	osDelay(4000); //Tiempo PUERTA + msg final
+	if(info.acceso == PERMITIDO) HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
+	
 	msg_gestor.pantallas = P_OFF;
 	osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
+	osDelay(500);
 }
 
 
 static void Th_gestor(void* arg){
-	MSGQUEUE_OBJ_GESTOR g;
-	MSGQUEUE_OBJ_LCD lcd;
+	MSGQUEUE_OBJ_GESTOR g = {.pantallas = P_OFF};
+	MSGQUEUE_OBJ_LCD lcd = {.state = OFF};
 	MSGQUEUE_OBJ_RGB rgb;
 	
 	g.time.sec = 33; //Evitar que rtc inicie mismo valor, Maria va por ti
-	g.pantallas = P_START;
-	time_updated(&g);
-	osThreadYield();
+	osMessageQueuePut(get_id_MsgQueue_lcd(), &lcd, 0U, 0U);
+	
+	time_updated(&g);//KKK POSIBLE QUITAR ¿?
 	
 	while(1){
-		
 		if((osOK == osMessageQueueGet(id_MsgQueue_gestor, &g, 0U, 0U)) || time_updated(&g)){
 			osMessageQueueReset(id_MsgQueue_gestor);
 			switch(g.pantallas){
@@ -425,29 +477,37 @@ static void Th_gestor(void* arg){
 
 
 static void Th_principal(void *argument){
-	data_t d;
-	init_pin_ali();
+	ali_state_t ali_state;
+	GPIO_Init();
+	MSGQUEUE_OBJ_RGB rgb = to_rgb(0, 128, 28);
+	
+	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
+	osDelay(200);
+	rgb = to_rgb(0,0,0);
+	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
+
 	
 	osThreadNew(Th_gestor, NULL, NULL);
 	id_MsgQueue_gestor = osMessageQueueNew(1, sizeof(MSGQUEUE_OBJ_GESTOR), NULL);
 	
 	osThreadYield();
-	
-	d.ali_state = MAIN_PSU;//KKK
-	//d.ali_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) ? MAIN_PSU : BATTERY_PSU;
 
-	switch(d.ali_state){
+	//mode_main_psu();
+	
+	ali_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) ? MAIN_PSU : BATTERY_PSU;
+	switch(ali_state){
 		case MAIN_PSU:
-			//mode_main_psu(&d); kkk
-			while(1){
-				registro_acceso();
-				osDelay(5000);
-			}
+			mode_main_psu();
 		break;
 		
 		case BATTERY_PSU:
-			//kkk
+			registro_acceso();
 		break;
 	}
-	//kkk sleep
+	
+	rgb = to_rgb(255, 0, 255);
+	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
+	osDelay(100);
+
+	StandbyMode_Measure();
 }

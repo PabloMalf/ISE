@@ -66,59 +66,59 @@ static void Th_ttf(void *arguments){
 		if (osOK == osMessageQueueGet(get_id_MsgQueue_ttf_mosi(), &msg_ttf, NULL, osWaitForever)){
 			 if(msg_ttf.cmd==WR){
 				 	stat = finit ("M0:");
-//					if (stat == fsOK) {
-//						stat = fmount ("M0:");
-//						if (stat == fsOK) {
-//							f = fopen ("M0:/data.csv","a+");
-//							if (f != NULL) {
-//								for(a=0;a<5;a++){
-//								  fwrite(msg_ttf.data[a], sizeof(char), strlen(msg_ttf.data[a]), f);
-//								  fwrite(",", sizeof(char), 1, f);
-//								}
-//								fclose(f);
-//							}
-//						}
-//					}
-//					
-//					stat=funmount("M0:");
+					if (stat == fsOK) {
+						stat = fmount ("M0:");
+						if (stat == fsOK) {
+							f = fopen ("M0:/data.csv","a+");
+							if (f != NULL) {
+								for(a=0;a<5;a++){
+								  fwrite(msg_ttf.data[a], sizeof(char), strlen(msg_ttf.data[a]), f);
+								  fwrite(",", sizeof(char), 1, f);
+								}
+								fclose(f);
+							}
+						}
+					}
+					
+					stat=funmount("M0:");
 					stat=funinit("M0:");
-//			 }
-//		
-//		 else if(msg_ttf.cmd==RD){
-//				 	stat = finit ("M0:");
-//					if (stat == fsOK) {
-//						stat = fmount ("M0:");
-//						if (stat == fsOK) {
-//							f = fopen ("M0:/data.csv","r");
-//							if (f != NULL) {
+			 }
+		
+		 else if(msg_ttf.cmd==RD){
+				 	stat = finit ("M0:");
+					if (stat == fsOK) {
+						stat = fmount ("M0:");
+						if (stat == fsOK) {
+							f = fopen ("M0:/data.csv","r");
+							if (f != NULL) {
 
-//								memset(str, '\0', sizeof(str));
-//								while (!feof (f)) {
-//								 c = fgetc(f);
-//								 if(c!=',')
-//							  	strcat(str,&c);
-//								 else{
-//									 strcat(str, "\0");
-//									 strcpy(adtos[i], str); 
-//								   memset(str, '\0', sizeof(str));
-//								   i++;
-//								 }
-//								}
-//								rewind(f);
-//								fclose(f);
-//							}
-//								
-//								
-//						}
-//					}
-//					
-//					stat=funmount("M0:");
-//					stat=funinit("M0:");
-//					for (j = 0; j < 50; j++) {
-//           strcpy(msg_ttf_miso.adtos[j], adtos[j]);
-//           }
-//					
-//					osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
+								memset(str, '\0', sizeof(str));
+								while (!feof (f)) {
+								 c = fgetc(f);
+								 if(c!=',')
+							  	strcat(str,&c);
+								 else{
+									 strcat(str, "\0");
+									 strcpy(adtos[i], str); 
+								   memset(str, '\0', sizeof(str));
+								   i++;
+								 }
+								}
+								rewind(f);
+								fclose(f);
+							}
+								
+								
+						}
+					}
+					
+					stat=funmount("M0:");
+					stat=funinit("M0:");
+					for (j = 0; j < 50; j++) {
+           strcpy(msg_ttf_miso.adtos[j], adtos[j]);
+           }
+					
+					osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
 			 }
 	
 	  }
