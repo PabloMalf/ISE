@@ -1,10 +1,10 @@
 /*------------------------------------------------------------------------------
  * MDK Middleware - Component ::Network:Interface
- * Copyright (c) 2004-2020 Arm Limited (or its affiliates). All rights reserved.
+ * Copyright (c) 2004-2021 Arm Limited (or its affiliates). All rights reserved.
  *------------------------------------------------------------------------------
  * Name:    Net_Config_ETH_0.h
  * Purpose: Network Configuration for ETH Interface
- * Rev.:    V7.3.0
+ * Rev.:    V7.4.0
  *----------------------------------------------------------------------------*/
 
 //-------- <<< Use Configuration Wizard in Context Menu >>> --------------------
@@ -21,11 +21,11 @@
 //   <i>Value FF-FF-FF-FF-FF-FF is not allowed,
 //   <i>LSB of first byte must be 0 (an ethernet Multicast bit).
 //   <i>Default: "1E-30-6C-A2-45-5E"
-#define ETH0_MAC_ADDR           "1E-03-6C-A2-45-3E"
+#define ETH0_MAC_ADDR           "1E-30-6C-A2-45-5E"
 
 //   <e>VLAN
 //   <i>Enable or disable Virtual LAN
-#define ETH0_VLAN_ENABLE        0
+#define ETH0_VLAN_ENABLE        1
 
 //     <o>VLAN Identifier <1-4093>
 //     <i>A unique 12-bit numeric value
@@ -40,17 +40,17 @@
 //     <s.15>IP Address
 //     <i>Static IPv4 Address in text representation
 //     <i>Default: "192.168.0.100"
-#define ETH0_IP4_ADDR           "10.48.17.118"
+#define ETH0_IP4_ADDR           "10.0.60.43"
 
 //     <s.15>Subnet mask
 //     <i>Local Subnet mask in text representation
 //     <i>Default: "255.255.255.0"
-#define ETH0_IP4_MASK           "255.255.0.0"
+#define ETH0_IP4_MASK           "255.255.255.0"
 
 //     <s.15>Default Gateway
 //     <i>IP Address of Default Gateway in text representation
 //     <i>Default: "192.168.0.254"
-#define ETH0_IP4_GATEWAY        "10.48.0.1"
+#define ETH0_IP4_GATEWAY        "10.0.60.1"
 
 //     <s.15>Primary DNS Server
 //     <i>IP Address of Primary DNS Server in text representation
@@ -66,7 +66,7 @@
 //     <i>This option enables fragmentation of outgoing IP datagrams,
 //     <i>and reassembling the fragments of incoming IP datagrams.
 //     <i>Default: enabled
-#define ETH0_IP4_FRAG_ENABLE    0
+#define ETH0_IP4_FRAG_ENABLE    1
 
 //       <o>MTU size <576-1500>
 //       <i>Maximum Transmission Unit in bytes
@@ -146,7 +146,7 @@
 //     </e>
 
 //     Disable ICMP Echo response
-#define ETH0_ICMP_NO_ECHO       0 
+#define ETH0_ICMP_NO_ECHO       0
 //   </e>
 
 //   <e>IPv6
@@ -180,6 +180,18 @@
 //     <i>Default: "2001:4860:4860::8844"
 #define ETH0_IP6_SECONDARY_DNS  "2001:4860:4860::8844"
 
+//     <e>IPv6 Fragmentation
+//     <i>This option enables fragmentation of outgoing IPv6 datagrams,
+//     <i>and reassembling the fragments of incoming IPv6 datagrams.
+//     <i>Default: enabled
+#define ETH0_IP6_FRAG_ENABLE    1
+
+//       <o>MTU size <1280-1500>
+//       <i>Maximum Transmission Unit in bytes
+//       <i>Default: 1500
+#define ETH0_IP6_MTU            1500
+//     </e>
+
 //     <h>Neighbor Discovery
 //     <i>Neighbor cache and node address resolver settings
 //       <o>Cache Table size <5-100>
@@ -207,7 +219,7 @@
 //     <e>Dynamic Host Configuration
 //     <i>When this option is enabled, local IPv6 address is
 //     <i>automatically configured.
-#define ETH0_DHCP6_ENABLE       0
+#define ETH0_DHCP6_ENABLE       1
 
 //       <o>DHCPv6 Client Mode  <0=>Stateless Mode <1=>Statefull Mode
 //       <i>Stateless DHCPv6 Client uses router advertisements
@@ -235,14 +247,14 @@
 //     </e>
 
 //     Disable ICMP6 Echo response
-#define ETH0_ICMP6_NO_ECHO      0 
+#define ETH0_ICMP6_NO_ECHO      0
 //   </e>
 
 //   <h>OS Resource Settings
 //   <i>These settings are used to optimize usage of OS resources.
 //     <o>Interface Thread Stack Size <512-65535:4>
 //     <i>Default: 512 bytes
-#define ETH0_THREAD_STACK_SIZE  1024
+#define ETH0_THREAD_STACK_SIZE  512
 
 //        Interface Thread Priority
 #define ETH0_THREAD_PRIORITY    osPriorityAboveNormal

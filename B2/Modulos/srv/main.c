@@ -66,27 +66,55 @@ int init_Th_test(void){
 void Th_test(void *arg){ //Test del modulo
   MSGQUEUE_OBJ_SRV msg_srv;
   int j;
-  sprintf(adtos[0],"111111111");
-  sprintf(adtos[1],"12:12:12");
-  sprintf(adtos[2],"12/12/2023");
-  sprintf(adtos[3],"permitido");
   
-  sprintf(adtos[4],"222222222");
+  sprintf(adtos[0],"12:12:12");
+  sprintf(adtos[1],"12/12/2023");
+  sprintf(adtos[2],"Claudia");
+  sprintf(adtos[3],"111111111");
+  sprintf(adtos[4],"permitido");
+  
   sprintf(adtos[5],"44:44:44");
   sprintf(adtos[6],"44/44/2024");
-  sprintf(adtos[7],"desconocido");
+  sprintf(adtos[7],"Roberto");
+  sprintf(adtos[8],"222222222");
+  sprintf(adtos[9],"desconocido");
   
-  sprintf(adtos[8],"333333333");
-  sprintf(adtos[9],"44:44:44");
-  sprintf(adtos[10],"44/44/2024");
-  sprintf(adtos[11],"denegado");
+  sprintf(adtos[10],"44:44:44");
+  sprintf(adtos[11],"44/44/2024");
+  sprintf(adtos[12],"Andrea");
+  sprintf(adtos[13],"333333333");
+  sprintf(adtos[14],"denegado");
+  
+  sprintf(adtos[15],"44:44:44");
+  sprintf(adtos[16],"44/44/2024");
+  sprintf(adtos[17],"Andrea");
+  sprintf(adtos[18],"333333333");
+  sprintf(adtos[19],"denegado");
+  
+  sprintf(adtos[20],"44:44:44");
+  sprintf(adtos[21],"44/44/2024");
+  sprintf(adtos[22],"Andrea");
+  sprintf(adtos[23],"333333333");
+  sprintf(adtos[24],"denegado");
+  
+  sprintf(adtos[25],"44:44:44");
+  sprintf(adtos[26],"44/44/2024");
+  sprintf(adtos[27],"Andrea");
+  sprintf(adtos[28],"333333333");
+  sprintf(adtos[29],"denegado");
+  
+  sprintf(adtos[30],"44:44:44");
+  sprintf(adtos[31],"44/44/2024");
+  sprintf(adtos[32],"Andrea");
+  sprintf(adtos[33],"333333333");
+  sprintf(adtos[34],"denegado");
   
   
   for (j = 0; j < 50; j++) {
      strcpy(msg_srv.adtos[j], adtos[j]);
   }
   
-  msg_srv.standBy=1;
+  msg_srv.standBy=0;
 
 
 	while(1){
