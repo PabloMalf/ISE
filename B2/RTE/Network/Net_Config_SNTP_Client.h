@@ -22,7 +22,7 @@
 //   <s.15>NTP Server
 //   <i>NTP Server IPv4 Address in text representation
 //   <i>Default: "217.79.179.106"
-#define SNTP_CLIENT_NTP_SERVER  "185.179.104.7"
+#define SNTP_CLIENT_NTP_SERVER  "217.79.179.106"
 
 // </h>
 
