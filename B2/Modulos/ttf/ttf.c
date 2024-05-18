@@ -17,7 +17,8 @@ static int Init_MsgQueue_ttf_mosi(void);
 static int Init_MsgQueue_ttf_miso(void);
 
 int init_Th_ttf(void){
-	id_Th_ttf = osThreadNew(Th_ttf, NULL, NULL);
+	const osThreadAttr_t attr = {.stack_size = 4096};
+	id_Th_ttf = osThreadNew(Th_ttf, NULL, &attr);
 	if(id_Th_ttf == NULL)
 		return(-1);
 	return(0);
@@ -80,46 +81,46 @@ static void Th_ttf(void *arguments){
 							}
 						}
 					}
-					
+//					
 					stat=funmount("M0:");
 					stat=funinit("M0:");
 			 }
-		
+//		
 		 else if(msg_ttf.cmd==RD){
 				 	stat = finit ("M0:");
-					if (stat == fsOK) {
-						stat = fmount ("M0:");
-						if (stat == fsOK) {
-							f = fopen ("M0:/data.csv","r");
-							if (f != NULL) {
+//					if (stat == fsOK) {
+//						stat = fmount ("M0:");
+//						if (stat == fsOK) {
+//							f = fopen ("M0:/data.csv","r");
+//							if (f != NULL) {
 
-								memset(str, '\0', sizeof(str));
-								while (!feof (f)) {
-								 c = fgetc(f);
-								 if(c!=',')
-							  	strcat(str,&c);
-								 else{
-									 strcat(str, "\0");
-									 strcpy(adtos[i], str); 
-								   memset(str, '\0', sizeof(str));
-								   i++;
-								 }
-								}
-								rewind(f);
-								fclose(f);
-							}
-								
-								
-						}
-					}
-					
-					stat=funmount("M0:");
-					stat=funinit("M0:");
-					for (j = 0; j < 50; j++) {
-           strcpy(msg_ttf_miso.adtos[j], adtos[j]);
-           }
-					
-					osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
+//								memset(str, '\0', sizeof(str));
+//								while (!feof (f)) {
+//								 c = fgetc(f);
+//								 if(c!=',')
+//							  	strcat(str,&c);
+//								 else{
+//									 strcat(str, "\0");
+//									 strcpy(adtos[i], str); 
+//								   memset(str, '\0', sizeof(str));
+//								   i++;
+//								 }
+//								}
+//								rewind(f);
+//								fclose(f);
+//							}
+//								
+//								
+//						}
+//					}
+//					
+//					stat=funmount("M0:");
+//					stat=funinit("M0:");
+//					for (j = 0; j < 50; j++) {
+//           strcpy(msg_ttf_miso.adtos[j], adtos[j]);
+//           }
+//					
+//					osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
 			 }
 	
 	  }

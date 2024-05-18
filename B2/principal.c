@@ -7,6 +7,8 @@
 
 //KKK PB13 RELE
 
+//KKK hay que poner en desconocido nombre= --- y identficacion=---
+
 #undef	NFC_TIMEOUT_MS
 #define NFC_TIMEOUT_MS	6000U
 #define INA_TIMEOUT			5U
@@ -71,7 +73,8 @@ const INFO_PERSONA_T personas_autorizadas [] = {
 	{.Nombre = "Admin",		.sexo = X, .pin = "*##*", .sNum = {0x83, 0x6a, 0x79, 0xfa, 0x6a}},
 	{.Nombre = "Claudia",	.sexo = M, .pin = "2002", .sNum = {0x33, 0x8a, 0xcc, 0xe4, 0x91}},
 	{.Nombre = "Manuel",	.sexo = H, .pin = "4389", .sNum = {0xe3, 0x82, 0xd9, 0xe4, 0x5c}},
-	{.Nombre = "Maria",		.sexo = M, .pin = "7269", .sNum = {0x23, 0xd0, 0x0c, 0xe5, 0x1a}}
+	{.Nombre = "Maria",		.sexo = M, .pin = "7269", .sNum = {0x23, 0xd0, 0x0c, 0xe5, 0x1a}},
+	{.Nombre = "Mara",		.sexo = M, .pin = "1234", .sNum = {0x53, 0xf6, 0xd0, 0xe4, 0x91}}
 }; 
 
 #define NUM_DIG_PIN 4U //DO NOT CHANGE: thats why it is here, nowhere, for it to not be found as my mark
@@ -89,6 +92,7 @@ static void Th_gestor(void *arg);
 static int time_updated(MSGQUEUE_OBJ_GESTOR* g);
 static void StandbyMode_Measure(void);
 static void registro_acceso(void);
+static void WR_Register(INFO_REGISTRO_T registro);
 
 static void StandbyMode_Measure(void){
   __HAL_RCC_PWR_CLK_ENABLE();
@@ -99,6 +103,20 @@ static void StandbyMode_Measure(void){
   __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
   HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
   HAL_PWR_EnterSTANDBYMode();  
+}
+
+static void WR_Register(INFO_REGISTRO_T registro){
+	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi;
+	msg_ttf_mosi.cmd=WR;
+	sprintf(msg_ttf_mosi.data[0], "%02d/%02d/%02d",registro.fecha.day,registro.fecha.month,registro.fecha.year);
+	sprintf(msg_ttf_mosi.data[1], "%02d:%02d:%02d",registro.fecha.hour,registro.fecha.min,registro.fecha.sec);
+	sprintf(msg_ttf_mosi.data[2], "%s",registro.persona.Nombre);
+	sprintf(msg_ttf_mosi.data[3], "%02X %02X %02X %02X %02X",registro.persona.sNum[0], registro.persona.sNum[1],
+		                                                                   registro.persona.sNum[2], registro.persona.sNum[3],
+		                                                                   registro.persona.sNum[4]);
+	sprintf(msg_ttf_mosi.data[4], "%d",registro.acceso);
+		
+	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
 }
 
 int init_Th_principal(void){
@@ -115,7 +133,8 @@ int init_Th_principal(void){
 	int rgb = init_Th_rgb();
 	int rtc = init_Th_rtc();
 	//int srv = init_Th_srv();//---
-	//int ttf = init_Th_ttf();//
+	int ttf = init_Th_ttf();//
+	//int buze = init_Th_buz();
 	
 	return(0);
 }
@@ -350,6 +369,7 @@ static void registro_acceso(void){
 	time_updated(&msg_gestor);
 	info.fecha = msg_gestor.time;
 	//SSS gestionar base de datos
+	WR_Register(info);
 	
 	if(info.acceso == PERMITIDO) HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
 	osDelay(4000); //Tiempo PUERTA + msg final
@@ -495,8 +515,6 @@ static void Th_principal(void *argument){
 	
 	osThreadYield();
 
-	//mode_main_psu();
-	
 	ali_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) ? MAIN_PSU : BATTERY_PSU;
 	switch(ali_state){
 		case MAIN_PSU:
@@ -512,5 +530,5 @@ static void Th_principal(void *argument){
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
 	osDelay(100);
 
-	StandbyMode_Measure();
+	//StandbyMode_Measure();
 }
