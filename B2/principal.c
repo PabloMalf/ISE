@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+//KKK dar de alta id nueva
+
 //SSS change ip Net_Conifg_ETH_0
 
 //KKK PB13 RELE
@@ -24,7 +26,7 @@ typedef enum{R_NFC, R_KEY, R_EXIT} reg_state_t;
 
 typedef enum{PERMITIDO, DENEGADO, DESCONOCIDO} tipo_acceso_t;
 
-typedef enum{H, M, X, poco} sexo_t;
+typedef enum{H, M, poco} sexo_t;
 
 typedef struct{
 	char Nombre [15];
@@ -64,23 +66,23 @@ static MSGQUEUE_OBJ_SRV msg_srv = {.adtos = {
 		{"12:12:12"}, {"11/05/2024"}, {"Admin"},   {"111111111"}, {"permitido"},
 		{"13:44:23"}, {"12/05/2024"}, {"Claudia"}, {"222222222"}, {"denegado"},
 		{"13:45:11"}, {"12/05/2024"}, {"Maria"},   {"333333333"}, {"permitido"},
-		{"22:40:11"}, {"14/05/2024"}, {"----"},    {"----"},      {"desconocido"},
+		{"22:40:11"}, {"14/05/2024"}, {"---"},     {"---"},       {"desconocido"},
 		{"13:45:11"}, {"14/05/2024"}, {"Manuel"},  {"444444444"}, {"permitido"},
-		{"22:30:31"}, {"15/05/2024"}, {"----"},    {"----"},      {"desconocido"}
+		{"22:30:31"}, {"15/05/2024"}, {"---"},     {"---"},       {"desconocido"}
 }};
 
 const INFO_PERSONA_T personas_autorizadas [] = {
-	{.Nombre = "Admin",		.sexo = X, .pin = "*##*", .sNum = {0x83, 0x6a, 0x79, 0xfa, 0x6a}},
-	{.Nombre = "Claudia",	.sexo = M, .pin = "2002", .sNum = {0x33, 0x8a, 0xcc, 0xe4, 0x91}},
-	{.Nombre = "Manuel",	.sexo = H, .pin = "4389", .sNum = {0xe3, 0x82, 0xd9, 0xe4, 0x5c}},
-	{.Nombre = "Maria",		.sexo = M, .pin = "7269", .sNum = {0x23, 0xd0, 0x0c, 0xe5, 0x1a}},
-	{.Nombre = "Mara",		.sexo = M, .pin = "1234", .sNum = {0x53, 0xf6, 0xd0, 0xe4, 0x91}}
+	{.Nombre = "Admin",		.sexo = poco, .pin = "*##*", .sNum = {0x83, 0x6a, 0x79, 0xfa, 0x6a}},
+	{.Nombre = "Claudia",	.sexo = M,		.pin = "2002", .sNum = {0x33, 0x8a, 0xcc, 0xe4, 0x91}},
+	{.Nombre = "Manuel",	.sexo = H,		.pin = "4389", .sNum = {0xe3, 0x82, 0xd9, 0xe4, 0x5c}},
+	{.Nombre = "Maria",		.sexo = M,		.pin = "7269", .sNum = {0x23, 0xd0, 0x0c, 0xe5, 0x1a}},
+	{.Nombre = "Mara",		.sexo = M,		.pin = "1234", .sNum = {0x53, 0xf6, 0xd0, 0xe4, 0x91}}
 }; 
 
 #define NUM_DIG_PIN 4U //DO NOT CHANGE: thats why it is here, nowhere, for it to not be found as my mark
 
 extern mytime_t g_time;
- osThreadId_t id_Th_principal;
+osThreadId_t id_Th_principal;
 static osMessageQueueId_t id_MsgQueue_gestor;
 
 
@@ -107,13 +109,11 @@ static void StandbyMode_Measure(void){
 
 static void WR_Register(INFO_REGISTRO_T registro){
 	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi;
-	msg_ttf_mosi.cmd=WR;
+	msg_ttf_mosi.cmd = WR;
 	sprintf(msg_ttf_mosi.data[0], "%02d/%02d/%02d",registro.fecha.day,registro.fecha.month,registro.fecha.year);
 	sprintf(msg_ttf_mosi.data[1], "%02d:%02d:%02d",registro.fecha.hour,registro.fecha.min,registro.fecha.sec);
 	sprintf(msg_ttf_mosi.data[2], "%s",registro.persona.Nombre);
-	sprintf(msg_ttf_mosi.data[3], "%02X %02X %02X %02X %02X",registro.persona.sNum[0], registro.persona.sNum[1],
-		                                                                   registro.persona.sNum[2], registro.persona.sNum[3],
-		                                                                   registro.persona.sNum[4]);
+	sprintf(msg_ttf_mosi.data[3], "%02X %02X %02X %02X %02X",registro.persona.sNum[0], registro.persona.sNum[1], registro.persona.sNum[2], registro.persona.sNum[3], registro.persona.sNum[4]);
 	sprintf(msg_ttf_mosi.data[4], "%d",registro.acceso);
 		
 	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
@@ -134,7 +134,6 @@ int init_Th_principal(void){
 	int rtc = init_Th_rtc();
 	//int srv = init_Th_srv();//---
 	int ttf = init_Th_ttf();//
-	//int buze = init_Th_buz();
 	
 	return(0);
 }
@@ -201,6 +200,7 @@ static char* get_str(uint8_t n) {
 	return &(exit[0]);
 }
 
+
 static void str_char_cat (char *str, char c){
 	for (;*str;str++); // note the terminating semicolon here. 
 	*str++ = c; 
@@ -218,10 +218,7 @@ static int time_updated(MSGQUEUE_OBJ_GESTOR* g){
 
 
 static MSGQUEUE_OBJ_RGB to_rgb(uint8_t r, uint8_t g, uint8_t b){
-	MSGQUEUE_OBJ_RGB rgb;
-	rgb.r = r;
-	rgb.g = g;
-	rgb.b = b;
+	MSGQUEUE_OBJ_RGB rgb = {.r = r, .g = g, .b = b};
 	return rgb;
 }	
 
@@ -247,7 +244,6 @@ static void mode_main_psu(void){
 		flags = osThreadFlagsGet();
 		
 		if(flags & FLAG_ACCESO){
-			//flags = 0x0000;
 			osThreadFlagsClear(FLAG_ACCESO);
 			HAL_NVIC_DisableIRQ(EXTI0_IRQn);
 			registro_acceso();
@@ -368,8 +364,7 @@ static void registro_acceso(void){
 	
 	time_updated(&msg_gestor);
 	info.fecha = msg_gestor.time;
-	//SSS gestionar base de datos
-	WR_Register(info);
+	WR_Register(info);	//SSS gestionar base de datos
 	
 	if(info.acceso == PERMITIDO) HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
 	osDelay(4000); //Tiempo PUERTA + msg final
@@ -377,7 +372,7 @@ static void registro_acceso(void){
 	
 	msg_gestor.pantallas = P_OFF;
 	osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
-	osDelay(500);
+	osDelay(500); //kkk maybe
 }
 
 static void Th_gestor(void* arg){
@@ -408,9 +403,7 @@ static void Th_gestor(void* arg){
 
 				case P_KEY:
 					lcd.state = ON; 
-					sprintf(lcd.L0, "     Bienvenid%s", g.p.sexo==M ? "a" : 
-																							g.p.sexo==H ? "o" :
-																														"x");
+					sprintf(lcd.L0, "     Bienvenid%s", g.p.sexo == M ? "a" : "o");
 					sprintf(lcd.L1, "%s", centrar(g.p.Nombre));
 					sprintf(lcd.L2, "%s %s  PIN %s ",	g.time_out > INA_TIMEOUT ? "  " : "to",
 																						g.time_out > INA_TIMEOUT ? " " : get_str(g.time_out),
@@ -462,12 +455,8 @@ static void Th_gestor(void* arg){
 					rgb = to_rgb(255, 0, 0);
 					lcd.state = ON;
 					sprintf(lcd.L0, "  Acceso  Denegado  ");
-					sprintf(lcd.L1, "  Usuari%s Inactiv%s  ", g.p.sexo==M ? "a" : 
-																										g.p.sexo==H ? "o" :
-																																	"x" , 
-																										g.p.sexo==M ? "a" : 
-																										g.p.sexo==H ? "o" :
-																																	"x");
+					sprintf(lcd.L1, "  Usuari%s Inactiv%s  ", g.p.sexo==M ? "a" : "o", 
+																										g.p.sexo==M ? "a" : "o");
 					sprintf(lcd.L2, " DeSpIeRtA CrAcK :) ");
 					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
@@ -500,9 +489,9 @@ static void Th_gestor(void* arg){
 
 
 static void Th_principal(void *argument){
+	MSGQUEUE_OBJ_RGB rgb = {.r = 0, .g = 128, .b = 28};
 	ali_state_t ali_state;
 	GPIO_Init();
-	MSGQUEUE_OBJ_RGB rgb = to_rgb(0, 128, 28);
 	
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
 	osDelay(200);
@@ -530,5 +519,5 @@ static void Th_principal(void *argument){
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
 	osDelay(100);
 
-	//StandbyMode_Measure();
+	StandbyMode_Measure();
 }
