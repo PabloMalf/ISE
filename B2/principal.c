@@ -125,13 +125,13 @@ int init_Th_principal(void){
 	if(id_Th_principal == NULL)
 		return(-1);
 	
+	int rtc = init_Th_rtc();
 	int buz = init_Th_buz();
 	//int cam = init_Th_cam();
 	int key = init_Th_key();
 	int lcd = init_Th_lcd();
 	int nfc = init_Th_nfc();
 	int rgb = init_Th_rgb();
-	int rtc = init_Th_rtc();
 	//int srv = init_Th_srv();//---
 	int ttf = init_Th_ttf();//
 	

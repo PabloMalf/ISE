@@ -44,7 +44,7 @@
 #define TCP_MAX_SEG_SIZE        1440
 
 //   <o>Receive Window Size <536-65535>
-//   <i>Receive Window Size specifies the size of data,
+//   <i>Receive Window Size specifies the size of data, 
 //   <i>that the socket is able to buffer in flow-control mode.
 //   <i>Default: 4320
 #define TCP_RECEIVE_WIN_SIZE    4320

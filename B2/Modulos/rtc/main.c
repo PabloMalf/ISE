@@ -62,7 +62,7 @@ int init_Th_test(void){
 void Th_test(void *arg){ //Test del modulo
 	while(1){
     printf("%02d:%02d:%02d\n", g_time.hour, g_time.min, g_time.sec);
-		printf("%02d-%02d-%02d\n", g_time.day, g_time.month, g_time.year);
+		printf("%02d-%02d-%d\n", g_time.day, g_time.month, g_time.year);
 		osDelay(1000);
 	}
 }

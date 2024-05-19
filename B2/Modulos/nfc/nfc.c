@@ -204,13 +204,13 @@ static void Init(void){
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
 
 	/*Reset*/ //o lo ponemos a 3v3
-	__HAL_RCC_GPIOB_CLK_ENABLE();
+	__HAL_RCC_GPIOF_CLK_ENABLE();
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 	GPIO_InitStruct.Pin = GPIO_PIN_12;
-	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); 
+	HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_12, GPIO_PIN_SET); 
 	
 	SPIdrv->Initialize(callback_spi);
   SPIdrv->PowerControl(ARM_POWER_FULL);
