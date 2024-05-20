@@ -26,18 +26,27 @@ uint32_t HAL_GetTick(void){
 }
 #endif
 
-static osThreadId_t id_Th_testWR;
-static int	init_Th_testWR(void);
-static void Th_testWR(void *arg);
+static osThreadId_t id_Th_testWR_reg;
+static int	init_Th_testWR_reg(void);
+static void Th_testWR_reg(void *arg);
 
-static osThreadId_t id_Th_testRD;
-static int	init_Th_testRD(void);
-static void Th_testRD(void *arg);
+static osThreadId_t id_Th_testWR_usu;
+static int	init_Th_testWR_usu(void);
+static void Th_testWR_usu(void *arg);
+
+static osThreadId_t id_Th_testRD_reg;
+static int	init_Th_testRD_reg(void);
+static void Th_testRD_reg(void *arg);
+
+static osThreadId_t id_Th_testRD_usu;
+static int	init_Th_testRD_usu(void);
+static void Th_testRD_usu(void *arg);
 
 static void Error_Handler(void);	
 static void SystemClock_Config(void);
 
 typedef enum{PERMITIDO, DENEGADO, DESCONOCIDO} tipo_acceso_t;
+typedef enum{H, M, poco} sexo_t;
 
 typedef struct{
 	uint8_t sec;
@@ -50,7 +59,9 @@ typedef struct{
 
 typedef struct{
 	char nombre [15];
+	char pin [4];
 	uint8_t sNum[5];
+	sexo_t sexo;
 }INFO_PERSONA_T;
 
 typedef struct{
@@ -60,6 +71,7 @@ typedef struct{
 }INFO_REGISTRO_T;
 
 static void WR_Register(INFO_REGISTRO_T registro);
+static void WR_Usuario(INFO_PERSONA_T usuario);
 
 
 int main(void){
@@ -73,18 +85,40 @@ int main(void){
 
 	//start Threads 
 	init_Th_ttf();
-	init_Th_testWR();
-	//init_Th_testRD();
-	//
+	//init_Th_testWR_reg();
+	//init_Th_testRD_reg();
+	init_Th_testWR_usu();
+	init_Th_testRD_usu();
+	
 	
   osKernelStart();
 #endif
   while(1){}
 }
 
-int init_Th_testWR(void){
-	id_Th_testWR = osThreadNew(Th_testWR, NULL, NULL);
-	if(id_Th_testWR == NULL)
+int init_Th_testWR_reg(void){
+	id_Th_testWR_reg = osThreadNew(Th_testWR_reg, NULL, NULL);
+	if(id_Th_testWR_reg == NULL)
+		return(-1);
+	return(0);
+}
+int init_Th_testWR_usu(void){
+	id_Th_testWR_usu = osThreadNew(Th_testWR_usu, NULL, NULL);
+	if(id_Th_testWR_usu == NULL)
+		return(-1);
+	return(0);
+}
+
+int init_Th_testRD_reg(void){
+	id_Th_testRD_reg = osThreadNew(Th_testRD_reg, NULL, NULL);
+	if(id_Th_testRD_reg == NULL)
+		return(-1);
+	return(0);
+}
+
+int init_Th_testRD_usu(void){
+	id_Th_testRD_usu = osThreadNew(Th_testRD_usu, NULL, NULL);
+	if(id_Th_testRD_usu == NULL)
 		return(-1);
 	return(0);
 }
@@ -92,61 +126,119 @@ int init_Th_testWR(void){
 static void WR_Register(INFO_REGISTRO_T registro){
 	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi;
 	msg_ttf_mosi.cmd=WR;
-	sprintf(msg_ttf_mosi.data[0], "%02d/%02d/%02d",registro.fecha.day,registro.fecha.month,registro.fecha.year);
-	sprintf(msg_ttf_mosi.data[1], "%02d:%02d:%02d",registro.fecha.hour,registro.fecha.min,registro.fecha.sec);
-	sprintf(msg_ttf_mosi.data[2], "%s",registro.persona.nombre);
-	sprintf(msg_ttf_mosi.data[3], "%02X %02X %02X %02X %02X",registro.persona.sNum[0], registro.persona.sNum[1],
-		                                                                   registro.persona.sNum[2], registro.persona.sNum[3],
-		                                                                   registro.persona.sNum[4]);
-	sprintf(msg_ttf_mosi.data[4], "%d",registro.acceso);
+	msg_ttf_mosi.fichero=REG;
+	sprintf(msg_ttf_mosi.data,"%02d/%02d/%02d,%02d:%02d:%02d,%s,%02X %02X %02X %02X %02X,%d,",
+	         registro.fecha.day,registro.fecha.month,registro.fecha.year,
+	         registro.fecha.hour,registro.fecha.min,registro.fecha.sec,
+	         registro.persona.nombre,
+	         registro.persona.sNum[0],registro.persona.sNum[1],
+	         registro.persona.sNum[2], registro.persona.sNum[3],registro.persona.sNum[4],
+	         registro.acceso);
+	
 		
 	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
+	memset(msg_ttf_mosi.data, '\0', sizeof(msg_ttf_mosi.data));
 }
 
-void Th_testWR(void *arg){ 
+static void WR_Usuario(INFO_PERSONA_T usuario){
+	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi;
+	msg_ttf_mosi.cmd=WR;
+	msg_ttf_mosi.fichero=USER;
+
+	sprintf(msg_ttf_mosi.data,"%s,%s,%02X %02X %02X %02X %02X,%d,\n",
+	         usuario.nombre, usuario.pin,
+	         usuario.sNum[0],usuario.sNum[1],
+	         usuario.sNum[2], usuario.sNum[3],usuario.sNum[4],
+	         usuario.sexo);
+	
+	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
+	memset(msg_ttf_mosi.data, '\0', sizeof(msg_ttf_mosi.data));
+}
+
+void Th_testWR_reg(void *arg){ 
 	
 	INFO_REGISTRO_T registro;
-	registro.fecha.day=8;
-	registro.fecha.month=8;
-	registro.fecha.year=22;
 	
-	registro.fecha.hour=12;
-	registro.fecha.min=12;
-	registro.fecha.sec=12;
+	registro.fecha.day=6;
+	registro.fecha.month=6;
+	registro.fecha.year=25;
 	
-	registro.persona.sNum[0]= 0x24;
-	registro.persona.sNum[1]= 0xD6;
-	registro.persona.sNum[2]= 0x26;
-	registro.persona.sNum[3]= 0x27;
-	registro.persona.sNum[4]= 0x66;
+	registro.fecha.hour=05;
+	registro.fecha.min=55;
+	registro.fecha.sec=54;
 	
-	registro.acceso= PERMITIDO;
+	registro.persona.sNum[0]= 0x01;
+	registro.persona.sNum[1]= 0x02;
+	registro.persona.sNum[2]= 0x03;
+	registro.persona.sNum[3]= 0x04;
+	registro.persona.sNum[4]= 0x05;
 	
-  strcpy(registro.persona.nombre, "Francisco");
+	registro.acceso=PERMITIDO;
+  strcpy(registro.persona.nombre, "carlos");
 	
 	while(1){
-		osDelay(5000);
+		printf("Write REG\n");
+		
 		WR_Register(registro);
+		osDelay(1000000);
+	
 	
 	}
 }
 
-int init_Th_testRD(void){
-	id_Th_testRD = osThreadNew(Th_testRD, NULL, NULL);
-	if(id_Th_testRD == NULL)
-		return(-1);
-	return(0);
+void Th_testWR_usu(void *arg){ 
+	INFO_PERSONA_T  usuario;
+	
+	usuario.sNum[0]= 0x06;
+	usuario.sNum[1]= 0x07;
+	usuario.sNum[2]= 0x08;
+	usuario.sNum[3]= 0x09;
+	usuario.sNum[4]= 0x10;
+	usuario.sexo=H;
+	strcpy(usuario.nombre, "Fran");
+	strcpy(usuario.pin, "1234");
+	
+	while(1){
+		printf("Write USU\n");
+		
+		WR_Usuario(usuario);
+		osDelay(1000000);
+	
+	}
 }
 
-void Th_testRD(void *arg){ 
+void Th_testRD_reg(void *arg){ 
 	MSGQUEUE_OBJ_TTF_MOSI msg_ttf;
 	MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso_main;
+	int i=0;
 	while(1){
-		
+		osDelay(2000);
 		msg_ttf.cmd=RD;
+		msg_ttf.fichero=REG;
 		osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf, NULL, osWaitForever);
 		
 		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso_main, NULL, osWaitForever);
+		 for ( i= 0; i < 50; i++) {
+            printf("adtos[%d]: %s\n", i, msg_ttf_miso_main.adtos[i]);
+        }
+		osDelay(20000);
+	}
+}
+
+void Th_testRD_usu(void *arg){ 
+	MSGQUEUE_OBJ_TTF_MOSI msg_ttf;
+	MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso_main;
+	int i=0;
+	while(1){
+		osDelay(2000);
+		msg_ttf.cmd=RD;
+		msg_ttf.fichero=USER;
+		osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf, NULL, osWaitForever);
+		
+		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso_main, NULL, osWaitForever);
+		 for ( i= 0; i < 50; i++) {
+            printf("adtos[%d]: %s\n", i, msg_ttf_miso_main.adtos[i]);
+        }
 		osDelay(20000);
 	}
 }
