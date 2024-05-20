@@ -387,6 +387,8 @@ static void Th_gestor(void* arg){
 	while(1){
 		if((osOK == osMessageQueueGet(id_MsgQueue_gestor, &g, 0U, 0U)) || time_updated(&g)){
 			osMessageQueueReset(id_MsgQueue_gestor);
+			//kkk adc pillar dato
+			//kkk modificar todas las pantallas para mostrar consumo
 			switch(g.pantallas){
 				case P_OFF:
 					rgb = to_rgb(0, 0, 0);
@@ -493,6 +495,8 @@ static void Th_principal(void *argument){
 	ali_state_t ali_state;
 	GPIO_Init();
 	
+	//kkk enable ali
+	
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
 	osDelay(200);
 	rgb = to_rgb(0,0,0);
@@ -519,5 +523,7 @@ static void Th_principal(void *argument){
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
 	osDelay(100);
 
+	//kkk disable ali
+	
 	StandbyMode_Measure();
 }
