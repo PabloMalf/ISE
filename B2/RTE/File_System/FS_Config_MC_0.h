@@ -19,7 +19,7 @@
 
 //   <o>Connect to hardware via Driver_SPI# <0-255>
 //   <i>Select driver control block for hardware interface when in SPI mode
-#define MC0_SPI_DRIVER          5
+#define MC0_SPI_DRIVER          2
 
 //   <o>Memory Card Interface Mode <0=>Native <1=>SPI
 //   <i>Native uses a SD Bus with up to 8 data lines, CLK, and CMD

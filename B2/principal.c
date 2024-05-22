@@ -109,14 +109,19 @@ static void StandbyMode_Measure(void){
 
 static void WR_Register(INFO_REGISTRO_T registro){
 	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi;
-	msg_ttf_mosi.cmd = WR;
-	sprintf(msg_ttf_mosi.data[0], "%02d/%02d/%02d",registro.fecha.day,registro.fecha.month,registro.fecha.year);
-	sprintf(msg_ttf_mosi.data[1], "%02d:%02d:%02d",registro.fecha.hour,registro.fecha.min,registro.fecha.sec);
-	sprintf(msg_ttf_mosi.data[2], "%s",registro.persona.Nombre);
-	sprintf(msg_ttf_mosi.data[3], "%02X %02X %02X %02X %02X",registro.persona.sNum[0], registro.persona.sNum[1], registro.persona.sNum[2], registro.persona.sNum[3], registro.persona.sNum[4]);
-	sprintf(msg_ttf_mosi.data[4], "%d",registro.acceso);
+	msg_ttf_mosi.cmd=WR;
+	msg_ttf_mosi.fichero=REG;
+	sprintf(msg_ttf_mosi.data,"%02d/%02d/%02d,%02d:%02d:%02d,%s,%02X %02X %02X %02X %02X,%d,\n",
+	         registro.fecha.day,registro.fecha.month,registro.fecha.year,
+	         registro.fecha.hour,registro.fecha.min,registro.fecha.sec,
+	         registro.persona.Nombre,
+	         registro.persona.sNum[0],registro.persona.sNum[1],
+	         registro.persona.sNum[2], registro.persona.sNum[3],registro.persona.sNum[4],
+	         registro.acceso);
+	
 		
 	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
+	memset(msg_ttf_mosi.data, '\0', sizeof(msg_ttf_mosi.data));
 }
 
 int init_Th_principal(void){

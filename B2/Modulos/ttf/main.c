@@ -85,10 +85,10 @@ int main(void){
 
 	//start Threads 
 	init_Th_ttf();
-	//init_Th_testWR_reg();
-	//init_Th_testRD_reg();
-	init_Th_testWR_usu();
-	init_Th_testRD_usu();
+	init_Th_testWR_reg();
+	init_Th_testRD_reg();
+	//init_Th_testWR_usu();
+	//init_Th_testRD_usu();
 	
 	
   osKernelStart();
@@ -127,7 +127,7 @@ static void WR_Register(INFO_REGISTRO_T registro){
 	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi;
 	msg_ttf_mosi.cmd=WR;
 	msg_ttf_mosi.fichero=REG;
-	sprintf(msg_ttf_mosi.data,"%02d/%02d/%02d,%02d:%02d:%02d,%s,%02X %02X %02X %02X %02X,%d,",
+	sprintf(msg_ttf_mosi.data,"%02d/%02d/%02d,%02d:%02d:%02d,%s,%02X %02X %02X %02X %02X,%d,\n",
 	         registro.fecha.day,registro.fecha.month,registro.fecha.year,
 	         registro.fecha.hour,registro.fecha.min,registro.fecha.sec,
 	         registro.persona.nombre,
@@ -174,7 +174,7 @@ void Th_testWR_reg(void *arg){
 	registro.persona.sNum[4]= 0x05;
 	
 	registro.acceso=PERMITIDO;
-  strcpy(registro.persona.nombre, "carlos");
+  strcpy(registro.persona.nombre, "CARLA");
 	
 	while(1){
 		printf("Write REG\n");
@@ -210,7 +210,7 @@ void Th_testWR_usu(void *arg){
 void Th_testRD_reg(void *arg){ 
 	MSGQUEUE_OBJ_TTF_MOSI msg_ttf;
 	MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso_main;
-	int i=0;
+	int i,j=0;
 	while(1){
 		osDelay(2000);
 		msg_ttf.cmd=RD;
@@ -218,8 +218,9 @@ void Th_testRD_reg(void *arg){
 		osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf, NULL, osWaitForever);
 		
 		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso_main, NULL, osWaitForever);
-		 for ( i= 0; i < 50; i++) {
-            printf("adtos[%d]: %s\n", i, msg_ttf_miso_main.adtos[i]);
+		 for (j=0; j<50;j++) {
+			 for(i=0; i<5;i++)
+            printf("Registro[%d]campo%d : %s\n", j,i, msg_ttf_miso_main.datos[j][i].valor);
         }
 		osDelay(20000);
 	}
@@ -228,7 +229,7 @@ void Th_testRD_reg(void *arg){
 void Th_testRD_usu(void *arg){ 
 	MSGQUEUE_OBJ_TTF_MOSI msg_ttf;
 	MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso_main;
-	int i=0;
+	int i,j=0;
 	while(1){
 		osDelay(2000);
 		msg_ttf.cmd=RD;
@@ -236,8 +237,9 @@ void Th_testRD_usu(void *arg){
 		osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf, NULL, osWaitForever);
 		
 		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso_main, NULL, osWaitForever);
-		 for ( i= 0; i < 50; i++) {
-            printf("adtos[%d]: %s\n", i, msg_ttf_miso_main.adtos[i]);
+		 for (j=0; j<50;j++) {
+			 for(i=0; i<4;i++)
+            printf("Usarios[%d]campo%d : %s\n", j,i, msg_ttf_miso_main.datos[j][i].valor);
         }
 		osDelay(20000);
 	}
