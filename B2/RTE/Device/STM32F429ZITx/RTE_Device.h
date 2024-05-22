@@ -1081,7 +1081,7 @@
 #define RTE_I2C2                        0
 
 //   <o> I2C2_SCL Pin <0=>PF1 <1=>PH4 <2=>PB10
-#define RTE_I2C2_SCL_PORT_ID            2
+#define RTE_I2C2_SCL_PORT_ID            0
 #if    (RTE_I2C2_SCL_PORT_ID == 0)
 #define RTE_I2C2_SCL_PORT               GPIOF
 #define RTE_I2C2_SCL_BIT                1
@@ -1096,7 +1096,7 @@
 #endif
 
 //   <o> I2C2_SDA Pin <0=>PF0 <1=>PH5 <2=>PB11 <3=>PB3 <4=>PB9
-#define RTE_I2C2_SDA_PORT_ID            2
+#define RTE_I2C2_SDA_PORT_ID            0
 #if    (RTE_I2C2_SDA_PORT_ID == 0)
 #define RTE_I2C2_SDA_PORT               GPIOF
 #define RTE_I2C2_SDA_BIT                0
@@ -1321,10 +1321,10 @@
 
 // <e> SPI2 (Serial Peripheral Interface 2) [Driver_SPI2]
 // <i> Configuration settings for Driver_SPI2 in component ::CMSIS Driver:SPI
-#define RTE_SPI2                        0
+#define RTE_SPI2                        1
 
 //   <o> SPI2_MISO Pin <0=>Not Used <1=>PB14 <2=>PC2 <3=>PI2 <4=>PA12
-#define RTE_SPI2_MISO_PORT_ID           0
+#define RTE_SPI2_MISO_PORT_ID           2
 #if    (RTE_SPI2_MISO_PORT_ID == 0)
 #define RTE_SPI2_MISO                   0
 #elif  (RTE_SPI2_MISO_PORT_ID == 1)
@@ -1348,7 +1348,7 @@
 #endif
 
 //   <o> SPI2_MOSI Pin <0=>Not Used <1=>PB15 <2=>PC3 <3=>PI3 <4=>PA10
-#define RTE_SPI2_MOSI_PORT_ID           0
+#define RTE_SPI2_MOSI_PORT_ID           2
 #if    (RTE_SPI2_MOSI_PORT_ID == 0)
 #define RTE_SPI2_MOSI                   0
 #elif  (RTE_SPI2_MOSI_PORT_ID == 1)
@@ -1396,7 +1396,7 @@
 #endif
 
 //   <o> SPI2_NSS Pin <0=>Not Used <1=>PB9 <2=>PB12 <3=>PI0 <4=>PA11
-#define RTE_SPI2_NSS_PORT_ID            0
+#define RTE_SPI2_NSS_PORT_ID            2
 #if    (RTE_SPI2_NSS_PORT_ID == 0)
 #define RTE_SPI2_NSS_PIN                0
 #elif  (RTE_SPI2_NSS_PORT_ID == 1)
@@ -1676,7 +1676,7 @@
 
 // <e> SPI5 (Serial Peripheral Interface 5) [Driver_SPI5]
 // <i> Configuration settings for Driver_SPI5 in component ::CMSIS Driver:SPI
-#define RTE_SPI5                        1
+#define RTE_SPI5                        0
 
 //   <o> SPI5_MISO Pin <0=>Not Used <1=>PA12 <2=>PE5 <3=>PE13 <4=>PF8 <5=>PH7
 #define RTE_SPI5_MISO_PORT_ID           4

@@ -19,7 +19,7 @@
 
 //   <o>Port Number <1-65535>
 //   <i>Listening port number
-//   <i>Default: 0 (autoselects: 80/HTTP, 443/HTTPS)
+//   <i>Default: 0 (autoselects: 80/HTTP, 443/HTTPS) 
 #define HTTP_SERVER_PORT_NUM        0
 
 //   <s.50>Server-Id header

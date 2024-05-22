@@ -80,15 +80,15 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc){
 
 
 static void RTC_CalendarConfig(void){
-  sdatestructure.Year = 0x14;
-  sdatestructure.Month = RTC_MONTH_APRIL;
+  sdatestructure.Year = 0x24;
+  sdatestructure.Month = RTC_MONTH_JUNE;
   sdatestructure.Date = 0x14;
   sdatestructure.WeekDay = RTC_WEEKDAY_TUESDAY;
   
   HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BCD);
 
-  stimestructure.Hours = 0x23;
-  stimestructure.Minutes = 0x59;
+  stimestructure.Hours = 0x11;
+  stimestructure.Minutes = 0x30;
   stimestructure.Seconds = 0x00;
   stimestructure.TimeFormat = RTC_HOURFORMAT12_PM;
   stimestructure.DayLightSaving = RTC_DAYLIGHTSAVING_NONE ;
@@ -111,14 +111,7 @@ static void init_rtc(void){
   __HAL_RTC_RESET_HANDLE_STATE(&RtcHandle);
 	
   HAL_RTC_Init(&RtcHandle);
-	
-  if (HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1) != 0x32F2)
-  {
-    RTC_CalendarConfig();
-  }
-	else
-    __HAL_RCC_CLEAR_RESET_FLAGS();
-	
+	RTC_CalendarConfig();
   init_SNTP();
 }
 
@@ -151,7 +144,7 @@ static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
 		
 		HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BIN);
 
-		stimestructure.Hours = ts.tm_hour + 2 ;
+		stimestructure.Hours = ts.tm_hour + 3;
 		stimestructure.Minutes = ts.tm_min;
 		stimestructure.Seconds = ts.tm_sec;
 		stimestructure.TimeFormat = RTC_HOURFORMAT_24;
@@ -162,6 +155,14 @@ static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
 	
 		HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2);
   }
+	else{
+    if (HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1) != 0x32F2){
+     RTC_CalendarConfig();
+    }
+	  else
+     __HAL_RCC_CLEAR_RESET_FLAGS();
+	}
+	
 }
 
 

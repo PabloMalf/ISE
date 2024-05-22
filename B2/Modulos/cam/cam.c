@@ -1,3 +1,3 @@
 #include "cam.h"
 
-//PLACEHOLDER
+//JA JA NO, que ha pasao?

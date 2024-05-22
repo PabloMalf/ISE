@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32F429ZITx$CMSIS\SVD\STM32F429x.svd</SFDFile>
+          <SFDFile>$$Device:STM32F429ZITx$CMSIS\SVD\STM32F429.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Objects\</OutputDirectory>
-          <OutputName>lcd</OutputName>
+          <OutputName>principal</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -134,11 +134,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4096</DriverSelection>
+            <DriverSelection>-1</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>HSE_VALUE=8000000</Define>
               <Undefine></Undefine>
-              <IncludePath>.\Modulos\buz;.\Modulos\cam;.\Modulos\key;.\Modulos\irq;.\Modulos\lcd;.\Modulos\nfc;.\Modulos\rgb;.\Modulos\rtc;.\Modulos\srv;.\Modulos\ttf</IncludePath>
+              <IncludePath>.\Modulos\buz;.\Modulos\cam;.\Modulos\irq;.\Modulos\key;.\Modulos\lcd;.\Modulos\nfc;.\Modulos\rgb;.\Modulos\rtc;.\Modulos\srv;.\Modulos\ttf</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -409,14 +409,14 @@
               <FilePath>.\Modulos\cam\cam.c</FilePath>
             </File>
             <File>
-              <FileName>key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Modulos\key\key.c</FilePath>
-            </File>
-            <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Modulos\irq\irq.c</FilePath>
+            </File>
+            <File>
+              <FileName>key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Modulos\key\key.c</FilePath>
             </File>
             <File>
               <FileName>lcd.c</FileName>
@@ -457,9 +457,6 @@
           <GroupName>::CMSIS Driver</GroupName>
         </Group>
         <Group>
-          <GroupName>::CMSIS-Compiler</GroupName>
-        </Group>
-        <Group>
           <GroupName>::Compiler</GroupName>
         </Group>
         <Group>
@@ -480,11 +477,6 @@
       <filter>
         <targetInfos/>
       </filter>
-      <package name="CMSIS-Compiler" schemaVersion="1.7.27" url="https://www.keil.com/pack/" vendor="ARM" version="2.0.0">
-        <targetInfos>
-          <targetInfo name="Target 1" versionMatchMode="fixed"/>
-        </targetInfos>
-      </package>
       <package name="CMSIS-Driver" schemaVersion="1.4.9" url="http://www.keil.com/pack/" vendor="ARM" version="2.6.1">
         <targetInfos>
           <targetInfo name="Target 1" versionMatchMode="fixed"/>
@@ -500,7 +492,7 @@
           <targetInfo name="Target 1" versionMatchMode="fixed"/>
         </targetInfos>
       </package>
-      <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0">
+      <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0">
         <targetInfos>
           <targetInfo name="Target 1" versionMatchMode="fixed"/>
         </targetInfos>
@@ -513,13 +505,13 @@
     </packages>
     <apis>
       <api Capiversion="2.2.0" Cclass="CMSIS Driver" Cgroup="Ethernet MAC" exclusive="0">
-        <package name="CMSIS" schemaVersion="1.7.7" url="http://www.keil.com/pack/" vendor="ARM" version="5.9.0"/>
+        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.8.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </api>
       <api Capiversion="2.2.0" Cclass="CMSIS Driver" Cgroup="Ethernet PHY" exclusive="0">
-        <package name="CMSIS" schemaVersion="1.7.7" url="http://www.keil.com/pack/" vendor="ARM" version="5.9.0"/>
+        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.8.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
@@ -532,12 +524,6 @@
       </api>
       <api Capiversion="2.3.0" Cclass="CMSIS Driver" Cgroup="SPI" exclusive="0">
         <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.8.0"/>
-        <targetInfos>
-          <targetInfo name="Target 1"/>
-        </targetInfos>
-      </api>
-      <api Capiversion="1.0.0" Cclass="CMSIS-Compiler" Cgroup="File Interface" condition="CortexDevice" exclusive="1">
-        <package name="CMSIS-Compiler" schemaVersion="1.7.27" url="https://www.keil.com/pack/" vendor="ARM" version="2.0.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
@@ -556,12 +542,6 @@
       </api>
     </apis>
     <components>
-      <component Cclass="CMSIS-Compiler" Cgroup="CORE" Cvendor="ARM" Cversion="1.0.0" condition="ARMCC CortexDevice">
-        <package name="CMSIS-Compiler" schemaVersion="1.7.27" url="https://www.keil.com/pack/" vendor="ARM" version="2.0.0"/>
-        <targetInfos>
-          <targetInfo name="Target 1"/>
-        </targetInfos>
-      </component>
       <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.5.0" condition="ARMv6_7_8-M Device">
         <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.8.0"/>
         <targetInfos>
@@ -580,50 +560,62 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </component>
-      <component Cbundle="MDK-Plus" Cclass="File System" Cgroup="CORE" Cvariant="LFN" Cvendor="Keil" Cversion="6.16.6" condition="CMSIS Core with RTOS and File System I/O">
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+      <component Cbundle="ARM Compiler" Cclass="Compiler" Cgroup="I/O" Csub="File" Cvariant="File System" Cvendor="Keil" Cversion="1.2.0" condition="ARMCC Cortex-M with File System">
+        <package name="ARM_Compiler" schemaVersion="1.6.3" url="http://www.keil.com/pack/" vendor="Keil" version="1.6.3"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </component>
-      <component Cbundle="MDK-Plus" Cclass="File System" Cgroup="Drive" Csub="Memory Card" Cvendor="Keil" Cversion="6.16.6" condition="File System and SD/MMC Driver" maxInstances="2">
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+      <component Cbundle="ARM Compiler" Cclass="Compiler" Cgroup="I/O" Csub="STDOUT" Cvariant="ITM" Cvendor="Keil" Cversion="1.2.0" condition="ARMCC Cortex-M with ITM">
+        <package name="ARM_Compiler" schemaVersion="1.6.3" url="http://www.keil.com/pack/" vendor="Keil" version="1.6.3"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </component>
-      <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="CORE" Cvariant="IPv4/IPv6 Release" Cvendor="Keil" Cversion="7.19.0" condition="CMSIS Core with RTOS">
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+      <component Cbundle="MDK-Plus" Cclass="File System" Cgroup="CORE" Cvariant="LFN" Cvendor="Keil" Cversion="6.14.1" condition="CMSIS Core with RTOS and File System I/O">
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </component>
-      <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="Interface" Csub="ETH" Cvendor="Keil" Cversion="7.19.0" condition="Network Driver ETH" maxInstances="2">
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+      <component Cbundle="MDK-Plus" Cclass="File System" Cgroup="Drive" Csub="Memory Card" Cvendor="Keil" Cversion="6.14.1" condition="File System and SD/MMC Driver" maxInstances="2">
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </component>
-      <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="Service" Csub="SNTP Client" Cvendor="Keil" Cversion="7.19.0" condition="Network UDP">
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+      <component Cbundle="MDK-Plus" Cclass="Network" Cgroup="CORE" Cvariant="IPv4 Release" Cvendor="Keil" Cversion="7.15.0" condition="CMSIS Core with RTOS">
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </component>
-      <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="Service" Csub="Web Server Compact" Cvariant="HTTP" Cvendor="Keil" Cversion="7.19.0" condition="Network Web Server Compact">
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+      <component Cbundle="MDK-Plus" Cclass="Network" Cgroup="Interface" Csub="ETH" Cvendor="Keil" Cversion="7.15.0" condition="Network Driver ETH" maxInstances="2">
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </component>
-      <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="Socket" Csub="TCP" Cvendor="Keil" Cversion="7.19.0" condition="Network Interface">
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+      <component Cbundle="MDK-Plus" Cclass="Network" Cgroup="Service" Csub="SNTP Client" Cvendor="Keil" Cversion="7.15.0" condition="Network UDP">
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </component>
-      <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="Socket" Csub="UDP" Cvendor="Keil" Cversion="7.19.0" condition="Network Interface">
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+      <component Cbundle="MDK-Plus" Cclass="Network" Cgroup="Service" Csub="Web Server Compact" Cvariant="HTTP" Cvendor="Keil" Cversion="7.15.0" condition="Network Web Server Compact">
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
+        <targetInfos>
+          <targetInfo name="Target 1"/>
+        </targetInfos>
+      </component>
+      <component Cbundle="MDK-Plus" Cclass="Network" Cgroup="Socket" Csub="TCP" Cvendor="Keil" Cversion="7.15.0" condition="Network Interface">
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
+        <targetInfos>
+          <targetInfo name="Target 1"/>
+        </targetInfos>
+      </component>
+      <component Cbundle="MDK-Plus" Cclass="Network" Cgroup="Socket" Csub="UDP" Cvendor="Keil" Cversion="7.15.0" condition="Network Interface">
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
@@ -652,13 +644,13 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </component>
-      <component Capiversion="1.0.0" Cclass="CMSIS-Compiler" Cgroup="File Interface" Csub="MDK-MW File System" Cvendor="Keil" Cversion="1.0.0" condition="File System and CMSIS Compiler">
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+      <component Capiversion="1.0.0" Cclass="Device" Cgroup="STM32Cube Framework" Csub="Classic" Cvendor="Keil" Cversion="1.7.9" condition="STM32F4 Framework Classic">
+        <package name="STM32F4xx_DFP" schemaVersion="1.6.3" url="http://www.keil.com/pack/" vendor="Keil" version="2.15.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </component>
-      <component Capiversion="1.0.0" Cclass="Device" Cgroup="STM32Cube Framework" Csub="Classic" Cvendor="Keil" Cversion="1.7.9" condition="STM32F4 Framework Classic">
+      <component Cclass="Device" Cgroup="STM32Cube HAL" Csub="ADC" Cvendor="Keil" Cversion="1.7.9" condition="STM32F4 HAL DMA">
         <package name="STM32F4xx_DFP" schemaVersion="1.6.3" url="http://www.keil.com/pack/" vendor="Keil" version="2.15.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
@@ -770,7 +762,7 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="source" condition="STM32F429xx_ARMCC" name="Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f429xx.s" version="2.6.8">
+      <file attr="config" category="source" condition="STM32F429xx_ARMCC" name="Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f429xx.s" version="2.6.2">
         <instance index="0">RTE\Device\STM32F429ZITx\startup_stm32f429xx.s</instance>
         <component Cclass="Device" Cgroup="Startup" Cvendor="Keil" Cversion="2.6.3" condition="STM32F4 CMSIS"/>
         <package name="STM32F4xx_DFP" schemaVersion="1.6.3" url="http://www.keil.com/pack/" vendor="Keil" version="2.15.0"/>
@@ -778,7 +770,7 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="header" name="MDK\Templates\Inc\stm32f4xx_hal_conf.h" version="1.8.1">
+      <file attr="config" category="header" name="MDK\Templates\Inc\stm32f4xx_hal_conf.h" version="1.7.9">
         <instance index="0">RTE\Device\STM32F429ZITx\stm32f4xx_hal_conf.h</instance>
         <component Capiversion="1.0.0" Cclass="Device" Cgroup="STM32Cube Framework" Csub="Classic" Cvendor="Keil" Cversion="1.7.9" condition="STM32F4 Framework Classic"/>
         <package name="STM32F4xx_DFP" schemaVersion="1.6.3" url="http://www.keil.com/pack/" vendor="Keil" version="2.15.0"/>
@@ -786,7 +778,7 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="source" name="Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c" version="2.6.8">
+      <file attr="config" category="source" name="Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c" version="2.6.2">
         <instance index="0">RTE\Device\STM32F429ZITx\system_stm32f4xx.c</instance>
         <component Cclass="Device" Cgroup="Startup" Cvendor="Keil" Cversion="2.6.3" condition="STM32F4 CMSIS"/>
         <package name="STM32F4xx_DFP" schemaVersion="1.6.3" url="http://www.keil.com/pack/" vendor="Keil" version="2.15.0"/>
@@ -794,72 +786,66 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="source" name="FileSystem\Config\FS_Config.c" version="6.4.0">
+      <file attr="config" category="source" name="FileSystem\Config\FS_Config.c" version="6.3.0">
         <instance index="0">RTE\File_System\FS_Config.c</instance>
-        <component Cbundle="MDK-Plus" Cclass="File System" Cgroup="CORE" Cvariant="LFN" Cvendor="Keil" Cversion="6.16.6" condition="CMSIS Core with RTOS and File System I/O"/>
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+        <component Cbundle="MDK-Plus" Cclass="File System" Cgroup="CORE" Cvariant="LFN" Cvendor="Keil" Cversion="6.14.1" condition="CMSIS Core with RTOS and File System I/O"/>
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
       <file attr="config" category="header" name="FileSystem\Config\FS_Config_MC.h" version="6.2.0">
         <instance index="0">RTE\File_System\FS_Config_MC_0.h</instance>
-        <component Cbundle="MDK-Plus" Cclass="File System" Cgroup="Drive" Csub="Memory Card" Cvendor="Keil" Cversion="6.16.6" condition="File System and SD/MMC Driver" maxInstances="2"/>
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
-        <targetInfos>
-          <targetInfo name="Target 1"/>
-        </targetInfos>
-      </file>
-      <file attr="config" category="source" name="FileSystem\Config\FS_Debug.c" version="1.0.0">
-        <instance index="0" removed="1">RTE\File_System\FS_Debug.c</instance>
-        <component Cbundle="MDK-Plus" Cclass="File System" Cgroup="CORE" Cvariant="LFN Debug" Cvendor="Keil" Cversion="6.14.1" condition="CMSIS Core with RTOS and File System I/O and Event Recorder"/>
+        <component Cbundle="MDK-Plus" Cclass="File System" Cgroup="Drive" Csub="Memory Card" Cvendor="Keil" Cversion="6.14.1" condition="File System and SD/MMC Driver" maxInstances="2"/>
         <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
-        <targetInfos/>
-      </file>
-      <file attr="config" category="source" name="Network\Config\Net_Config.c" version="7.2.0">
-        <instance index="0">RTE\Network\Net_Config.c</instance>
-        <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="CORE" Cvariant="IPv4/IPv6 Release" Cvendor="Keil" Cversion="7.19.0" condition="CMSIS Core with RTOS" isDefaultVariant="1"/>
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="header" name="Network\Config\Net_Config_ETH.h" version="7.4.0">
+      <file attr="config" category="source" name="Network\Config\Net_Config.c" version="7.1.0">
+        <instance index="0">RTE\Network\Net_Config.c</instance>
+        <component Cbundle="MDK-Plus" Cclass="Network" Cgroup="CORE" Cvariant="IPv4 Release" Cvendor="Keil" Cversion="7.15.0" condition="CMSIS Core with RTOS" isDefaultVariant="1"/>
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
+        <targetInfos>
+          <targetInfo name="Target 1"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="header" name="Network\Config\Net_Config_ETH.h" version="7.3.0">
         <instance index="0">RTE\Network\Net_Config_ETH_0.h</instance>
-        <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="Interface" Csub="ETH" Cvendor="Keil" Cversion="7.19.0" condition="Network Driver ETH" maxInstances="2"/>
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+        <component Cbundle="MDK-Plus" Cclass="Network" Cgroup="Interface" Csub="ETH" Cvendor="Keil" Cversion="7.15.0" condition="Network Driver ETH" maxInstances="2"/>
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
       <file attr="config" category="header" name="Network\Config\Net_Config_HTTP_Server.h" version="7.2.0">
         <instance index="0">RTE\Network\Net_Config_HTTP_Server.h</instance>
-        <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="Service" Csub="Web Server Compact" Cvariant="HTTP" Cvendor="Keil" Cversion="7.19.0" condition="Network Web Server Compact" isDefaultVariant="1"/>
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+        <component Cbundle="MDK-Plus" Cclass="Network" Cgroup="Service" Csub="Web Server Compact" Cvariant="HTTP" Cvendor="Keil" Cversion="7.15.0" condition="Network Web Server Compact" isDefaultVariant="1"/>
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
       <file attr="config" category="header" name="Network\Config\Net_Config_SNTP_Client.h" version="7.0.0">
         <instance index="0">RTE\Network\Net_Config_SNTP_Client.h</instance>
-        <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="Service" Csub="SNTP Client" Cvendor="Keil" Cversion="7.19.0" condition="Network UDP"/>
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+        <component Cbundle="MDK-Plus" Cclass="Network" Cgroup="Service" Csub="SNTP Client" Cvendor="Keil" Cversion="7.15.0" condition="Network UDP"/>
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
       <file attr="config" category="header" name="Network\Config\Net_Config_TCP.h" version="7.1.1">
         <instance index="0">RTE\Network\Net_Config_TCP.h</instance>
-        <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="Socket" Csub="TCP" Cvendor="Keil" Cversion="7.19.0" condition="Network Interface"/>
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+        <component Cbundle="MDK-Plus" Cclass="Network" Cgroup="Socket" Csub="TCP" Cvendor="Keil" Cversion="7.15.0" condition="Network Interface"/>
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
       <file attr="config" category="header" name="Network\Config\Net_Config_UDP.h" version="5.1.0">
         <instance index="0">RTE\Network\Net_Config_UDP.h</instance>
-        <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="Socket" Csub="UDP" Cvendor="Keil" Cversion="7.19.0" condition="Network Interface"/>
-        <package name="MDK-Middleware" schemaVersion="1.7.28" url="https://www.keil.com/pack/" vendor="Keil" version="7.17.0"/>
+        <component Cbundle="MDK-Plus" Cclass="Network" Cgroup="Socket" Csub="UDP" Cvendor="Keil" Cversion="7.15.0" condition="Network Interface"/>
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.13.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>

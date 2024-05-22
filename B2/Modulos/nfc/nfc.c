@@ -204,13 +204,13 @@ static void Init(void){
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
 
 	/*Reset*/ //o lo ponemos a 3v3
-	__HAL_RCC_GPIOB_CLK_ENABLE();
+	__HAL_RCC_GPIOF_CLK_ENABLE();
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 	GPIO_InitStruct.Pin = GPIO_PIN_12;
-	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); 
+	HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_12, GPIO_PIN_SET); 
 	
 	SPIdrv->Initialize(callback_spi);
   SPIdrv->PowerControl(ARM_POWER_FULL);
@@ -444,6 +444,7 @@ static void			Halt(void){
 //Thread
 static void Th_nfc(void *arg){
 	uint32_t flags;
+	uint8_t S_N [5];
 	MSGQUEUE_OBJ_NFC msg;
 	Init();
 
@@ -451,11 +452,12 @@ static void Th_nfc(void *arg){
 		osThreadFlagsWait(NFC_FLAG_ON, osFlagsWaitAny, osWaitForever);
 		osTimerStart(tim_id_auto_off, NFC_TIMEOUT_MS);
 
-		while((Check(msg.sNum) != MI_OK) && !(flags & NFC_FLAG_OFF)){
+		while((Check(S_N) != MI_OK) && !(flags & NFC_FLAG_OFF)){
 			flags = osThreadFlagsGet();
 		}
-		
+
 		if(!(flags & NFC_FLAG_OFF)){
+			sprintf(msg.sNum, "%02x %02x %02x %02x %02x", S_N[0], S_N[1], S_N[2],  S_N[3],  S_N[4]);
 			osMessageQueuePut(id_MsgQueue_nfc, &msg, 0U, 0U);
 		}
 		
