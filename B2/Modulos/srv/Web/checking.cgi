@@ -22,7 +22,7 @@ t  else
 t   clearTimeout(periodicFormTime);
 t }
 t </script></head>
-t <body bgcolor=#D7EFCB style="background-repeat: no-repeat;">
+t <body background="background3.png" style="background-repeat: no-repeat;">
 t <div style="width: 1060;">
 t <h2 align="center" ><br>Lista de acceso</h2>
 t <td style="border-bottom: 1px solid #000080" align=center vAlign=center noWrap width="70"> 
