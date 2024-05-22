@@ -9,7 +9,7 @@
 #define NFC_TIMEOUT_MS 8000U
 
 typedef struct{
-	uint8_t sNum [5];
+	char sNum [14];
 }MSGQUEUE_OBJ_NFC;
 
 int init_Th_nfc(void);

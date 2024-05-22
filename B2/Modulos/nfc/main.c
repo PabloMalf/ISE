@@ -66,10 +66,7 @@ void Th_test(void *arg){
 		osThreadFlagsSet(get_id_Th_nfc(), NFC_FLAG_ON);
 		osDelay(1000);
 		if(osOK == osMessageQueueGet(get_id_MsgQueue_nfc(), &msg, 0U, NFC_TIMEOUT_MS)){
-			printf("ID: ");
-			for(i = 0; i < sizeof(msg.sNum); i++){
-				printf("%d" ,msg.sNum[i]);
-			}
+			printf("ID: %s", msg.sNum);
 			printf("\n");
 		}
 		else{
