@@ -100,7 +100,7 @@ static void Th_ttf(void *arguments){
 					}
 					else if (msg_ttf.fichero==USER){
 						 f = fopen ("M0:/user.csv","r");
-					   rango = CAMPOS_REG;
+					   rango = CAMPOS_USU;
 					}
 					if (f == NULL) return;
 										

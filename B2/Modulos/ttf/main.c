@@ -85,10 +85,10 @@ int main(void){
 
 	//start Threads 
 	init_Th_ttf();
-	init_Th_testWR_reg();
-	init_Th_testRD_reg();
-	//init_Th_testWR_usu();
-	//init_Th_testRD_usu();
+	//init_Th_testWR_reg();
+	//init_Th_testRD_reg();
+	init_Th_testWR_usu();
+	init_Th_testRD_usu();
 	
 	
   osKernelStart();
@@ -145,10 +145,10 @@ static void WR_Usuario(INFO_PERSONA_T usuario){
 	msg_ttf_mosi.cmd=WR;
 	msg_ttf_mosi.fichero=USER;
 
-	sprintf(msg_ttf_mosi.data,"%s,%s,%02X %02X %02X %02X %02X,%d,\n",
-	         usuario.nombre, usuario.pin,
+	sprintf(msg_ttf_mosi.data,"%02X %02X %02X %02X %02X,%s,%s,%d,\n",
 	         usuario.sNum[0],usuario.sNum[1],
 	         usuario.sNum[2], usuario.sNum[3],usuario.sNum[4],
+	         usuario.nombre, usuario.pin,
 	         usuario.sexo);
 	
 	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
@@ -195,7 +195,7 @@ void Th_testWR_usu(void *arg){
 	usuario.sNum[3]= 0x09;
 	usuario.sNum[4]= 0x10;
 	usuario.sexo=H;
-	strcpy(usuario.nombre, "Fran");
+	strcpy(usuario.nombre, "Franote");
 	strcpy(usuario.pin, "1234");
 	
 	while(1){

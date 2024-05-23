@@ -1,7 +1,5 @@
-#include "stm32f4xx_hal.h"
-#include <stdio.h>
 #include "rtc.h"
-                     // CMSIS RTOS header file
+#include <stdio.h>
 #include <time.h>
 #include "rl_net_lib.h"
 #include "rl_net.h"                     // Keil.MDK-Pro::Network:CORE
@@ -13,6 +11,7 @@ mytime_t g_time;
 
 RTC_HandleTypeDef RtcHandle;
 RTC_DateTypeDef sdatestructure;
+
 RTC_TimeTypeDef stimestructure;
 
 static uint32_t exec;  
@@ -31,6 +30,9 @@ static void RTC_CalendarConfig(void);
 static void RTC_Show(void);
 static void Init_timers (void);
 
+//osThreadId_t get_id_Th_rtc(void){
+//	return id_Th_rtc;
+//}
 
 static void Timer_Callback_3min (void const *arg) {
 	 init_SNTP(); // Cada 3 min se llama al servidor SNTP
@@ -111,8 +113,14 @@ static void init_rtc(void){
   __HAL_RTC_RESET_HANDLE_STATE(&RtcHandle);
 	
   HAL_RTC_Init(&RtcHandle);
-	RTC_CalendarConfig();
-  init_SNTP();
+	//RTC_CalendarConfig();
+	if (HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1) != 0x32F2){
+    init_SNTP();
+  }
+	else
+  __HAL_RCC_CLEAR_RESET_FLAGS();
+	
+
 }
 
 
@@ -172,6 +180,7 @@ static void Th_rtc(void *argument){
 	Init_timers();
 	osTimerStart(tim_id_3min, AUTO_SYNC_TIME_S);
 	while(1){
+		//osThreadFlagsWait(FLAG_GET_HOUR, osFlagsWaitAny, osWaitForever);
 	  RTC_Show();
     osDelay (1000);
 	}

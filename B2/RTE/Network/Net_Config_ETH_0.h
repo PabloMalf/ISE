@@ -40,17 +40,17 @@
 //     <s.15>IP Address
 //     <i>Static IPv4 Address in text representation
 //     <i>Default: "192.168.0.100"
-#define ETH0_IP4_ADDR           "192.168.0.100"
+#define ETH0_IP4_ADDR           "10.48.11.117"
 
 //     <s.15>Subnet mask
 //     <i>Local Subnet mask in text representation
 //     <i>Default: "255.255.255.0"
-#define ETH0_IP4_MASK           "255.255.255.0"
+#define ETH0_IP4_MASK           "255.255.0.0"
 
 //     <s.15>Default Gateway
 //     <i>IP Address of Default Gateway in text representation
 //     <i>Default: "192.168.0.254"
-#define ETH0_IP4_GATEWAY        "192.168.0.254"
+#define ETH0_IP4_GATEWAY        "10.48.0.1"
 
 //     <s.15>Primary DNS Server
 //     <i>IP Address of Primary DNS Server in text representation
@@ -124,7 +124,7 @@
 //     <i>When this option is enabled, local IP address, Net Mask
 //     <i>and Default Gateway are obtained automatically from
 //     <i>the DHCP Server on local LAN.
-#define ETH0_DHCP_ENABLE        1
+#define ETH0_DHCP_ENABLE        0
 
 //       <s.40>Vendor Class Identifier
 //       <i>This value is optional. If specified, it is added
@@ -151,7 +151,7 @@
 
 //   <e>IPv6
 //   <i>Enable IPv6 Protocol for Network Interface
-#define ETH0_IP6_ENABLE         1
+#define ETH0_IP6_ENABLE         0
 
 //     <s.40>IPv6 Address
 //     <i>Static IPv6 Address in text representation
@@ -242,7 +242,7 @@
 //   <i>These settings are used to optimize usage of OS resources.
 //     <o>Interface Thread Stack Size <512-65535:4>
 //     <i>Default: 512 bytes
-#define ETH0_THREAD_STACK_SIZE  512
+#define ETH0_THREAD_STACK_SIZE  1024
 
 //        Interface Thread Priority
 #define ETH0_THREAD_PRIORITY    osPriorityAboveNormal
