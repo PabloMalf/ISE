@@ -4,12 +4,8 @@
 #include <string.h>
 
 //KKK dar de alta id nueva
-
+//kkk pin erroneo y salta color verde en vez de amarillo
 //SSS change ip Net_Conifg_ETH_0
-
-//KKK PB13 RELE
-
-//KKK hay que poner en desconocido nombre= --- y identficacion=---
 
 #undef	NFC_TIMEOUT_MS
 #define NFC_TIMEOUT_MS	6000U
@@ -20,7 +16,7 @@
 
 typedef enum{BATTERY_PSU, MAIN_PSU} ali_state_t;
 
-typedef enum{P_OFF, P_START, P_KEY, P_KEY_TRY, P_DENEGADO_PIN, P_DENEGADO_TRJ, P_DENEGADO_TIM, P_PERMITIDO, P_DESCONOCIDO} pantallas_t;
+typedef enum{P_OFF, P_START, P_KEY, P_KEY_TRY, P_DENEGADO_TRJ_UNKNOWN, P_DENEGADO_PIN_ERR, P_DENEGADO_TIME_OUT, P_PERMITIDO, P_DESCONOCIDO} pantallas_t;
 
 typedef enum{R_NFC, R_KEY, R_EXIT} reg_state_t;
 
@@ -29,9 +25,9 @@ typedef enum{PERMITIDO, DENEGADO, DESCONOCIDO} tipo_acceso_t;
 typedef enum{H, M, poco} sexo_t;
 
 typedef struct{
-	char Nombre [15];
+	char sNum [15];
+	char nombre [15];
 	char pin [4];
-	uint8_t sNum [5];
 	sexo_t sexo;
 }INFO_PERSONA_T;
 
@@ -72,11 +68,11 @@ static MSGQUEUE_OBJ_SRV msg_srv = {.adtos = {
 }};
 
 const INFO_PERSONA_T personas_autorizadas [] = {
-	{.Nombre = "Admin",		.sexo = poco, .pin = "*##*", .sNum = {0x83, 0x6a, 0x79, 0xfa, 0x6a}},
-	{.Nombre = "Claudia",	.sexo = M,		.pin = "2002", .sNum = {0x33, 0x8a, 0xcc, 0xe4, 0x91}},
-	{.Nombre = "Manuel",	.sexo = H,		.pin = "4389", .sNum = {0xe3, 0x82, 0xd9, 0xe4, 0x5c}},
-	{.Nombre = "Maria",		.sexo = M,		.pin = "7269", .sNum = {0x23, 0xd0, 0x0c, 0xe5, 0x1a}},
-	{.Nombre = "Mara",		.sexo = M,		.pin = "1234", .sNum = {0x53, 0xf6, 0xd0, 0xe4, 0x91}}
+	{.nombre = "Admin",		.sexo = poco, .pin = "*##*", .sNum = "83 6a 79 fa 6a"},
+	{.nombre = "Claudia",	.sexo = M,		.pin = "2002", .sNum = "33 8a cc e4 91"},
+	{.nombre = "Manuel",	.sexo = H,		.pin = "4389", .sNum = "e3 82 d9 e4 5c"},
+	{.nombre = "Maria",		.sexo = M,		.pin = "7269", .sNum = "23 d0 0c e5 1a"},
+	{.nombre = "Mara",		.sexo = M,		.pin = "1234", .sNum = "53 f6 d0 e4 91"}
 }; 
 
 #define NUM_DIG_PIN 4U //DO NOT CHANGE: thats why it is here, nowhere, for it to not be found as my mark
@@ -111,17 +107,17 @@ static void WR_Register(INFO_REGISTRO_T registro){
 	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi;
 	msg_ttf_mosi.cmd=WR;
 	msg_ttf_mosi.fichero=REG;
-	sprintf(msg_ttf_mosi.data,"%02d/%02d/%02d,%02d:%02d:%02d,%s,%02X %02X %02X %02X %02X,%d,\n",
-	         registro.fecha.day,registro.fecha.month,registro.fecha.year,
-	         registro.fecha.hour,registro.fecha.min,registro.fecha.sec,
-	         registro.persona.Nombre,
-	         registro.persona.sNum[0],registro.persona.sNum[1],
-	         registro.persona.sNum[2], registro.persona.sNum[3],registro.persona.sNum[4],
-	         registro.acceso);
 	
-		
+	sprintf(msg_ttf_mosi.data,"%02d/%02d/%02d,%02d:%02d:%02d,%s,%s,%d",
+	         registro.fecha.day,  registro.fecha.month, registro.fecha.year,
+	         registro.fecha.hour, registro.fecha.min,   registro.fecha.sec,
+	         registro.persona.nombre,
+					 registro.persona.sNum,
+	         registro.acceso
+	         );
+	
+
 	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
-	memset(msg_ttf_mosi.data, '\0', sizeof(msg_ttf_mosi.data));
 }
 
 int init_Th_principal(void){
@@ -187,12 +183,12 @@ static char* centrar(const char cadena[]) {
 	
 	return &(exit[0]);
 }
-				
 
-static int get_persona(const uint8_t sNum [5]){
+
+static int get_persona(const char sNum [14]){
 	int i;
 	for(i = 0; i < sizeof(personas_autorizadas) / sizeof(personas_autorizadas[0]); i++){
-		if(memcmp(sNum, personas_autorizadas[i].sNum, sizeof(personas_autorizadas[i].sNum)) == 0)
+		if(strncmp(sNum, personas_autorizadas[i].sNum, sizeof(personas_autorizadas[i].sNum)) == 0)
 			return i;
 	}
 	return -1;
@@ -230,7 +226,8 @@ static MSGQUEUE_OBJ_RGB to_rgb(uint8_t r, uint8_t g, uint8_t b){
 
 static void post_sv(void){
 	MSGQUEUE_OBJ_RGB rgb;
-	osMessageQueuePut(get_id_MsgQueue_srv(), &msg_srv, 0U, 0U);
+	//pillar adc
+	osMessageQueuePut(get_id_MsgQueue_srv(), &msg_srv, 0U, 0U); //kkk sss
 	rgb = to_rgb(0, 0, 255);
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb, 0U, 0U);
 	osDelay(100);
@@ -242,21 +239,25 @@ static void post_sv(void){
 static void mode_main_psu(void){
 	uint32_t flags;
 	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+	//kkk copiar base datos tarjeta
 	post_sv();
 	
 	while(1){
 		if(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15)) return; //go sleep
 		flags = osThreadFlagsGet();
 		
-		if(flags & FLAG_ACCESO){
+		if(flags & FLAG_ACCESO){ //kkk revisar doble acceso
 			osThreadFlagsClear(FLAG_ACCESO);
 			HAL_NVIC_DisableIRQ(EXTI0_IRQn);
 			registro_acceso();
 			post_sv();
 			HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		}
+		
+		osThreadYield();
   }
 }
+
 
 static void registro_acceso(void){
 	MSGQUEUE_OBJ_GESTOR msg_gestor = {.intentos = NUM_INTENTOS, .time_out = INA_TIMEOUT};
@@ -264,7 +265,7 @@ static void registro_acceso(void){
 	MSGQUEUE_OBJ_RGB msg_rgb;
 	MSGQUEUE_OBJ_KEY msg_key;
 	MSGQUEUE_OBJ_BUZ msg_buz = {750, 200, 5};
-	INFO_REGISTRO_T info;
+	INFO_REGISTRO_T info = {.persona.nombre = "---", .persona.sNum = "---"};
 	
 	osStatus_t error;
 	
@@ -285,30 +286,30 @@ static void registro_acceso(void){
 					msg_gestor.pantallas = P_DESCONOCIDO;
 					osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 					msg_rgb.r = 255;
-					osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0U, 0U); //EEE 
+					osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0U, 0U); //kkk revisar ya lo hacemos en el gestor
 					reg_state = R_EXIT;
 				}
 				else{
-					aux = get_persona(msg_nfc.sNum);
+					aux = get_persona(msg_nfc.sNum); //iii
 					if(aux != -1){ // Acceso autorizado
-						info.persona = personas_autorizadas[aux];
+						info.persona = personas_autorizadas[aux];//iii
 						
 						msg_gestor.p = info.persona;
 						msg_gestor.pantallas = P_KEY;
 						msg_gestor.n_digitos = 0;
 						msg_gestor.time_out = INA_TIMEOUT + NUM_DIG_PIN;
-						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U); //EEE
+						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 						
 						strcpy(pin, "");
 						reg_state = R_KEY;
 					}
 					else{ // Acceso denegado, regsitrado como desconocido
 						info.acceso = DESCONOCIDO;
-						memcpy(info.persona.sNum, msg_nfc.sNum, sizeof(msg_nfc.sNum));
+						strcpy(info.persona.sNum, msg_nfc.sNum); //qqq
 
-						msg_gestor.pantallas = P_DENEGADO_PIN;
-						memcpy(msg_gestor.p.sNum, msg_nfc.sNum, sizeof(msg_nfc.sNum));
-						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);//EEE
+						msg_gestor.pantallas = P_DENEGADO_TRJ_UNKNOWN;
+						strcpy(msg_gestor.p.sNum, msg_nfc.sNum); //qqq
+						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 						reg_state = R_EXIT;
 					}
 				}
@@ -331,7 +332,7 @@ static void registro_acceso(void){
 
 				osThreadYield();
 				
-				if(!error){ //PIN completo
+				if(!error){ //PIN completo (tenemos 4 numeros)
 					if(!memcmp(info.persona.pin, pin, sizeof(pin))){ //Correcto
 						info.acceso = PERMITIDO;
 						msg_gestor.pantallas = P_PERMITIDO;
@@ -346,34 +347,34 @@ static void registro_acceso(void){
 					}
 					else{ //Incorrecto sin intentos
 						info.acceso = DENEGADO;
-						msg_gestor.pantallas = P_DENEGADO_TRJ;
-						reg_state = R_EXIT;
-					}
-				}
-				else{ //PIN incompleto TIME OUT
-					msg_gestor.time_out--;
-					if(!msg_gestor.time_out){
-						info.acceso = DENEGADO;
-						msg_gestor.pantallas = P_DENEGADO_TIM;
+						msg_gestor.pantallas = P_DENEGADO_PIN_ERR;
 						reg_state = R_EXIT;
 					}
 				}
 				
-				osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U); //EEE
+				else{ //PIN incompleto TIME OUT
+					msg_gestor.time_out--;
+					if(!msg_gestor.time_out){
+						info.acceso = DENEGADO;
+						msg_gestor.pantallas = P_DENEGADO_TIME_OUT;
+						reg_state = R_EXIT;
+					}
+				}
+				
+				osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 			break;
 			
 			case R_EXIT: break; //Nothing needed
 		}
-		//osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0U, 0U); //EEE 
 	}
 	
 	time_updated(&msg_gestor);
 	info.fecha = msg_gestor.time;
-	WR_Register(info);	//SSS gestionar base de datos
+	WR_Register(info);
 	
-	if(info.acceso == PERMITIDO) HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+	if(info.acceso == PERMITIDO) HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET); //Rele
 	osDelay(4000); //Tiempo PUERTA + msg final
-	if(info.acceso == PERMITIDO) HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
+	if(info.acceso == PERMITIDO) HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET); //Rele
 	
 	msg_gestor.pantallas = P_OFF;
 	osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
@@ -411,7 +412,7 @@ static void Th_gestor(void* arg){
 				case P_KEY:
 					lcd.state = ON; 
 					sprintf(lcd.L0, "     Bienvenid%s", g.p.sexo == M ? "a" : "o");
-					sprintf(lcd.L1, "%s", centrar(g.p.Nombre));
+					sprintf(lcd.L1, "%s", centrar(g.p.nombre));
 					sprintf(lcd.L2, "%s %s  PIN %s ",	g.time_out > INA_TIMEOUT ? "  " : "to",
 																						g.time_out > INA_TIMEOUT ? " " : get_str(g.time_out),
 																						(g.n_digitos == 0) ? "...." :
@@ -440,16 +441,16 @@ static void Th_gestor(void* arg){
 					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
 				
-				case P_DENEGADO_PIN:
+				case P_DENEGADO_TRJ_UNKNOWN: 
 					rgb = to_rgb(255, 0, 0);
 					lcd.state = ON; 
 					sprintf(lcd.L0, "  Acceso  Denegado  ");
 					sprintf(lcd.L1, "Tarjeta  desconocida");
-					sprintf(lcd.L2, " ID: %02x %02x %02x %02x %02x ", g.p.sNum[0], g.p.sNum[1], g.p.sNum[2], g.p.sNum[3], g.p.sNum[4] );
+					sprintf(lcd.L2, " ID: %s ", g.p.sNum);
 					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
 				
-				case P_DENEGADO_TRJ:
+				case P_DENEGADO_PIN_ERR:
 					rgb = to_rgb(255, 0, 0);
 					lcd.state = ON;
 					sprintf(lcd.L0, "  Acceso  Denegado  ");
@@ -458,7 +459,7 @@ static void Th_gestor(void* arg){
 					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
 				
-				case P_DENEGADO_TIM:
+				case P_DENEGADO_TIME_OUT:
 					rgb = to_rgb(255, 0, 0);
 					lcd.state = ON;
 					sprintf(lcd.L0, "  Acceso  Denegado  ");
@@ -475,7 +476,7 @@ static void Th_gestor(void* arg){
 					sprintf(lcd.L1, "     Bienvenid%s", g.p.sexo==M ? "a" : 
 																							g.p.sexo==H ? "o" :
 																														"x" );
-					sprintf(lcd.L2, "%s", centrar(g.p.Nombre));
+					sprintf(lcd.L2, "%s", centrar(g.p.nombre));
 					sprintf(lcd.L3, "%02d/%02d/%04d  %02d:%02d:%02d", g.time.day, g.time.month, g.time.year, g.time.hour, g.time.min, g.time.sec);
 				break;
 				
@@ -509,7 +510,7 @@ static void Th_principal(void *argument){
 
 	
 	osThreadNew(Th_gestor, NULL, NULL);
-	id_MsgQueue_gestor = osMessageQueueNew(1, sizeof(MSGQUEUE_OBJ_GESTOR), NULL);
+	id_MsgQueue_gestor = osMessageQueueNew(1, sizeof(MSGQUEUE_OBJ_GESTOR), NULL); //KKK lanzarlo en acceso
 	
 	osThreadYield();
 
