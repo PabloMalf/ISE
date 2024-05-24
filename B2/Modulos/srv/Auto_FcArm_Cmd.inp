@@ -1,11 +1,22 @@
 index.htm,
 pg_header.inc,
+pg_footer.inc,
+tcp.cgi,
 xml_http.js,
 home.png,
 keil.gif,
 logo.gif,
 llblue.jpg,
 pabb.gif,
+rtc.cgi,
+rtc.cgx,
 checking.cgi,
-checking.cgx 
+checking.cgx,
+descarga.jpg,
+entradas.html,
+background3.png,
+consumo.cgi,
+consumo.cgx,
+registrados.cgi,
+registrados.cgx 
 TO Web.c RTE NOPRINT ROOT(Web)

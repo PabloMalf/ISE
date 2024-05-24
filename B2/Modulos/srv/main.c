@@ -1,6 +1,6 @@
 #include "main.h"
 #include <stdio.h>
-#include "srv.h"
+#include "HTTP_Server.h"
 #include <string.h>
 
 #ifdef _RTE_
@@ -114,7 +114,7 @@ void Th_test(void *arg){ //Test del modulo
      strcpy(msg_srv.adtos[j], adtos[j]);
   }
   
-  msg_srv.standBy=0;
+  msg_srv.standBy=1;
 
 
 	while(1){
