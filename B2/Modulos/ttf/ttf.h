@@ -5,11 +5,9 @@
 #include "stm32f4xx_hal.h"
 
 #define REGISTROS 15
-#define CAMPOS_REG 5
-#define CAMPOS_USU 4
+#define CAMPOS 5
 
-
-typedef enum {WR = 0x08, RD = 0x00}cmd_t;
+typedef enum {WR, RD}cmd_t;
 typedef enum {REG, USER}fich_t;
 
 typedef struct{
@@ -28,7 +26,7 @@ typedef struct{
 } string;
 
 typedef struct{
-  string datos[REGISTROS][CAMPOS_REG];
+  string datos[REGISTROS][CAMPOS];
 } MSGQUEUE_OBJ_TTF_MISO;
 
 #endif
