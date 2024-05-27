@@ -394,19 +394,14 @@
               <FilePath>.\HTTP_Server_CGI.c</FilePath>
             </File>
             <File>
+              <FileName>HTTP_Server_CGI.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\HTTP_Server_CGI.h</FilePath>
+            </File>
+            <File>
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>Web\Web.c</FilePath>
-            </File>
-            <File>
-              <FileName>srv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\srv.h</FilePath>
-            </File>
-            <File>
-              <FileName>srv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\srv.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -429,11 +424,6 @@
               <FilePath>.\Web\pg_footer.inc</FilePath>
             </File>
             <File>
-              <FileName>tcp.cgi</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\tcp.cgi</FilePath>
-            </File>
-            <File>
               <FileName>xml_http.js</FileName>
               <FileType>9</FileType>
               <FilePath>.\Web\xml_http.js</FilePath>
@@ -444,16 +434,6 @@
               <FilePath>.\Web\home.png</FilePath>
             </File>
             <File>
-              <FileName>keil.gif</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\keil.gif</FilePath>
-            </File>
-            <File>
-              <FileName>logo.gif</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\logo.gif</FilePath>
-            </File>
-            <File>
               <FileName>llblue.jpg</FileName>
               <FileType>9</FileType>
               <FilePath>.\Web\llblue.jpg</FilePath>
@@ -462,16 +442,6 @@
               <FileName>pabb.gif</FileName>
               <FileType>9</FileType>
               <FilePath>.\Web\pabb.gif</FilePath>
-            </File>
-            <File>
-              <FileName>rtc.cgi</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\rtc.cgi</FilePath>
-            </File>
-            <File>
-              <FileName>rtc.cgx</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\rtc.cgx</FilePath>
             </File>
             <File>
               <FileName>checking.cgi</FileName>
@@ -487,11 +457,6 @@
               <FileName>descarga.jpg</FileName>
               <FileType>9</FileType>
               <FilePath>.\Web\descarga.jpg</FilePath>
-            </File>
-            <File>
-              <FileName>entradas.html</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\entradas.html</FilePath>
             </File>
             <File>
               <FileName>background3.png</FileName>
@@ -935,19 +900,14 @@
               <FilePath>.\HTTP_Server_CGI.c</FilePath>
             </File>
             <File>
+              <FileName>HTTP_Server_CGI.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\HTTP_Server_CGI.h</FilePath>
+            </File>
+            <File>
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>Web\Web.c</FilePath>
-            </File>
-            <File>
-              <FileName>srv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\srv.h</FilePath>
-            </File>
-            <File>
-              <FileName>srv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\srv.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -970,11 +930,6 @@
               <FilePath>.\Web\pg_footer.inc</FilePath>
             </File>
             <File>
-              <FileName>tcp.cgi</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\tcp.cgi</FilePath>
-            </File>
-            <File>
               <FileName>xml_http.js</FileName>
               <FileType>9</FileType>
               <FilePath>.\Web\xml_http.js</FilePath>
@@ -985,16 +940,6 @@
               <FilePath>.\Web\home.png</FilePath>
             </File>
             <File>
-              <FileName>keil.gif</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\keil.gif</FilePath>
-            </File>
-            <File>
-              <FileName>logo.gif</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\logo.gif</FilePath>
-            </File>
-            <File>
               <FileName>llblue.jpg</FileName>
               <FileType>9</FileType>
               <FilePath>.\Web\llblue.jpg</FilePath>
@@ -1003,16 +948,6 @@
               <FileName>pabb.gif</FileName>
               <FileType>9</FileType>
               <FilePath>.\Web\pabb.gif</FilePath>
-            </File>
-            <File>
-              <FileName>rtc.cgi</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\rtc.cgi</FilePath>
-            </File>
-            <File>
-              <FileName>rtc.cgx</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\rtc.cgx</FilePath>
             </File>
             <File>
               <FileName>checking.cgi</FileName>
@@ -1028,11 +963,6 @@
               <FileName>descarga.jpg</FileName>
               <FileType>9</FileType>
               <FilePath>.\Web\descarga.jpg</FilePath>
-            </File>
-            <File>
-              <FileName>entradas.html</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\entradas.html</FilePath>
             </File>
             <File>
               <FileName>background3.png</FileName>
