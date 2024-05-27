@@ -30,9 +30,9 @@ static void RTC_CalendarConfig(void);
 static void RTC_Show(void);
 static void Init_timers (void);
 
-//osThreadId_t get_id_Th_rtc(void){
-//	return id_Th_rtc;
-//}
+osThreadId_t get_id_Th_rtc(void){
+	return id_Th_rtc;
+}
 
 static void Timer_Callback_3min (void const *arg) {
 	 init_SNTP(); // Cada 3 min se llama al servidor SNTP
@@ -179,8 +179,13 @@ static void Th_rtc(void *argument){
 	init_rtc();
 	Init_timers();
 	osTimerStart(tim_id_3min, AUTO_SYNC_TIME_S);
+	uint32_t flags;
 	while(1){
-		//osThreadFlagsWait(FLAG_GET_HOUR, osFlagsWaitAny, osWaitForever);
+		uint32_t flags;
+		flags=osThreadFlagsWait(FLAG_GET_HOUR, osFlagsWaitAny, 100);
+		if(flags==FLAG_GET_HOUR)
+			init_SNTP();
+		 
 	  RTC_Show();
     osDelay (1000);
 	}

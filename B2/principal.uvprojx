@@ -439,11 +439,6 @@
               <FilePath>.\Modulos\rtc\rtc.c</FilePath>
             </File>
             <File>
-              <FileName>srv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Modulos\srv\srv.c</FilePath>
-            </File>
-            <File>
               <FileName>ttf.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Modulos\ttf\ttf.c</FilePath>

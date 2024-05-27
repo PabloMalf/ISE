@@ -6,10 +6,10 @@
 #include "cmsis_os2.h"  
 
 #define AUTO_SYNC_TIME_S 180000U
-//#define FLAG_GET_HOUR		 1U << 0
+#define FLAG_GET_HOUR		 1U << 0
 
 int init_Th_rtc(void);
-//osThreadId_t get_id_Th_rtc(void);
+osThreadId_t get_id_Th_rtc(void);
 
 typedef struct{
 	uint8_t sec;

@@ -9,7 +9,7 @@
 #define CAMPOS_USU 4
 
 //typedef struct{
-//  char adtos[50][20];
+//  char datos[50][20];
 //  uint8_t standBy; // 0: modo activo (red) -- 1: modo standBy (pila)
 //} MSGQUEUE_OBJ_SRV;
 

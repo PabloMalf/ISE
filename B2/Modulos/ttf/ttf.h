@@ -27,6 +27,7 @@ typedef struct{
 
 typedef struct{
   string datos[REGISTROS][CAMPOS];
+	
 } MSGQUEUE_OBJ_TTF_MISO;
 
 #endif

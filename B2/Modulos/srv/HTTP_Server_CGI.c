@@ -13,7 +13,7 @@
 static osThreadId_t id_Th_srv;
 static osMessageQueueId_t id_MsgQueue_srv;
 static void Th_srv(void *arg);
-static char adtos[50][20];
+static char datos[50][20];
 
 char fechaHora[MAX_USU][20];
 char nombre[MAX_USU][20];
@@ -51,12 +51,12 @@ void asignacion(){
    i=0;
    
   while(j<50){ //orden de la targeta: hora y fecha, nombre, identificacion, tipoAcceso
-      strcpy(fechaHora[i],adtos[j]);
+      strcpy(fechaHora[i],datos[j]);
       strcat(fechaHora[i]," ");
-      strcat(fechaHora[i],adtos[j+1]);
-      strcpy(nombre[i],adtos[j+2]);
-      strcpy(identificacion[i],adtos[j+3]);
-      strcpy(tipoAcceso[i],adtos[j+4]);
+      strcat(fechaHora[i],datos[j+1]);
+      strcpy(nombre[i],datos[j+2]);
+      strcpy(identificacion[i],datos[j+3]);
+      strcpy(tipoAcceso[i],datos[j+4]);
       j=j+5;
       i++;  
   }
@@ -84,7 +84,7 @@ __NO_RETURN void Th_srv (void *arg) {
    osMessageQueueGet(get_id_MsgQueue_srv(), &msg_srv, NULL, osWaitForever);
       if(msg_srv.standBy==0){
         for (j = 0; j < 50; j++) {
-          strcpy(adtos[j], msg_srv.adtos[j]);
+          strcpy(datos[j], msg_srv.datos[j]);
          }
          asignacion();
       }

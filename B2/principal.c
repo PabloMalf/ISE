@@ -58,14 +58,14 @@ typedef struct{
 	MSGQUEUE_OBJ_TTF_MISO ttf_miso;
 }msg_t;
 
-static MSGQUEUE_OBJ_SRV msg_srv = {.adtos = {
-		{"12:12:12"}, {"11/05/2024"}, {"Admin"},   {"111111111"}, {"permitido"},
-		{"13:44:23"}, {"12/05/2024"}, {"Claudia"}, {"222222222"}, {"denegado"},
-		{"13:45:11"}, {"12/05/2024"}, {"Maria"},   {"333333333"}, {"permitido"},
-		{"22:40:11"}, {"14/05/2024"}, {"---"},     {"---"},       {"desconocido"},
-		{"13:45:11"}, {"14/05/2024"}, {"Manuel"},  {"444444444"}, {"permitido"},
-		{"22:30:31"}, {"15/05/2024"}, {"---"},     {"---"},       {"desconocido"}
-}};
+//static MSGQUEUE_OBJ_SRV msg_srv = {.adtos = {
+//		{"12:12:12"}, {"11/05/2024"}, {"Admin"},   {"111111111"}, {"permitido"},
+//		{"13:44:23"}, {"12/05/2024"}, {"Claudia"}, {"222222222"}, {"denegado"},
+//		{"13:45:11"}, {"12/05/2024"}, {"Maria"},   {"333333333"}, {"permitido"},
+//		{"22:40:11"}, {"14/05/2024"}, {"---"},     {"---"},       {"desconocido"},
+//		{"13:45:11"}, {"14/05/2024"}, {"Manuel"},  {"444444444"}, {"permitido"},
+//		{"22:30:31"}, {"15/05/2024"}, {"---"},     {"---"},       {"desconocido"}
+//}};
 
 const INFO_PERSONA_T personas_autorizadas [] = {
 	{.nombre = "Admin",		.sexo = poco, .pin = "*##*", .sNum = "83 6a 79 fa 6a"},
@@ -226,8 +226,18 @@ static MSGQUEUE_OBJ_RGB to_rgb(uint8_t r, uint8_t g, uint8_t b){
 
 static void post_sv(void){
 	MSGQUEUE_OBJ_RGB rgb;
+	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi;
+  MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso;
+		int i,j=0;
+	
+	//Leer fichero registros
+	msg_ttf_mosi.cmd = RD; 
+	msg_ttf_mosi.fichero = REG ;
+	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
+	osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
+		
 	//pillar adc
-	osMessageQueuePut(get_id_MsgQueue_srv(), &msg_srv, 0U, 0U); //kkk sss
+	//osMessageQueuePut(get_id_MsgQueue_srv(), &msg_srv, 0U, 0U); //kkk sss
 	rgb = to_rgb(0, 0, 255);
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb, 0U, 0U);
 	osDelay(100);
@@ -265,6 +275,8 @@ static void registro_acceso(void){
 	MSGQUEUE_OBJ_RGB msg_rgb;
 	MSGQUEUE_OBJ_KEY msg_key;
 	MSGQUEUE_OBJ_BUZ msg_buz = {750, 200, 5};
+	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi;
+	MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso;
 	INFO_REGISTRO_T info = {.persona.nombre = "---", .persona.sNum = "---"};
 	
 	osStatus_t error;
@@ -290,10 +302,22 @@ static void registro_acceso(void){
 					reg_state = R_EXIT;
 				}
 				else{
-					aux = get_persona(msg_nfc.sNum); //iii
-					if(aux != -1){ // Acceso autorizado
-						info.persona = personas_autorizadas[aux];//iii
-						
+					// PUT cola mosi RD USER y sNum 
+					//aux = get_persona(msg_nfc.sNum); //iii
+					strcpy(msg_ttf_mosi.data,msg_nfc.sNum);
+					msg_ttf_mosi.cmd = RD, 
+					msg_ttf_mosi.fichero = USER ;
+					osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
+					osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
+					
+					//if(aux != -1){ // Acceso autorizado
+					if(strncmp(msg_ttf_miso.datos[0][0].valor, "ID FAIL",7)!=0){ // Acceso autorizado
+						//info.persona = personas_autorizadas[aux];//iii
+						strcpy(info.persona.sNum,msg_ttf_miso.datos[0][0].valor);
+						strcpy(info.persona.nombre,msg_ttf_miso.datos[0][1].valor);
+						strcpy(info.persona.pin,msg_ttf_miso.datos[0][2].valor);
+						info.persona.sexo = (msg_ttf_miso.datos[0][3].valor[0] == 'H') ? H : M;
+
 						msg_gestor.p = info.persona;
 						msg_gestor.pantallas = P_KEY;
 						msg_gestor.n_digitos = 0;
@@ -513,7 +537,7 @@ static void Th_principal(void *argument){
 	id_MsgQueue_gestor = osMessageQueueNew(1, sizeof(MSGQUEUE_OBJ_GESTOR), NULL); //KKK lanzarlo en acceso
 	
 	osThreadYield();
-
+  osThreadFlagsSet(get_id_Th_rtc(),FLAG_GET_HOUR);
 	ali_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) ? MAIN_PSU : BATTERY_PSU;
 	switch(ali_state){
 		case MAIN_PSU:

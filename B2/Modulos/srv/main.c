@@ -32,7 +32,7 @@ static osThreadId_t id_Th_test;
 static int	init_Th_test(void);
 static void Th_test(void *arg);
 
-static char adtos[50][20];
+static char datos[50][20];
 
 static void Error_Handler(void);	
 static void SystemClock_Config(void);
@@ -67,51 +67,51 @@ void Th_test(void *arg){ //Test del modulo
   MSGQUEUE_OBJ_SRV msg_srv;
   int j;
   
-  sprintf(adtos[0],"12:12:12");
-  sprintf(adtos[1],"12/12/2023");
-  sprintf(adtos[2],"Claudia");
-  sprintf(adtos[3],"111111111");
-  sprintf(adtos[4],"permitido");
+  sprintf(datos[0],"12:12:12");
+  sprintf(datos[1],"12/12/2023");
+  sprintf(datos[2],"Claudia");
+  sprintf(datos[3],"111111111");
+  sprintf(datos[4],"permitido");
   
-  sprintf(adtos[5],"44:44:44");
-  sprintf(adtos[6],"44/44/2024");
-  sprintf(adtos[7],"Roberto");
-  sprintf(adtos[8],"222222222");
-  sprintf(adtos[9],"desconocido");
+  sprintf(datos[5],"44:44:44");
+  sprintf(datos[6],"44/44/2024");
+  sprintf(datos[7],"Roberto");
+  sprintf(datos[8],"222222222");
+  sprintf(datos[9],"desconocido");
   
-  sprintf(adtos[10],"44:44:44");
-  sprintf(adtos[11],"44/44/2024");
-  sprintf(adtos[12],"Andrea");
-  sprintf(adtos[13],"333333333");
-  sprintf(adtos[14],"denegado");
+  sprintf(datos[10],"44:44:44");
+  sprintf(datos[11],"44/44/2024");
+  sprintf(datos[12],"Andrea");
+  sprintf(datos[13],"333333333");
+  sprintf(datos[14],"denegado");
   
-  sprintf(adtos[15],"44:44:44");
-  sprintf(adtos[16],"44/44/2024");
-  sprintf(adtos[17],"Andrea");
-  sprintf(adtos[18],"333333333");
-  sprintf(adtos[19],"denegado");
+  sprintf(datos[15],"44:44:44");
+  sprintf(datos[16],"44/44/2024");
+  sprintf(datos[17],"Andrea");
+  sprintf(datos[18],"333333333");
+  sprintf(datos[19],"denegado");
   
-  sprintf(adtos[20],"44:44:44");
-  sprintf(adtos[21],"44/44/2024");
-  sprintf(adtos[22],"Andrea");
-  sprintf(adtos[23],"333333333");
-  sprintf(adtos[24],"denegado");
+  sprintf(datos[20],"44:44:44");
+  sprintf(datos[21],"44/44/2024");
+  sprintf(datos[22],"Andrea");
+  sprintf(datos[23],"333333333");
+  sprintf(datos[24],"denegado");
   
-  sprintf(adtos[25],"44:44:44");
-  sprintf(adtos[26],"44/44/2024");
-  sprintf(adtos[27],"Andrea");
-  sprintf(adtos[28],"333333333");
-  sprintf(adtos[29],"denegado");
+  sprintf(datos[25],"44:44:44");
+  sprintf(datos[26],"44/44/2024");
+  sprintf(datos[27],"Andrea");
+  sprintf(datos[28],"333333333");
+  sprintf(datos[29],"denegado");
   
-  sprintf(adtos[30],"44:44:44");
-  sprintf(adtos[31],"44/44/2024");
-  sprintf(adtos[32],"Andrea");
-  sprintf(adtos[33],"333333333");
-  sprintf(adtos[34],"denegado");
+  sprintf(datos[30],"44:44:44");
+  sprintf(datos[31],"44/44/2024");
+  sprintf(datos[32],"Andrea");
+  sprintf(datos[33],"333333333");
+  sprintf(datos[34],"denegado");
   
   
   for (j = 0; j < 50; j++) {
-     strcpy(msg_srv.adtos[j], adtos[j]);
+     strcpy(msg_srv.datos[j], datos[j]);
   }
   
   msg_srv.standBy=0;

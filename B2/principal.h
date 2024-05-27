@@ -11,7 +11,7 @@
 #include "nfc.h"
 #include "rgb.h"
 #include "rtc.h"
-#include "srv.h"
+//#include "srv.h"
 #include "ttf.h"
 
 int init_Th_principal(void);
