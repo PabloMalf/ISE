@@ -33,7 +33,6 @@ static int	init_Th_test(void);
 static void Th_test(void *arg);
 
 
-
 static void Error_Handler(void);	
 static void SystemClock_Config(void);
 
@@ -66,7 +65,6 @@ int init_Th_test(void){
 void Th_test(void *arg){ //Test del modulo
   MSGQUEUE_OBJ_SRV msg_srv;
 
-  
 sprintf(msg_srv.datos[0][0].valor, "11:11:11");
 sprintf(msg_srv.datos[0][1].valor, "11/11/2011");
 sprintf(msg_srv.datos[0][2].valor, "Andrea");
@@ -90,6 +88,7 @@ sprintf(msg_srv.datos[3][1].valor, "24/04/2024");
 sprintf(msg_srv.datos[3][2].valor, "Cojonciado");
 sprintf(msg_srv.datos[3][3].valor, "44 44 44 44");
 sprintf(msg_srv.datos[3][4].valor, "admitido");
+
   
   msg_srv.standBy=0;
 

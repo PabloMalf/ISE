@@ -13,7 +13,7 @@
 static osThreadId_t id_Th_srv;
 static osMessageQueueId_t id_MsgQueue_srv;
 static void Th_srv(void *arg);
-static char adtos[50][20];
+static char datos[50][20];
 
 char fechaHora[MAX_USU][20];
 char nombre[MAX_USU][20];
@@ -51,12 +51,12 @@ void asignacion(){
    i=0;
    
   while(j<50){ //orden de la targeta: hora y fecha, nombre, identificacion, tipoAcceso
-      strcpy(fechaHora[i],adtos[j]);
+      strcpy(fechaHora[i],datos[j]);
       strcat(fechaHora[i]," ");
-      strcat(fechaHora[i],adtos[j+1]);
-      strcpy(nombre[i],adtos[j+2]);
-      strcpy(identificacion[i],adtos[j+3]);
-      strcpy(tipoAcceso[i],adtos[j+4]);
+      strcat(fechaHora[i],datos[j+1]);
+      strcpy(nombre[i],datos[j+2]);
+      strcpy(identificacion[i],datos[j+3]);
+      strcpy(tipoAcceso[i],datos[j+4]);
       j=j+5;
       i++;  
   }
@@ -85,12 +85,13 @@ __NO_RETURN void Th_srv (void *arg) {
       if(msg_srv.standBy==0){ // si NO nos encontramos en modo bajo consumo
         for (j = 0; j < REGISTROS; j++) { // recorremos todos los registros
 						i=0;
-						  strcpy(fechaHora[j],msg_srv.datos[j][i].valor);
-							strcpy(nombre[j],msg_srv.datos[j][i+1].valor);
-							strcpy(identificacion[j],msg_srv.datos[j][i+3].valor);
-							strcpy(tipoAcceso[j],msg_srv.datos[j][i+4].valor);
+					    strcpy(identificacion[j],msg_srv.datos[j][0].valor);
+						  strcpy(fechaHora[j],msg_srv.datos[j][1].valor);
+							strcpy(nombre[j],msg_srv.datos[j][2].valor);
+							strcpy(tipoAcceso[j],msg_srv.datos[j][3].valor);
+
          }
-         
+         memset(mensajeInfo, '\0', sizeof(mensajeInfo));
       }
       else{
         modoAhorro();

@@ -8,7 +8,6 @@
 #define CAMPOS_REG 5
 #define CAMPOS_USU 4
 
-
 typedef struct{
   char nombre[15];
   char pin[4];
