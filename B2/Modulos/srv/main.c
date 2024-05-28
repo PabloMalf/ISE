@@ -32,7 +32,7 @@ static osThreadId_t id_Th_test;
 static int	init_Th_test(void);
 static void Th_test(void *arg);
 
-static char adtos[50][20];
+
 
 static void Error_Handler(void);	
 static void SystemClock_Config(void);
@@ -65,54 +65,31 @@ int init_Th_test(void){
 
 void Th_test(void *arg){ //Test del modulo
   MSGQUEUE_OBJ_SRV msg_srv;
-  int j;
+
   
-  sprintf(adtos[0],"12:12:12");
-  sprintf(adtos[1],"12/12/2023");
-  sprintf(adtos[2],"Claudia");
-  sprintf(adtos[3],"111111111");
-  sprintf(adtos[4],"permitido");
-  
-  sprintf(adtos[5],"44:44:44");
-  sprintf(adtos[6],"44/44/2024");
-  sprintf(adtos[7],"Roberto");
-  sprintf(adtos[8],"222222222");
-  sprintf(adtos[9],"desconocido");
-  
-  sprintf(adtos[10],"44:44:44");
-  sprintf(adtos[11],"44/44/2024");
-  sprintf(adtos[12],"Andrea");
-  sprintf(adtos[13],"333333333");
-  sprintf(adtos[14],"denegado");
-  
-  sprintf(adtos[15],"44:44:44");
-  sprintf(adtos[16],"44/44/2024");
-  sprintf(adtos[17],"Andrea");
-  sprintf(adtos[18],"333333333");
-  sprintf(adtos[19],"denegado");
-  
-  sprintf(adtos[20],"44:44:44");
-  sprintf(adtos[21],"44/44/2024");
-  sprintf(adtos[22],"Andrea");
-  sprintf(adtos[23],"333333333");
-  sprintf(adtos[24],"denegado");
-  
-  sprintf(adtos[25],"44:44:44");
-  sprintf(adtos[26],"44/44/2024");
-  sprintf(adtos[27],"Andrea");
-  sprintf(adtos[28],"333333333");
-  sprintf(adtos[29],"denegado");
-  
-  sprintf(adtos[30],"44:44:44");
-  sprintf(adtos[31],"44/44/2024");
-  sprintf(adtos[32],"Andrea");
-  sprintf(adtos[33],"333333333");
-  sprintf(adtos[34],"denegado");
-  
-  
-  for (j = 0; j < 50; j++) {
-     strcpy(msg_srv.adtos[j], adtos[j]);
-  }
+sprintf(msg_srv.datos[0][0].valor, "11:11:11");
+sprintf(msg_srv.datos[0][1].valor, "11/11/2011");
+sprintf(msg_srv.datos[0][2].valor, "Andrea");
+sprintf(msg_srv.datos[0][3].valor, "11 11 11 11");
+sprintf(msg_srv.datos[0][4].valor, "denegado");
+	
+sprintf(msg_srv.datos[1][0].valor, "22:22:22");
+sprintf(msg_srv.datos[1][1].valor, "22/02/2022");
+sprintf(msg_srv.datos[1][2].valor, "Juan");
+sprintf(msg_srv.datos[1][3].valor, "22 22 22 22");
+sprintf(msg_srv.datos[1][4].valor, "desconocido");
+
+sprintf(msg_srv.datos[2][0].valor, "33:23:23");
+sprintf(msg_srv.datos[2][1].valor, "31/03/2023");
+sprintf(msg_srv.datos[2][2].valor, "Eustaquio");
+sprintf(msg_srv.datos[2][3].valor, "33 33 33 33");
+sprintf(msg_srv.datos[2][4].valor, "admitido");
+	
+sprintf(msg_srv.datos[3][0].valor, "44:44:00");
+sprintf(msg_srv.datos[3][1].valor, "24/04/2024");
+sprintf(msg_srv.datos[3][2].valor, "Cojonciado");
+sprintf(msg_srv.datos[3][3].valor, "44 44 44 44");
+sprintf(msg_srv.datos[3][4].valor, "admitido");
   
   msg_srv.standBy=0;
 

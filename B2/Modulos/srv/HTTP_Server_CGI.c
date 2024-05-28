@@ -75,18 +75,22 @@ void modoAhorro(){
 
 __NO_RETURN void Th_srv (void *arg) {
   (void)arg;
-  int j;
+  int j,i;
   MSGQUEUE_OBJ_SRV msg_srv;
   Init_MsgQueue_srv();
   
   netInitialize();
   while(1){
    osMessageQueueGet(get_id_MsgQueue_srv(), &msg_srv, NULL, osWaitForever);
-      if(msg_srv.standBy==0){
-        for (j = 0; j < 50; j++) {
-          strcpy(adtos[j], msg_srv.adtos[j]);
+      if(msg_srv.standBy==0){ // si NO nos encontramos en modo bajo consumo
+        for (j = 0; j < REGISTROS; j++) { // recorremos todos los registros
+						i=0;
+						  strcpy(fechaHora[j],msg_srv.datos[j][i].valor);
+							strcpy(nombre[j],msg_srv.datos[j][i+1].valor);
+							strcpy(identificacion[j],msg_srv.datos[j][i+3].valor);
+							strcpy(tipoAcceso[j],msg_srv.datos[j][i+4].valor);
          }
-         asignacion();
+         
       }
       else{
         modoAhorro();

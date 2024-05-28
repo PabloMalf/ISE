@@ -8,10 +8,6 @@
 #define CAMPOS_REG 5
 #define CAMPOS_USU 4
 
-//typedef struct{
-//  char adtos[50][20];
-//  uint8_t standBy; // 0: modo activo (red) -- 1: modo standBy (pila)
-//} MSGQUEUE_OBJ_SRV;
 
 typedef struct{
   char nombre[15];
