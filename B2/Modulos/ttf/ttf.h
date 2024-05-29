@@ -23,10 +23,10 @@ osMessageQueueId_t get_id_MsgQueue_ttf_mosi(void);
 
 typedef struct{
   char valor[20];
-} string;
+} String;
 
 typedef struct{
-  string datos[REGISTROS][CAMPOS];
+  String datos[REGISTROS][CAMPOS];
 	//uint8_t eof;
 } MSGQUEUE_OBJ_TTF_MISO;
 

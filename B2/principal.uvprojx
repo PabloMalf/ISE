@@ -134,15 +134,15 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>-1</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
-          <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
-          <pFcArmRoot></pFcArmRoot>
+          <pFcarmOut>Web.c</pFcarmOut>
+          <pFcarmGrp>Source Group 1</pFcarmGrp>
+          <pFcArmRoot>.\Modulos\srv\Web</pFcArmRoot>
           <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>HSE_VALUE=8000000</Define>
               <Undefine></Undefine>
-              <IncludePath>.\Modulos\buz;.\Modulos\cam;.\Modulos\irq;.\Modulos\key;.\Modulos\lcd;.\Modulos\nfc;.\Modulos\rgb;.\Modulos\rtc;.\Modulos\srv;.\Modulos\ttf</IncludePath>
+              <IncludePath>.\Modulos\buz;.\Modulos\cam;.\Modulos\irq;.\Modulos\key;.\Modulos\lcd;.\Modulos\nfc;.\Modulos\rgb;.\Modulos\rtc;.\Modulos\srv;.\Modulos\ttf;.\Modulos\srv\Web</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -393,6 +393,11 @@
               <FileType>1</FileType>
               <FilePath>.\principal.c</FilePath>
             </File>
+            <File>
+              <FileName>Web.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Modulos\srv\Web\Web.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -442,6 +447,96 @@
               <FileName>ttf.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Modulos\ttf\ttf.c</FilePath>
+            </File>
+            <File>
+              <FileName>HTTP_Server_CGI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Modulos\srv\HTTP_Server_CGI.c</FilePath>
+            </File>
+            <File>
+              <FileName>HTTP_Server_CGI.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Modulos\srv\HTTP_Server_CGI.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Web Files</GroupName>
+          <Files>
+            <File>
+              <FileName>background3.png</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\background3.png</FilePath>
+            </File>
+            <File>
+              <FileName>checking.cgi</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\checking.cgi</FilePath>
+            </File>
+            <File>
+              <FileName>checking.cgx</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\checking.cgx</FilePath>
+            </File>
+            <File>
+              <FileName>descarga.jpg</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\descarga.jpg</FilePath>
+            </File>
+            <File>
+              <FileName>home.png</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\home.png</FilePath>
+            </File>
+            <File>
+              <FileName>index.htm</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\index.htm</FilePath>
+            </File>
+            <File>
+              <FileName>keil.gif</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\keil.gif</FilePath>
+            </File>
+            <File>
+              <FileName>language.cgi</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\language.cgi</FilePath>
+            </File>
+            <File>
+              <FileName>llblue.jpg</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\llblue.jpg</FilePath>
+            </File>
+            <File>
+              <FileName>pabb.gif</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\pabb.gif</FilePath>
+            </File>
+            <File>
+              <FileName>pg_footer.inc</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Modulos\srv\Web\pg_footer.inc</FilePath>
+            </File>
+            <File>
+              <FileName>pg_header.inc</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Modulos\srv\Web\pg_header.inc</FilePath>
+            </File>
+            <File>
+              <FileName>registrados.cgi</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\registrados.cgi</FilePath>
+            </File>
+            <File>
+              <FileName>registrados.cgx</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\registrados.cgx</FilePath>
+            </File>
+            <File>
+              <FileName>xml_http.js</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\xml_http.js</FilePath>
             </File>
           </Files>
         </Group>

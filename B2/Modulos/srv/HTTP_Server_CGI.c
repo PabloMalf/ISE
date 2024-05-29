@@ -10,6 +10,19 @@
 #define MAX_USU 20
 #define MSGQUEUE_OBJECTS_SRV 1
 
+#define REGISTROS 15
+#define CAMPOS_REG 5
+#define CAMPOS_USU 4
+
+typedef struct{
+  char valor[20];
+} string;
+
+typedef struct{
+  string datos[REGISTROS][CAMPOS_REG];
+	uint8_t standBy; // 0: modo activo (red) -- 1: modo standBy (pila)
+} MSGQUEUE_OBJ_SRV;
+
 static osThreadId_t id_Th_srv;
 static osMessageQueueId_t id_MsgQueue_srv;
 static void Th_srv(void *arg);
@@ -25,7 +38,8 @@ char mensajeInfo[50];
 static int Init_MsgQueue_srv(void);
 
 int init_Th_srv(void){
-	id_Th_srv = osThreadNew(Th_srv, NULL, NULL);
+	const osThreadAttr_t attr = {.stack_size = 4096};
+	id_Th_srv = osThreadNew(Th_srv, NULL, &attr);
 	if(id_Th_srv == NULL)
 		return(-1);
 	return(0);
@@ -73,30 +87,30 @@ void modoAhorro(){
   strcpy(mensajeInfo,"Lo sentimos, el servidor no se encuentra disponible, por favor inténtelo más tarde, gracias");
 }
 
-__NO_RETURN void Th_srv (void *arg) {
+static void Th_srv (void *arg) {
   (void)arg;
-  int j,i;
+  int j;
   MSGQUEUE_OBJ_SRV msg_srv;
   Init_MsgQueue_srv();
   
   netInitialize();
-  while(1){
-   osMessageQueueGet(get_id_MsgQueue_srv(), &msg_srv, NULL, osWaitForever);
-      if(msg_srv.standBy==0){ // si NO nos encontramos en modo bajo consumo
-        for (j = 0; j < REGISTROS; j++) { // recorremos todos los registros
-						i=0;
-					    strcpy(identificacion[j],msg_srv.datos[j][0].valor);
-						  strcpy(fechaHora[j],msg_srv.datos[j][1].valor);
-							strcpy(nombre[j],msg_srv.datos[j][2].valor);
-							strcpy(tipoAcceso[j],msg_srv.datos[j][3].valor);
+//  while(1){
+//   osMessageQueueGet(get_id_MsgQueue_srv(), &msg_srv, NULL, osWaitForever);
+//      if(msg_srv.standBy==0){ // si NO nos encontramos en modo bajo consumo
+//        for (j = 0; j < REGISTROS; j++) { // recorremos todos los registros
+//						
+//					    strcpy(identificacion[j],msg_srv.datos[j][0].valor);
+//						  strcpy(fechaHora[j],msg_srv.datos[j][1].valor);
+//							strcpy(nombre[j],msg_srv.datos[j][2].valor);
+//							strcpy(tipoAcceso[j],msg_srv.datos[j][3].valor);
 
-         }
-         memset(mensajeInfo, '\0', sizeof(mensajeInfo));
-      }
-      else{
-        modoAhorro();
-      }
-  }
+//         }
+//         memset(mensajeInfo, '\0', sizeof(mensajeInfo));
+//      }
+//      else{
+//        modoAhorro();
+//      }
+//  }
 }
 
 
