@@ -30,9 +30,9 @@ static void RTC_CalendarConfig(void);
 static void RTC_Show(void);
 static void Init_timers (void);
 
-//osThreadId_t get_id_Th_rtc(void){
-//	return id_Th_rtc;
-//}
+osThreadId_t get_id_Th_rtc(void){
+	return id_Th_rtc;
+}
 
 static void Timer_Callback_3min (void const *arg) {
 	 init_SNTP(); // Cada 3 min se llama al servidor SNTP
@@ -103,19 +103,20 @@ static void RTC_CalendarConfig(void){
 
 
 static void init_rtc(void){
-  RtcHandle.Instance = RTC; 
-  RtcHandle.Init.HourFormat = RTC_HOURFORMAT_24;
-  RtcHandle.Init.AsynchPrediv = RTC_ASYNCH_PREDIV;
-  RtcHandle.Init.SynchPrediv = RTC_SYNCH_PREDIV;
-  RtcHandle.Init.OutPut = RTC_OUTPUT_DISABLE;
-  RtcHandle.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-  RtcHandle.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-  __HAL_RTC_RESET_HANDLE_STATE(&RtcHandle);
-	
-  HAL_RTC_Init(&RtcHandle);
+ 
 	//RTC_CalendarConfig();
 	if (HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1) != 0x32F2){
-    init_SNTP();
+		  RtcHandle.Instance = RTC; 
+			RtcHandle.Init.HourFormat = RTC_HOURFORMAT_24;
+			RtcHandle.Init.AsynchPrediv = RTC_ASYNCH_PREDIV;
+			RtcHandle.Init.SynchPrediv = RTC_SYNCH_PREDIV;
+			RtcHandle.Init.OutPut = RTC_OUTPUT_DISABLE;
+			RtcHandle.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+			RtcHandle.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+			__HAL_RTC_RESET_HANDLE_STATE(&RtcHandle);
+
+			HAL_RTC_Init(&RtcHandle);
+  		init_SNTP();
   }
 	else
   __HAL_RCC_CLEAR_RESET_FLAGS();
@@ -138,12 +139,12 @@ static void RTC_Show(){
 
 
 static void init_SNTP (void) {
-  netStatus status = netSNTPc_GetTime (NULL, time_callback);
+  netSNTPc_GetTime (NULL, time_callback);
 }
 
 
 static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
-  if (seconds != 0) {
+  if(seconds != 0){
 		ts = *localtime(&seconds);
 		sdatestructure.Year = ts.tm_year - 100;
 		sdatestructure.Month = ts.tm_mon + 1;
@@ -163,14 +164,6 @@ static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
 	
 		HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2);
   }
-	else{
-    if (HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1) != 0x32F2){
-     RTC_CalendarConfig();
-    }
-	  else
-     __HAL_RCC_CLEAR_RESET_FLAGS();
-	}
-	
 }
 
 
@@ -179,8 +172,13 @@ static void Th_rtc(void *argument){
 	init_rtc();
 	Init_timers();
 	osTimerStart(tim_id_3min, AUTO_SYNC_TIME_S);
+	uint32_t flags;
 	while(1){
-		//osThreadFlagsWait(FLAG_GET_HOUR, osFlagsWaitAny, osWaitForever);
+		uint32_t flags;
+		flags=osThreadFlagsWait(FLAG_GET_HOUR, osFlagsWaitAny, 100);
+		if(flags==FLAG_GET_HOUR)
+			init_SNTP();
+		 
 	  RTC_Show();
     osDelay (1000);
 	}

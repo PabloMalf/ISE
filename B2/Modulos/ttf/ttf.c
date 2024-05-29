@@ -106,7 +106,7 @@ static void Th_ttf(void *arguments){
 					
 							if(feof(f)){
 								//msg no encontrado
-								sprintf(msg_ttf_miso.datos[0][0].valor,"ID no encontrado");
+								sprintf(msg_ttf_miso.datos[0][0].valor,"ID FAIL");
 							}
 							else{
 								j=0;
@@ -143,10 +143,9 @@ static void Th_ttf(void *arguments){
 					funmount("M0:");
 					funinit("M0:");
 							
-					osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
+					osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, 0, 0);
 	 }
   }		
  }
 }
-
 

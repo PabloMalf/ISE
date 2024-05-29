@@ -4,7 +4,7 @@
 #include "cmsis_os2.h"
 #include "stm32f4xx_hal.h"
 
-#define REGISTROS 15
+#define REGISTROS 20
 #define CAMPOS 5
 
 typedef enum {WR, RD}cmd_t;
@@ -27,7 +27,7 @@ typedef struct{
 
 typedef struct{
   string datos[REGISTROS][CAMPOS];
+	//uint8_t eof;
 } MSGQUEUE_OBJ_TTF_MISO;
 
 #endif
-
