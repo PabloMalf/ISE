@@ -27,14 +27,26 @@ uint32_t HAL_GetTick(void){
 }
 #endif
 
+#define REGISTROS 15
+#define CAMPOS_REG 5
+#define CAMPOS_USU 4
+
 static osThreadId_t id_Th_test;
 
 static int	init_Th_test(void);
 static void Th_test(void *arg);
 
-
 static void Error_Handler(void);	
 static void SystemClock_Config(void);
+
+typedef struct{
+  char valor[20];
+} string;
+
+typedef struct{
+  string datos[REGISTROS][CAMPOS_REG];
+	uint8_t standBy; // 0: modo activo (red) -- 1: modo standBy (pila)
+} MSGQUEUE_OBJ_SRV;
 
 int main(void){
   HAL_Init();

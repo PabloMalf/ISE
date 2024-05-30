@@ -133,7 +133,7 @@ int init_Th_principal(void){
 	int lcd = init_Th_lcd();
 	int rgb = init_Th_rgb();
 	int nfc = init_Th_nfc();
-	//int srv = init_Th_srv();//---
+	int srv = init_Th_srv();//---
 	int ttf = init_Th_ttf();//
 	
 	return(0);
@@ -252,6 +252,7 @@ static void post_sv(void){
 		
 	//pillar adc
 	//osMessageQueuePut(get_id_MsgQueue_srv(), &msg_srv, 0U, 0U); //kkk sss
+	osMessageQueuePut(get_id_MsgQueue_srv(), &msg_ttf_miso, 0U, 0U); //kkk sss
 	rgb = to_rgb(0, 0, 255);
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb, 0U, 0U);
 	osDelay(100);

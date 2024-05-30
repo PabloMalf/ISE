@@ -10,7 +10,7 @@
 #define MAX_USU 20
 #define MSGQUEUE_OBJECTS_SRV 1
 
-#define REGISTROS 15
+#define REGISTROS 20
 #define CAMPOS_REG 5
 #define CAMPOS_USU 4
 
@@ -92,25 +92,25 @@ static void Th_srv (void *arg) {
   int j;
   MSGQUEUE_OBJ_SRV msg_srv;
   Init_MsgQueue_srv();
+  //netInitialize();
   
-  netInitialize();
-//  while(1){
-//   osMessageQueueGet(get_id_MsgQueue_srv(), &msg_srv, NULL, osWaitForever);
-//      if(msg_srv.standBy==0){ // si NO nos encontramos en modo bajo consumo
-//        for (j = 0; j < REGISTROS; j++) { // recorremos todos los registros
-//						
-//					    strcpy(identificacion[j],msg_srv.datos[j][0].valor);
-//						  strcpy(fechaHora[j],msg_srv.datos[j][1].valor);
-//							strcpy(nombre[j],msg_srv.datos[j][2].valor);
-//							strcpy(tipoAcceso[j],msg_srv.datos[j][3].valor);
+  while(1){
+   osMessageQueueGet(get_id_MsgQueue_srv(), &msg_srv, NULL, 500U);
+      if(msg_srv.standBy==0){ // si NO nos encontramos en modo bajo consumo
+        for (j = 0; j < REGISTROS; j++) { // recorremos todos los registros
+					// Fecha Hora Nombre iD, Acceso
+					    strcpy(fechaHora[j],msg_srv.datos[j][0].valor);
+						  strcpy(nombre[j],msg_srv.datos[j][2].valor);
+							strcpy(identificacion[j],msg_srv.datos[j][3].valor);
+							strcpy(tipoAcceso[j],msg_srv.datos[j][4].valor);
 
-//         }
-//         memset(mensajeInfo, '\0', sizeof(mensajeInfo));
-//      }
-//      else{
-//        modoAhorro();
-//      }
-//  }
+         }
+         memset(mensajeInfo, '\0', sizeof(mensajeInfo));
+      }
+      else{
+        modoAhorro();
+      }
+  }
 }
 
 
