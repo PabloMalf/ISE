@@ -14,6 +14,14 @@ int init_Th_ttf(void);
 static void Th_ttf(void *arg);
 static int Init_MsgQueue_ttf_mosi(void);
 static int Init_MsgQueue_ttf_miso(void);
+static void ttf_WR_RD(void);
+
+static FILE *f;
+static MSGQUEUE_OBJ_TTF_MOSI msg_ttf;
+static MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso; 
+static char *token;
+static char line [50];
+static int i,j = 0;
 
 void get_next_line(FILE *f, char exit [50]);
 
@@ -57,20 +65,10 @@ void get_next_line(FILE *f, char exit [50]){
 	}
 }
 
-static void Th_ttf(void *arguments){	
-	FILE *f;
-  MSGQUEUE_OBJ_TTF_MOSI msg_ttf;
-	MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso; 
-	char *token;
-	char line [50];
-	int i,j = 0;
-	Init_MsgQueue_ttf_miso();
-  Init_MsgQueue_ttf_mosi();
-
-	while(1){
-		if (osOK == osMessageQueueGet(get_id_MsgQueue_ttf_mosi(), &msg_ttf, NULL, osWaitForever)){
-			
-			 if(msg_ttf.cmd==WR){
+static void ttf_WR_RD(void){
+	
+				 if(msg_ttf.cmd==WR){
+				 
 					if(fsOK != finit("M0:")) return;
 				  if(fsOK != fmount("M0:")) return;
 				 
@@ -145,6 +143,17 @@ static void Th_ttf(void *arguments){
 							
 					osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, 0, 0);
 	 }
+	
+}
+
+static void Th_ttf(void *arguments){	
+
+	Init_MsgQueue_ttf_miso();
+  Init_MsgQueue_ttf_mosi();
+
+	while(1){
+		if (osOK == osMessageQueueGet(get_id_MsgQueue_ttf_mosi(), &msg_ttf, NULL, osWaitForever)){
+			ttf_WR_RD();
   }		
  }
 }

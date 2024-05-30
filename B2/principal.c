@@ -131,9 +131,9 @@ int init_Th_principal(void){
 	//int cam = init_Th_cam();
 	int key = init_Th_key();
 	int lcd = init_Th_lcd();
-	int nfc = init_Th_nfc();
 	int rgb = init_Th_rgb();
-	int srv = init_Th_srv();//---
+	int nfc = init_Th_nfc();
+	//int srv = init_Th_srv();//---
 	int ttf = init_Th_ttf();//
 	
 	return(0);
@@ -245,6 +245,10 @@ static void post_sv(void){
 	msg_ttf_mosi.fichero = REG ;
 	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
 	osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
+	//if (osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1500U) != osOK) return;
+	//osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1500U);
+	
+	
 		
 	//pillar adc
 	//osMessageQueuePut(get_id_MsgQueue_srv(), &msg_srv, 0U, 0U); //kkk sss
@@ -319,33 +323,35 @@ static void registro_acceso(void){
 					msg_ttf_mosi.cmd = RD, 
 					msg_ttf_mosi.fichero = USER ;
 					osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
-					osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
-					
-					//if(aux != -1){ // Acceso autorizado
-					if(strncmp(msg_ttf_miso.datos[0][0].valor, "ID FAIL",7)!=0){ // Acceso autorizado
-						//info.persona = personas_autorizadas[aux];//iii
-						strcpy(info.persona.sNum,msg_ttf_miso.datos[0][0].valor);
-						strcpy(info.persona.nombre,msg_ttf_miso.datos[0][1].valor);
-						strcpy(info.persona.pin,msg_ttf_miso.datos[0][2].valor);
-						info.persona.sexo = (msg_ttf_miso.datos[0][3].valor[0] == 'H') ? H : M;
-
-						msg_gestor.p = info.persona;
-						msg_gestor.pantallas = P_KEY;
-						msg_gestor.n_digitos = 0;
-						msg_gestor.time_out = INA_TIMEOUT + NUM_DIG_PIN;
-						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
-						
-						strcpy(pin, "");
-						reg_state = R_KEY;
-					}
-					else{ // Acceso denegado, regsitrado como desconocido
-						info.acceso = DESCONOCIDO;
-						strcpy(info.persona.sNum, msg_nfc.sNum); //qqq
-
-						msg_gestor.pantallas = P_DENEGADO_TRJ_UNKNOWN;
-						strcpy(msg_gestor.p.sNum, msg_nfc.sNum); //qqq
-						osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
+					if(osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1000U)!=osOK) 
 						reg_state = R_EXIT;
+					else{
+						//if(aux != -1){ // Acceso autorizado
+						if(strncmp(msg_ttf_miso.datos[0][0].valor, "ID FAIL",7)!=0){ // Acceso autorizado
+							//info.persona = personas_autorizadas[aux];//iii
+							strcpy(info.persona.sNum,msg_ttf_miso.datos[0][0].valor);
+							strcpy(info.persona.nombre,msg_ttf_miso.datos[0][1].valor);
+							strcpy(info.persona.pin,msg_ttf_miso.datos[0][2].valor);
+							info.persona.sexo = (msg_ttf_miso.datos[0][3].valor[0] == 'H') ? H : M;
+
+							msg_gestor.p = info.persona;
+							msg_gestor.pantallas = P_KEY;
+							msg_gestor.n_digitos = 0;
+							msg_gestor.time_out = INA_TIMEOUT + NUM_DIG_PIN;
+							osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
+							
+							strcpy(pin, "");
+							reg_state = R_KEY;
+						}
+						else{ // Acceso denegado, regsitrado como desconocido
+							info.acceso = DESCONOCIDO;
+							strcpy(info.persona.sNum, msg_nfc.sNum); //qqq
+
+							msg_gestor.pantallas = P_DENEGADO_TRJ_UNKNOWN;
+							strcpy(msg_gestor.p.sNum, msg_nfc.sNum); //qqq
+							osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
+							reg_state = R_EXIT;
+						}
 					}
 				}
 			break;
@@ -541,7 +547,7 @@ static void Th_principal(void *argument){
 	rgb = to_rgb(0,0,0);
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
 
-	osThreadYield();
+	//osThreadYield();
 	
 	osThreadNew(Th_gestor, NULL, NULL);
 	id_MsgQueue_gestor = osMessageQueueNew(1, sizeof(MSGQUEUE_OBJ_GESTOR), NULL); //KKK lanzarlo en acceso
