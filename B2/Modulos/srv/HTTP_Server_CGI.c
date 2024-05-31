@@ -100,6 +100,8 @@ static void Th_srv (void *arg) {
         for (j = 0; j < REGISTROS; j++) { // recorremos todos los registros
 					// Fecha Hora Nombre iD, Acceso
 					    strcpy(fechaHora[j],msg_srv.datos[j][0].valor);
+							strcat(fechaHora[j]," ");
+							strcat(fechaHora[j],msg_srv.datos[j][1].valor);
 						  strcpy(nombre[j],msg_srv.datos[j][2].valor);
 							strcpy(identificacion[j],msg_srv.datos[j][3].valor);
 							strcpy(tipoAcceso[j],msg_srv.datos[j][4].valor);

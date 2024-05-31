@@ -10,5 +10,6 @@ llblue.jpg,
 pabb.gif,
 registrados.cgi,
 registrados.cgx,
-xml_http.js 
+xml_http.js,
+refrescar.png 
 TO Web.c RTE NOPRINT ROOT(.\Modulos\srv\Web)

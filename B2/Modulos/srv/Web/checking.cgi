@@ -30,7 +30,7 @@ t <a href="index.htm"><img border="0" src="home.png" width="31" height="29"></a>
 t <form action="checking.cgi" method="post" id="form1" name="form1">
 t <table border="0" width=99%><font size="3">
 t <tr bgcolor=#94C8A5>
-t <th width=30%>Hora y Fecha</th>
+t <th width=30%>Fecha y Hora </th>
 t <th width=20%>Nombre</th>
 t <th width=30%>Identificacion</th>
 t <th width=20%>Acceso</th>

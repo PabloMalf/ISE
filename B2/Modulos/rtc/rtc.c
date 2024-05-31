@@ -28,21 +28,11 @@ static void init_rtc(void);
 static void init_SNTP(void);
 static void RTC_CalendarConfig(void);
 static void RTC_Show(void);
-static void Init_timers (void);
 
 osThreadId_t get_id_Th_rtc(void){
 	return id_Th_rtc;
 }
 
-static void Timer_Callback_3min (void const *arg) {
-	 init_SNTP(); // Cada 3 min se llama al servidor SNTP
-}
-
-static void Init_timers (void) {
-	exec = 1U;
-	tim_id_3min = osTimerNew((osTimerFunc_t)&Timer_Callback_3min, osTimerPeriodic, &exec, NULL);
-
-}
 
 int init_Th_rtc(void){
 	id_Th_rtc = osThreadNew(Th_rtc, NULL, NULL);
@@ -104,7 +94,6 @@ static void RTC_CalendarConfig(void){
 
 static void init_rtc(void){
  
-	//RTC_CalendarConfig();
 	if (HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1) != 0x32F2){
 		  RtcHandle.Instance = RTC; 
 			RtcHandle.Init.HourFormat = RTC_HOURFORMAT_24;
@@ -170,8 +159,6 @@ static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
 static void Th_rtc(void *argument){
   netInitialize();
 	init_rtc();
-	Init_timers();
-	osTimerStart(tim_id_3min, AUTO_SYNC_TIME_S);
 	uint32_t flags;
 	while(1){
 		uint32_t flags;

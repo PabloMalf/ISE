@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "cmsis_os2.h"  
 
-#define AUTO_SYNC_TIME_S 180000U
+//#define AUTO_SYNC_TIME_S 180000U
 #define FLAG_GET_HOUR		 1U << 0
 
 int init_Th_rtc(void);
