@@ -13,6 +13,7 @@
 #include "rtc.h"
 #include "HTTP_Server_CGI.h"
 #include "ttf.h"
+#include "adc.h"
 
 int init_Th_principal(void);
 

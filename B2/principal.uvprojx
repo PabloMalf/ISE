@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>HSE_VALUE=8000000</Define>
               <Undefine></Undefine>
-              <IncludePath>.\Modulos\buz;.\Modulos\cam;.\Modulos\irq;.\Modulos\key;.\Modulos\lcd;.\Modulos\nfc;.\Modulos\rgb;.\Modulos\rtc;.\Modulos\srv;.\Modulos\ttf;.\Modulos\srv\Web</IncludePath>
+              <IncludePath>.\Modulos\buz;.\Modulos\cam;.\Modulos\irq;.\Modulos\key;.\Modulos\lcd;.\Modulos\nfc;.\Modulos\rgb;.\Modulos\rtc;.\Modulos\srv;.\Modulos\ttf;.\Modulos\srv\Web;.\Modulos\adc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -458,6 +458,11 @@
               <FileType>5</FileType>
               <FilePath>.\Modulos\srv\HTTP_Server_CGI.h</FilePath>
             </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Modulos\adc\adc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -542,6 +547,16 @@
               <FileName>refrescar.png</FileName>
               <FileType>9</FileType>
               <FilePath>.\Modulos\srv\Web\refrescar.png</FilePath>
+            </File>
+            <File>
+              <FileName>ad.cgi</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\ad.cgi</FilePath>
+            </File>
+            <File>
+              <FileName>ad.cgx</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\ad.cgx</FilePath>
             </File>
           </Files>
         </Group>

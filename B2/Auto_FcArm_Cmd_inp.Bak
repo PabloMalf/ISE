@@ -11,5 +11,7 @@ pabb.gif,
 registrados.cgi,
 registrados.cgx,
 xml_http.js,
-refrescar.png 
+refrescar.png,
+ad.cgi,
+ad.cgx 
 TO Web.c RTE NOPRINT ROOT(.\Modulos\srv\Web)

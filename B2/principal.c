@@ -92,6 +92,8 @@ static void StandbyMode_Measure(void);
 static void registro_acceso(void);
 static void WR_Register(INFO_REGISTRO_T registro);
 
+ADC_HandleTypeDef hadc;
+
 static void StandbyMode_Measure(void){
   __HAL_RCC_PWR_CLK_ENABLE();
   HAL_PWR_EnableBkUpAccess();
@@ -243,8 +245,8 @@ static void post_sv(void){
 	//Leer fichero registros
 	msg_ttf_mosi.cmd = RD; 
 	msg_ttf_mosi.fichero = REG ;
-	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
-	osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
+//	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
+//	osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
 	//if (osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1500U) != osOK) return;
 	//osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1500U);
 	
@@ -542,6 +544,7 @@ static void Th_principal(void *argument){
 	MSGQUEUE_OBJ_RGB rgb = {.r = 0, .g = 128, .b = 28};
 	ali_state_t ali_state;
 	GPIO_Init();
+	myADC_Init(&hadc);
 	
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
 	osDelay(200);
