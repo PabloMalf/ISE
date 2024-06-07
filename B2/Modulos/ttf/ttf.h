@@ -4,7 +4,7 @@
 #include "cmsis_os2.h"
 #include "stm32f4xx_hal.h"
 
-#define REGISTROS 20
+#define REGISTROS 25
 #define CAMPOS 5
 
 typedef enum {WR, RD}cmd_t;

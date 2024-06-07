@@ -7,10 +7,9 @@
 #include "HTTP_Server_CGI.h"
 #include <string.h>
 
-#define MAX_USU 20
 #define MSGQUEUE_OBJECTS_SRV 1
 
-#define REGISTROS 20
+#define REGISTROS 25
 #define CAMPOS_REG 5
 #define CAMPOS_USU 4
 
@@ -26,14 +25,24 @@ typedef struct{
 static osThreadId_t id_Th_srv;
 static osMessageQueueId_t id_MsgQueue_srv;
 static void Th_srv(void *arg);
-static char datos[50][20];
 
-char fechaHora[MAX_USU][20];
-char nombre[MAX_USU][20];
-char identificacion[MAX_USU][20];
-char tipoAcceso[MAX_USU][20];
+
+
 
 char mensajeInfo[50];
+
+
+typedef struct{
+	char fechaHora[20];
+  char nombre[20];
+  char identificacion[20];
+  char tipoAcceso[20];
+	}entrada;
+
+entrada entradas[REGISTROS];
+int j=0;
+int cont;
+int imprimir;
 
 static uint32_t adv;
 extern ADC_HandleTypeDef hadc;
@@ -60,55 +69,31 @@ osMessageQueueId_t get_id_MsgQueue_srv(void){
 }
 
 /*
-Asignamos los valores a cada entrada 
-*/
-void asignacion(){
- int i, j;
-   j=0;
-   i=0;
-   
-  while(j<50){ //orden de la targeta: hora y fecha, nombre, identificacion, tipoAcceso
-      strcpy(fechaHora[i],datos[j]);
-      strcat(fechaHora[i]," ");
-      strcat(fechaHora[i],datos[j+1]);
-      strcpy(nombre[i],datos[j+2]);
-      strcpy(identificacion[i],datos[j+3]);
-      strcpy(tipoAcceso[i],datos[j+4]);
-      j=j+5;
-      i++;  
-  }
-   memset(mensajeInfo, '\0', sizeof(mensajeInfo));
-} 
-/*
 Vaciamos todas las listas y generamos un mensaje de informacion
 */
 void modoAhorro(){
-  memset(nombre, '\0', sizeof(nombre));
-  memset(identificacion, '\0', sizeof(identificacion));
-  memset(fechaHora, '\0', sizeof(fechaHora));
-  memset(tipoAcceso, '\0', sizeof(tipoAcceso));
-  strcpy(mensajeInfo,"Lo sentimos, el servidor no se encuentra disponible, por favor inténtelo más tarde, gracias");
+	memset(entradas,  '\0', sizeof(entradas));
+  strcpy(mensajeInfo,"Lo sentimos, el servidor no se encuentra disponible, por favor int?ntelo m?s tarde, gracias");
 }
 
 static void Th_srv (void *arg) {
   (void)arg;
-  int j;
   MSGQUEUE_OBJ_SRV msg_srv;
   Init_MsgQueue_srv();
-  //netInitialize();
+  //netInitialize(); // cOMENTAR En el princiapal
   
   while(1){
    osMessageQueueGet(get_id_MsgQueue_srv(), &msg_srv, NULL, 500U);
-      if(msg_srv.standBy==0){ // si NO nos encontramos en modo bajo consumo
-        for (j = 0; j < REGISTROS; j++) { // recorremos todos los registros
+   if(msg_srv.standBy==0){ // si NO nos encontramos en modo bajo consumo		
+      while(msg_srv.datos[j][0].valor[0]!='\0') { 
 					// Fecha Hora Nombre iD, Acceso
-					    strcpy(fechaHora[j],msg_srv.datos[j][0].valor);
-							strcat(fechaHora[j]," ");
-							strcat(fechaHora[j],msg_srv.datos[j][1].valor);
-						  strcpy(nombre[j],msg_srv.datos[j][2].valor);
-							strcpy(identificacion[j],msg_srv.datos[j][3].valor);
-							strcpy(tipoAcceso[j],msg_srv.datos[j][4].valor);
-
+					    strcpy(entradas[j].fechaHora,msg_srv.datos[j][0].valor);
+							strcat(entradas[j].fechaHora," ");
+							strcat(entradas[j].fechaHora,msg_srv.datos[j][1].valor);
+						  strcpy(entradas[j].nombre,msg_srv.datos[j][2].valor);
+							strcpy(entradas[j].identificacion,msg_srv.datos[j][3].valor);
+							strcpy(entradas[j].tipoAcceso,msg_srv.datos[j][4].valor);
+					j++; // lleva el numero de entradas
          }
          memset(mensajeInfo, '\0', sizeof(mensajeInfo));
       }
@@ -117,9 +102,6 @@ static void Th_srv (void *arg) {
       }
   }
 }
-
-
-
 
 
 #if      defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
@@ -134,267 +116,46 @@ static void Th_srv (void *arg) {
 
 uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *pcgi) {
   
- 
   uint32_t len = 0U;
+	char tipoAcceso[20];
   
   switch (env[0]) {
-    case 'a':
-      switch (env[2]) {
-        case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[0]);
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[0]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[0]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[0]);
-          break;
-      }
-      break;
-      
-     case 'b':
-      switch (env[2]) {
-       case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[1]);
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[1]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[1]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[1]);
-          break;
-      }
-      break;
-    
-	  case 'c':
-      switch (env[2]) {
-       case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[2]);
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[2]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[2]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[2]);
-          break;
-      }
-      break;
-      
-    case 'd':
-      switch (env[2]) {
-       case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[3]);
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[3]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[3]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[3]);
-          break;
-      }
-      break;
-     
-      case 'e':
-      switch (env[2]) {
-       case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[4]);
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[4]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[4]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[4]);
-          break;
-      }
-      break;
-      
-      case 'f':
-      switch (env[2]) {
-          case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[5]);
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[5]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[5]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[5]);
-          break;
-      }
-      break;
-      
-      case 'g':
+		case 'a':
       switch (env[2]) {
          case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[6]);
+					 len = (uint32_t)sprintf (buf,&env[4],  ((imprimir==1)? entradas[cont].fechaHora: "") );
           break;
         case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[6]);
+          len = (uint32_t)sprintf (buf, &env[4], ((imprimir==1)? entradas[cont].nombre: ""));
           break;
         case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[6]);
+          len = (uint32_t)sprintf (buf, &env[4], ((imprimir==1)? entradas[cont].identificacion:""));
           break;
         case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[6]);
+					sprintf(tipoAcceso, ((strcmp(entradas[cont].tipoAcceso ,"0")==0)  ? "Permitido"  : 
+			                     	  ((strcmp(entradas[cont].tipoAcceso, "1")==0)  ? "Denegado"   :
+															 (strcmp(entradas[cont].tipoAcceso, "2")==0)  ? "Desconocido": "")));
+				
+          len = (uint32_t)sprintf (buf, &env[4], ((imprimir==1)? tipoAcceso: ""));
+				 
+				if(cont<j) cont++;
+					else imprimir=0;
           break;
       }
       break;
-      
-      case 'h':
-      switch (env[2]) {
-         case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[7]);
+			case 'b': 
+				case '1':// ACTIVACION DE IMPRESION 
+          imprimir=1;
+			    cont= 0;
           break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[7]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[7]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[7]);
-          break;
-      }
-      break;
-      
-      case 'i':
-      switch (env[2]) {
-          case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[8]);
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[8]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[8]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[8]);
-          break;
-      }
-      break;
-      
-      case 'j':
-      switch (env[2]) {
-         case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[9]);
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[9]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[9]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[9]);
-          break;
-      }
-      break;
-      
-      case 'k':
-      switch (env[2]) {
-        case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[10]);
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[10]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[10]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[10]);
-          break;
-      }
-      break;
-      
-       case 'l':
-      switch (env[2]) {
-         case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[11]);
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[11]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[11]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[11]);
-          break;
-      }
-      break;
-      
-       case 'm':
-      switch (env[2]) {
-         case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[12]);
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[12]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[12]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[12]);
-          break;
-      }
-      break;
-      
-      
-       case 'n':
-      switch (env[2]) {
-         case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[13]);
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[13]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[13]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[13]);
-          break;
-      }
-      break;
-      
-       case 'o':
-      switch (env[2]) {
-         case '1':
-          len = (uint32_t)sprintf (buf,&env[4], fechaHora[14]);
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], nombre[14]);
-          break;
-        case '3':        
-          len = (uint32_t)sprintf (buf, &env[4], identificacion[14]);
-          break;
-        case '4':
-          len = (uint32_t)sprintf (buf, &env[4], tipoAcceso[14]);
-          break;
-      }
-      break;
 			
-			
+
+				case '2':
+          imprimir=0;// DESACTIVACION DE IMPRESION, KKK MIRAR SI ES NECESARO
+			    
+          break;
+				 
+			 break;
 	
 			case 'x':
       // AD Input from 'ad.cgi'

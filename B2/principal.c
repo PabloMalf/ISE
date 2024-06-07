@@ -245,8 +245,8 @@ static void post_sv(void){
 	//Leer fichero registros
 	msg_ttf_mosi.cmd = RD; 
 	msg_ttf_mosi.fichero = REG ;
-//	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
-//	osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
+	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, 0U, 0U);
+	osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
 	//if (osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1500U) != osOK) return;
 	//osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1500U);
 	
