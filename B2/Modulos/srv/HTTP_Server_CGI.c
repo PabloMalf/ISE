@@ -9,7 +9,7 @@
 
 #define MSGQUEUE_OBJECTS_SRV 1
 
-#define REGISTROS 25
+#define REGISTROS 20
 #define CAMPOS_REG 5
 #define CAMPOS_USU 4
 
@@ -43,6 +43,7 @@ entrada entradas[REGISTROS];
 int j=0;
 int cont;
 int imprimir;
+
 
 static uint32_t adv;
 extern ADC_HandleTypeDef hadc;
@@ -81,6 +82,7 @@ static void Th_srv (void *arg) {
   MSGQUEUE_OBJ_SRV msg_srv;
   Init_MsgQueue_srv();
   //netInitialize(); // cOMENTAR En el princiapal
+	
   
   while(1){
    osMessageQueueGet(get_id_MsgQueue_srv(), &msg_srv, NULL, 500U);
@@ -94,9 +96,9 @@ static void Th_srv (void *arg) {
 							strcpy(entradas[j].identificacion,msg_srv.datos[j][3].valor);
 							strcpy(entradas[j].tipoAcceso,msg_srv.datos[j][4].valor);
 					j++; // lleva el numero de entradas
-         }
          memset(mensajeInfo, '\0', sizeof(mensajeInfo));
       }
+	 }
       else{
         modoAhorro();
       }
