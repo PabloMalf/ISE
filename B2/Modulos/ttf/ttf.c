@@ -114,7 +114,7 @@ static void ttf_WR_RD(void){
 									strcpy(msg_ttf_miso.datos[0][i].valor,token);
 									token = strtok(NULL, ",");
 								}
-								
+								osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, 0, 0);
 							}
 						break;
 						
@@ -122,26 +122,34 @@ static void ttf_WR_RD(void){
 							f = fopen ("M0:/data.csv","r");
 							if (f == NULL) return;
 
-						  j=0;
+						  
 							do{
-								get_next_line(f, line);
-								token = strtok(line, ",");
-								for(i=0; token != NULL; i++){
-									strcpy(msg_ttf_miso.datos[j][i].valor,token);
-									token = strtok(NULL, ",");
-								}
-								j++;
+								j=0;
+								do{
+									get_next_line(f, line);
+									token = strtok(line, ",");
+									for(i=0; token != NULL; i++){
+										strcpy(msg_ttf_miso.datos[j][i].valor,token);
+										token = strtok(NULL, ",");
+									}
+									j++;
+								}while(j<24 || !feof(f));
+								
+								osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, 0, 0);
+	
 							}while(!feof(f));
 						break;
-					}
-					
+						}
+				
+							
 					rewind(f);
 					fflush(f);
 					fclose(f);
 					funmount("M0:");
 					funinit("M0:");
 							
-					osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, 0, 0);
+					
+					
 	 }
 	
 }
