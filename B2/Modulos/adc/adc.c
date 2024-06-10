@@ -3,6 +3,7 @@
 #define VREF 3.3f
 #define RESOLUTION_12B 4096U
 
+
 void myADC_Init(ADC_HandleTypeDef *hadc){
 	static GPIO_InitTypeDef sgpio = {0};
 	static ADC_ChannelConfTypeDef sadc = {0};
@@ -53,15 +54,5 @@ uint32_t myADC_Get_Voltage(ADC_HandleTypeDef *hadc){
 	voltage = HAL_ADC_GetValue(hadc);
 	
 	return voltage;
-}
-
-
-uint32_t myADC_Get_Resolution(void){
-	return RESOLUTION_12B;
-}
-
-
-float myADC_Get_ReferenceVoltage(void){
-	return VREF;
 }
 

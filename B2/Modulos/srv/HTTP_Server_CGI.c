@@ -25,9 +25,7 @@ typedef struct{
 static osThreadId_t id_Th_srv;
 static osMessageQueueId_t id_MsgQueue_srv;
 static void Th_srv(void *arg);
-
-
-
+extern uint32_t g_adc_value;
 
 char mensajeInfo[50];
 
@@ -45,7 +43,6 @@ int cont;
 int imprimir;
 
 static uint32_t adv;
-extern ADC_HandleTypeDef hadc;
 
 static int Init_MsgQueue_srv(void);
 
@@ -161,7 +158,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       // AD Input from 'ad.cgi'
       switch (env[2]) {
         case '1':
-          adv = myADC_Get_Voltage(&hadc);
+          adv = g_adc_value;
           len = (uint32_t)sprintf (buf, &env[4], adv);
           break;
         case '2':
@@ -176,7 +173,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 			
 		 case 'y':
       // AD Input from 'ad.cgx'
-      adv = myADC_Get_Voltage(&hadc);
+      adv = g_adc_value;
       len = (uint32_t)sprintf (buf, &env[1], adv);
       break;
     

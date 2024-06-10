@@ -77,9 +77,15 @@ const INFO_PERSONA_T personas_autorizadas [] = {
 
 #define NUM_DIG_PIN 4U //DO NOT CHANGE: thats why it is here, nowhere, for it to not be found as my mark
 
+uint32_t g_adc_value;
 extern mytime_t g_time;
+ADC_HandleTypeDef hadc;
+
+
 osThreadId_t id_Th_principal;
 static osMessageQueueId_t id_MsgQueue_gestor;
+
+static osTimerId_t tim_id_get_adc;
 
 
 int init_Th_principal(void);
@@ -92,7 +98,6 @@ static void StandbyMode_Measure(void);
 static void registro_acceso(void);
 static void WR_Register(INFO_REGISTRO_T registro);
 
-ADC_HandleTypeDef hadc;
 
 static void StandbyMode_Measure(void){
   __HAL_RCC_PWR_CLK_ENABLE();
@@ -139,6 +144,21 @@ int init_Th_principal(void){
 	int ttf = init_Th_ttf();//
 	
 	return(0);
+}
+
+
+static void Get_ADC(void){
+	g_adc_value = myADC_Get_Voltage(&hadc);
+}
+
+
+static void ADC_Init(void){
+	uint32_t exec = 0U;
+	myADC_Init(&hadc);
+	
+	tim_id_get_adc = osTimerNew((osTimerFunc_t)&Get_ADC, osTimerPeriodic, &exec, NULL);
+	
+	osTimerStart(tim_id_get_adc, 500U);
 }
 
 
@@ -250,9 +270,6 @@ static void post_sv(void){
 	//if (osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1500U) != osOK) return;
 	//osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1500U);
 	
-	
-		
-	//pillar adc
 	//osMessageQueuePut(get_id_MsgQueue_srv(), &msg_srv, 0U, 0U); //kkk sss
 	osMessageQueuePut(get_id_MsgQueue_srv(), &msg_ttf_miso, 0U, 0U); //kkk sss
 	rgb = to_rgb(0, 0, 255);
@@ -543,8 +560,8 @@ static void Th_gestor(void* arg){
 static void Th_principal(void *argument){
 	MSGQUEUE_OBJ_RGB rgb = {.r = 0, .g = 128, .b = 28};
 	ali_state_t ali_state;
+	ADC_Init();
 	GPIO_Init();
-	myADC_Init(&hadc);
 	
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
 	osDelay(200);
