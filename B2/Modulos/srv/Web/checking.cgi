@@ -26,7 +26,7 @@ t function recargarPagina() {
 t    location.reload();  
 t }
 t </script></head>
-t <body background="background3.png" style="background-repeat: no-repeat;" onload="setInterval(recargarPagina, 1000)">
+t <body background="background3.png" style="background-repeat: no-repeat;" onload="setInterval(recargarPagina, 3000)">
 t <div style="width: 1060;">
 t <h2 align="center" ><br>Lista de acceso</h2>
 t <td style="border-bottom: 1px solid #000080" align=center vAlign=center noWrap width="70"> 
@@ -221,7 +221,7 @@ c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td
 c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
 c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
 t </tr>
-c b 1
+c b 2
 t </font></table>
 t </form>
 # MENSAJE DE INFOMRACION DEL STANDBY
