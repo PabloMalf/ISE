@@ -245,13 +245,17 @@ static void post_sv(void){
 	//Leer fichero registros
 	msg_ttf_mosi.cmd = RD; 
 	msg_ttf_mosi.fichero = REG ;
-	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, 0U, 0U);
-	osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, osWaitForever);
-	//if (osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1500U) != osOK) return;
-	//osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1500U);
+	//osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, 0U, 0U);
+	//osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1000);
 	
-	
+	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, 0U);
 		
+	do{
+		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 4000U);
+		osMessageQueuePut(get_id_MsgQueue_srv(), &msg_ttf_miso, 0U, 0U);
+		}while(msg_ttf_miso.eof!=1);
+
+	
 	//pillar adc
 	//osMessageQueuePut(get_id_MsgQueue_srv(), &msg_srv, 0U, 0U); //kkk sss
 	osMessageQueuePut(get_id_MsgQueue_srv(), &msg_ttf_miso, 0U, 0U); //kkk sss
@@ -323,10 +327,10 @@ static void registro_acceso(void){
 					// PUT cola mosi RD USER y sNum 
 					//aux = get_persona(msg_nfc.sNum); //iii
 					strcpy(msg_ttf_mosi.data,msg_nfc.sNum);
-					msg_ttf_mosi.cmd = RD, 
-					msg_ttf_mosi.fichero = USER ;
-					osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
-					if(osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1000U)!=osOK) 
+					msg_ttf_mosi.cmd = RD; 
+					msg_ttf_mosi.fichero = USER;
+					osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, 0U);
+					if(osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 4000U)!=osOK) 
 						reg_state = R_EXIT;
 					else{
 						//if(aux != -1){ // Acceso autorizado

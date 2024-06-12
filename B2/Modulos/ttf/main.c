@@ -46,6 +46,10 @@ static osThreadId_t id_Th_test_borrar;
 static int	init_Th_test_borrar(void);
 static void Th_test_borrar(void *arg);
 
+static osThreadId_t id_Th_test;
+static int	init_Th_test(void);
+static void Th_test(void *arg);
+
 static void Error_Handler(void);	
 static void SystemClock_Config(void);
 
@@ -89,10 +93,12 @@ int main(void){
 	//start Threads 
 	init_Th_ttf();
 	//init_Th_testWR_reg();
-	init_Th_testRD_reg();
+	//init_Th_testRD_reg();
 	//init_Th_testWR_usu();
 	//init_Th_testRD_usu();
   //init_Th_test_borrar();
+	init_Th_test();
+	
 	
 	
   osKernelStart();
@@ -130,6 +136,13 @@ int init_Th_testRD_usu(void){
 int init_Th_test_borrar(void){
 	id_Th_test_borrar = osThreadNew(Th_test_borrar, NULL, NULL);
 	if(id_Th_test_borrar == NULL)
+		return(-1);
+	return(0);
+}
+
+int init_Th_test(void){
+	id_Th_test_borrar = osThreadNew(Th_test, NULL, NULL);
+	if(id_Th_test == NULL)
 		return(-1);
 	return(0);
 }
@@ -205,40 +218,72 @@ void Th_testRD_reg(void *arg){
 	MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso_main;
 	int i,j=0;
 	while(1){
-		osDelay(4000);
+		osDelay(8000);
 		msg_ttf.cmd=RD;
 		msg_ttf.fichero=REG;
 		osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf, NULL, 0U);
 		
 		do{
-		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso_main, NULL, 1000U);
-		
-		
-		 for (j=0; j<25;j++) {
+		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso_main, NULL, 4000U);
+		 for (j=0; j<20;j++) {
 			 for(i=0; i<5;i++){
             printf("Registro[%d]campo%d : %s\n", j,i, msg_ttf_miso_main.datos[j][i].valor); // ENVIAR AL SERVIDOR
         }
 			}
-		}while(msg_ttf_miso_main.eof==1);
+		}while(msg_ttf_miso_main.eof!=1);
 		
 	}
 }
+
+
+
 void Th_testRD_usu(void *arg){ 
-	MSGQUEUE_OBJ_TTF_MOSI msg_ttf = {.data = "53 f6 d0 e4 91", .cmd = RD, .fichero = USER} ;
+	MSGQUEUE_OBJ_TTF_MOSI msg_ttf = {.data = "53 ab c7 e4 db", .cmd = RD, .fichero = USER} ;
 	MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso_main;
 	int i,j=0;
 	while(1){
-		osDelay(2000);
-		osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf, NULL, osWaitForever);
+		osDelay(3000);
+		osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf, NULL, 0U);
 		
-		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso_main, NULL, osWaitForever);
-		 for (j=0; j<50;j++) {
-			 for(i=0; i<4;i++)
-            printf("Usarios[%d]campo%d : %s\n", j,i, msg_ttf_miso_main.datos[j][i].valor);
-        }
-		osDelay(20000);
+		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso_main, NULL, 4000U);
+		for(i=0; i<4;i++)
+       printf("Usarios[%d]campo%d : %s\n", j,i, msg_ttf_miso_main.datos[j][i].valor);
 	}
 }
+
+void Th_test(void *arg){ 
+	MSGQUEUE_OBJ_TTF_MOSI msg_ttf;
+	MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso_main;
+	int i,j=0;
+	while(1){
+    osDelay(4000);
+		sprintf(msg_ttf.data,"53 ab c7 e4 db");
+		msg_ttf.cmd=RD;
+		msg_ttf.fichero=USER;
+		osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf, NULL, 0U);
+		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso_main, NULL, 4000U);
+		j=0;
+		for(i=0; i<4;i++)
+       printf("Usarios[%d]campo%d : %s\n", j,i, msg_ttf_miso_main.datos[j][i].valor);
+		
+		msg_ttf.cmd=RD;
+		msg_ttf.fichero=REG;
+		osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf, NULL, 0U);
+		
+		do{
+		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso_main, NULL, 4000U);
+		 for (j=0; j<20;j++) {
+			 for(i=0; i<5;i++){
+            printf("Registro[%d]campo%d : %s\n", j,i, msg_ttf_miso_main.datos[j][i].valor); // ENVIAR AL SERVIDOR
+        }
+			}
+		}while(msg_ttf_miso_main.eof!=1);
+		
+	}
+}
+
+
+
 
 static void SystemClock_Config(void){
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
