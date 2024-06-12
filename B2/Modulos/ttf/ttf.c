@@ -125,7 +125,7 @@ static void ttf_WR_RD(MSGQUEUE_OBJ_TTF_MOSI * mosi){
 					if (j==20){ // enviar en bloques de 20
 						j=0;
 						while(0 == osMessageQueueGetSpace(id_MsgQueue_ttf_miso)) osThreadYield();
-						osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, 0, 0);
+						//osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, 0, 0);
 						memset(msg_ttf_miso.datos, '\0', sizeof(msg_ttf_miso.datos));
 					}
 				}while(!feof(f));

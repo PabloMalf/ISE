@@ -77,9 +77,15 @@ const INFO_PERSONA_T personas_autorizadas [] = {
 
 #define NUM_DIG_PIN 4U //DO NOT CHANGE: thats why it is here, nowhere, for it to not be found as my mark
 
+uint32_t g_adc_value;
 extern mytime_t g_time;
+ADC_HandleTypeDef hadc;
+
+
 osThreadId_t id_Th_principal;
 static osMessageQueueId_t id_MsgQueue_gestor;
+
+static osTimerId_t tim_id_get_adc;
 
 
 int init_Th_principal(void);
@@ -92,7 +98,6 @@ static void StandbyMode_Measure(void);
 static void registro_acceso(void);
 static void WR_Register(INFO_REGISTRO_T registro);
 
-ADC_HandleTypeDef hadc;
 
 static void StandbyMode_Measure(void){
   __HAL_RCC_PWR_CLK_ENABLE();
@@ -139,6 +144,21 @@ int init_Th_principal(void){
 	int ttf = init_Th_ttf();//
 	
 	return(0);
+}
+
+
+static void Get_ADC(void){
+	g_adc_value = myADC_Get_Voltage(&hadc);
+}
+
+
+static void ADC_Init(void){
+	uint32_t exec = 0U;
+	myADC_Init(&hadc);
+	
+	tim_id_get_adc = osTimerNew((osTimerFunc_t)&Get_ADC, osTimerPeriodic, &exec, NULL);
+	
+	osTimerStart(tim_id_get_adc, 500U);
 }
 
 
@@ -240,20 +260,20 @@ static void post_sv(void){
 	MSGQUEUE_OBJ_RGB rgb;
 	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi;
   MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso;
-		int i,j=0;
 	
 	//Leer fichero registros
 	msg_ttf_mosi.cmd = RD; 
 	msg_ttf_mosi.fichero = REG ;
-	//osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, 0U, 0U);
-	//osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 1000);
+	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, 0U, 0U);
+	osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 4000);
+	osMessageQueuePut(get_id_MsgQueue_srv(), &msg_ttf_miso, 0U, 0U);
 	
-	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, 0U);
+//	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, 0U);
 		
-	do{
-		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 4000U);
-		osMessageQueuePut(get_id_MsgQueue_srv(), &msg_ttf_miso, 0U, 0U);
-		}while(msg_ttf_miso.eof!=1);
+//	do{
+//		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 4000U);
+//		osMessageQueuePut(get_id_MsgQueue_srv(), &msg_ttf_miso, 0U, 0U);
+//		}while(msg_ttf_miso.eof!=1);
 
 	
 	//pillar adc
@@ -265,7 +285,6 @@ static void post_sv(void){
 	rgb = to_rgb(0, 0, 0);
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb, 0U, 0U);
 }
-
 
 static void mode_main_psu(void){
 	uint32_t flags;
@@ -327,9 +346,9 @@ static void registro_acceso(void){
 					// PUT cola mosi RD USER y sNum 
 					//aux = get_persona(msg_nfc.sNum); //iii
 					strcpy(msg_ttf_mosi.data,msg_nfc.sNum);
-					msg_ttf_mosi.cmd = RD; 
-					msg_ttf_mosi.fichero = USER;
-					osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, 0U);
+					msg_ttf_mosi.cmd = RD, 
+					msg_ttf_mosi.fichero = USER ;
+					osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
 					if(osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 4000U)!=osOK) 
 						reg_state = R_EXIT;
 					else{
@@ -547,8 +566,8 @@ static void Th_gestor(void* arg){
 static void Th_principal(void *argument){
 	MSGQUEUE_OBJ_RGB rgb = {.r = 0, .g = 128, .b = 28};
 	ali_state_t ali_state;
+	ADC_Init();
 	GPIO_Init();
-	myADC_Init(&hadc);
 	
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
 	osDelay(200);

@@ -101,6 +101,7 @@ c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td
 c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
 c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
 t </tr>
+# 10 entradas
 t <tr>
 c a 1 <td><span align="center"  type=text size="10" id="hora_fecha0"> %s </span></td>
 c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td>
@@ -161,6 +162,7 @@ c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td
 c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
 c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
 t </tr>
+# 20 entradas
 t <tr>
 c a 1 <td><span align="center"  type=text size="10" id="hora_fecha0"> %s </span></td>
 c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td>
@@ -221,7 +223,69 @@ c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td
 c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
 c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
 t </tr>
-c b 1
+# 30 entradas
+t <tr>
+c a 1 <td><span align="center"  type=text size="10" id="hora_fecha0"> %s </span></td>
+c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td>
+c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
+c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
+t </tr>
+t <tr>
+c a 1 <td><span align="center"  type=text size="10" id="hora_fecha0"> %s </span></td>
+c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td>
+c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
+c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
+t </tr>
+t <tr>
+c a 1 <td><span align="center"  type=text size="10" id="hora_fecha0"> %s </span></td>
+c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td>
+c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
+c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
+t </tr>
+t <tr>
+c a 1 <td><span align="center"  type=text size="10" id="hora_fecha0"> %s </span></td>
+c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td>
+c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
+c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
+t </tr>
+t <tr>
+c a 1 <td><span align="center"  type=text size="10" id="hora_fecha0"> %s </span></td>
+c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td>
+c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
+c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
+t </tr>
+t <tr>
+c a 1 <td><span align="center"  type=text size="10" id="hora_fecha0"> %s </span></td>
+c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td>
+c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
+c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
+t </tr>
+t <tr>
+c a 1 <td><span align="center"  type=text size="10" id="hora_fecha0"> %s </span></td>
+c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td>
+c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
+c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
+t </tr>
+t <tr>
+c a 1 <td><span align="center"  type=text size="10" id="hora_fecha0"> %s </span></td>
+c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td>
+c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
+c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
+t </tr>
+t <tr>
+c a 1 <td><span align="center"  type=text size="10" id="hora_fecha0"> %s </span></td>
+c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td>
+c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
+c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
+t </tr>
+t <tr>
+c a 1 <td><span align="center"  type=text size="10" id="hora_fecha0"> %s </span></td>
+c a 2 <td><span align="center"  type=text size="10" id="nombre0"> %s </span></td>
+c a 3 <td><span align="center"  type=text size="10" id="id_targeta0"> %s </span></td>
+c a 4 <td><span align="center"  type=text size="10" id="tipoacceso0"> %s </span></td>
+t </tr>
+# 40 entradas
+c b 2
 t </font></table>
 t </form>
 # MENSAJE DE INFOMRACION DEL STANDBY

@@ -11,7 +11,7 @@
 
 #define REGISTROS 20
 #define CAMPOS_REG 5
-#define CAMPOS_USU 4
+#define MAX_ENTRADAS 20
 
 typedef struct{
   char valor[20];
@@ -19,15 +19,14 @@ typedef struct{
 
 typedef struct{
   string datos[REGISTROS][CAMPOS_REG];
-	uint8_t standBy; // 0: modo activo (red) -- 1: modo standBy (pila)
+	uint8_t standBy; // 0: modo activo (red) -- 1: modo standBy (bateria)
+	uint8_t eof;     // 0: no es el final    -- 1: es el final 
 } MSGQUEUE_OBJ_SRV;
 
 static osThreadId_t id_Th_srv;
 static osMessageQueueId_t id_MsgQueue_srv;
 static void Th_srv(void *arg);
-
-
-
+extern uint32_t g_adc_value;
 
 char mensajeInfo[50];
 
@@ -39,14 +38,20 @@ typedef struct{
   char tipoAcceso[20];
 	}entrada;
 
-entrada entradas[REGISTROS];
-int j=0;
-int cont;
-int imprimir;
+entrada entradas[MAX_ENTRADAS];
+	
+	// leer la cola
+int j=0; // puntea las posiciones del array -entradas-
+int i=0; // puntea las posiciones del mensaje recivido
+bool fin; // bool para indicar que es el ultimo mensaje 
+	
+	// escribir la cola en pantalla
+int numEntradas=0; // indica el numero de lineas que hay que imprimir, en caso de ser maximo impimible, se queda fijo
+int cont; // puntea las posiciones del array -entradas- para imprimir
+int imprimir; // bool para indicar si hay que imprimir o no
 
 
 static uint32_t adv;
-extern ADC_HandleTypeDef hadc;
 
 static int Init_MsgQueue_srv(void);
 
@@ -76,32 +81,59 @@ void modoAhorro(){
 	memset(entradas,  '\0', sizeof(entradas));
   strcpy(mensajeInfo,"Lo sentimos, el servidor no se encuentra disponible, por favor int?ntelo m?s tarde, gracias");
 }
+/**
+metodologia:
+	1. recorro hasta encontrar vacio y como maximo  los 20 del propio mensjae
+  2. una vez llegado a fuera de de las dos comprobaciones, miro si es el ulitmo mensjae
+				SI: reseteo la j a 0 para que la siguiente escriba desde el prinipio
+				NO: no reseteo la cola pero si la i a 0 para que lea desde el principo
+  3. siempre que llegue j = entradas.size() se resetea para que sobreescriba.
+
+**/
 
 static void Th_srv (void *arg) {
-  (void)arg;
   MSGQUEUE_OBJ_SRV msg_srv;
   Init_MsgQueue_srv();
-  //netInitialize(); // cOMENTAR En el princiapal
+  //netInitialize(); // // DDD COMENTAR EN EL PRINCIPAL 
 	
-  
+  osStatus_t status;
+	uint8_t trys=0;
   while(1){
-   osMessageQueueGet(get_id_MsgQueue_srv(), &msg_srv, NULL, 500U);
-   if(msg_srv.standBy==0){ // si NO nos encontramos en modo bajo consumo		
-      while(msg_srv.datos[j][0].valor[0]!='\0') { 
-					// Fecha Hora Nombre iD, Acceso
-					    strcpy(entradas[j].fechaHora,msg_srv.datos[j][0].valor);
-							strcat(entradas[j].fechaHora," ");
-							strcat(entradas[j].fechaHora,msg_srv.datos[j][1].valor);
-						  strcpy(entradas[j].nombre,msg_srv.datos[j][2].valor);
-							strcpy(entradas[j].identificacion,msg_srv.datos[j][3].valor);
-							strcpy(entradas[j].tipoAcceso,msg_srv.datos[j][4].valor);
-					j++; // lleva el numero de entradas
-         memset(mensajeInfo, '\0', sizeof(mensajeInfo));
-      }
+   do{
+		status = osMessageQueueGet(id_MsgQueue_srv, &msg_srv, NULL, osWaitForever);
+		trys++;
+	 }while(status!=osOK && trys<4);
+	 if(trys>=4){
+			// notificacion de error
+		 printf("(-)No esta llegando ningun mensaje de la cola");
+		 osThreadYield();
 	 }
-      else{
-        modoAhorro();
+	 trys = 0;
+   if(status==osOK){ // innecesario pero para asegurar :)
+		  memset(entradas,  '\0', sizeof(entradas));
+      while((msg_srv.datos[i][0].valor[0]!='\0') && (i<REGISTROS)) { 
+				
+				strcpy(entradas[j].fechaHora,msg_srv.datos[i][0].valor);
+				strcat(entradas[j].fechaHora," ");
+				strcat(entradas[j].fechaHora,msg_srv.datos[i][1].valor);
+				strcpy(entradas[j].nombre,msg_srv.datos[i][2].valor);
+				strcpy(entradas[j].identificacion,msg_srv.datos[i][3].valor);
+				strcpy(entradas[j].tipoAcceso,msg_srv.datos[i][4].valor);
+				j++;
+				i++;
+				if(j==MAX_ENTRADAS) j=0; // sobreescribir
+				if(numEntradas<MAX_ENTRADAS) numEntradas++; 
+				
       }
+			i=0;j=0;
+//una vez que acabe el mesnaje reseteo i
+//			if(msg_srv.eof==1){
+//				j=0;  // si es el utimo reseteo j
+//				imprimir=1;
+//			}
+				
+			memset(mensajeInfo, '\0', sizeof(mensajeInfo));
+		}
   }
 }
 
@@ -140,7 +172,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 				
           len = (uint32_t)sprintf (buf, &env[4], ((imprimir==1)? tipoAcceso: ""));
 				 
-				if(cont<j) cont++;
+				if(cont<numEntradas) cont++;
 					else imprimir=0;
           break;
       }
@@ -154,7 +186,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 
 				case '2':
           imprimir=0;// DESACTIVACION DE IMPRESION, KKK MIRAR SI ES NECESARO
-			    
+			   
           break;
 				 
 			 break;
@@ -163,7 +195,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       // AD Input from 'ad.cgi'
       switch (env[2]) {
         case '1':
-          adv = myADC_Get_Voltage(&hadc);
+          adv = g_adc_value; // DDD DESCOMENTAR EN EL PRINCIPAL 
           len = (uint32_t)sprintf (buf, &env[4], adv);
           break;
         case '2':
@@ -178,7 +210,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 			
 		 case 'y':
       // AD Input from 'ad.cgx'
-      adv = myADC_Get_Voltage(&hadc);
+      adv = g_adc_value;		 // DDD DESCOMENTAR EN EL PRINCIPAL 
       len = (uint32_t)sprintf (buf, &env[1], adv);
       break;
     

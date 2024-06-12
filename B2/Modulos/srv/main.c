@@ -1,7 +1,7 @@
 #include "main.h"
 #include <stdio.h>
-#include "HTTP_Server_CGI.h"
 #include <string.h>
+#include "HTTP_Server_CGI.h"
 
 #ifdef _RTE_
 #include "RTE_Components.h"
@@ -27,7 +27,7 @@ uint32_t HAL_GetTick(void){
 }
 #endif
 
-#define REGISTROS 25
+#define REGISTROS 20
 #define CAMPOS_REG 5
 #define CAMPOS_USU 4
 
@@ -46,6 +46,7 @@ typedef struct{
 typedef struct{
   string datos[REGISTROS][CAMPOS_REG];
 	uint8_t standBy; // 0: modo activo (red) -- 1: modo standBy (pila)
+	uint8_t eof; // 0: no es el final -- 1: es el final 
 } MSGQUEUE_OBJ_SRV;
 
 int main(void){
@@ -76,80 +77,22 @@ int init_Th_test(void){
 
 void Th_test(void *arg){ //Test del modulo
   MSGQUEUE_OBJ_SRV msg_srv;
-	int j=9;
+	int j_main;
 
-sprintf(msg_srv.datos[0][0].valor, "11:11:11");
-sprintf(msg_srv.datos[0][1].valor, "11/11/2011");
-sprintf(msg_srv.datos[0][2].valor, "Andrea");
-sprintf(msg_srv.datos[0][3].valor, "11 11 11 11");
-sprintf(msg_srv.datos[0][4].valor, "0");
+	for(j_main=0; j_main < REGISTROS; j_main++){
+		sprintf(msg_srv.datos[j_main][0].valor, "44:44:00");
+    sprintf(msg_srv.datos[j_main][1].valor, "24/04/2024");
+    sprintf(msg_srv.datos[j_main][2].valor, "USUARIO %d", j_main);
+    sprintf(msg_srv.datos[j_main][3].valor, "%d%d %d%d %d%d", j_main,j_main,j_main,j_main,j_main,j_main);
+    sprintf(msg_srv.datos[j_main][4].valor, "1");
+	}
 	
-sprintf(msg_srv.datos[1][0].valor, "22:22:22");
-sprintf(msg_srv.datos[1][1].valor, "22/02/2022");
-sprintf(msg_srv.datos[1][2].valor, "Juan");
-sprintf(msg_srv.datos[1][3].valor, "22 22 22 22");
-sprintf(msg_srv.datos[1][4].valor, "0");
-
-sprintf(msg_srv.datos[2][0].valor, "33:23:23");
-sprintf(msg_srv.datos[2][1].valor, "31/03/2023");
-sprintf(msg_srv.datos[2][2].valor, "Eustaquio");
-sprintf(msg_srv.datos[2][3].valor, "33 33 33 33");
-sprintf(msg_srv.datos[2][4].valor, "1");
-	
-sprintf(msg_srv.datos[3][0].valor, "44:44:00");
-sprintf(msg_srv.datos[3][1].valor, "24/04/2024");
-sprintf(msg_srv.datos[3][2].valor, "Cojonciado");
-sprintf(msg_srv.datos[3][3].valor, "44 44 44 44");
-sprintf(msg_srv.datos[3][4].valor, "2");
-
-
-sprintf(msg_srv.datos[4][0].valor, "44:44:00");
-sprintf(msg_srv.datos[4][1].valor, "24/04/2024");
-sprintf(msg_srv.datos[4][2].valor, "Cojonciado1");
-sprintf(msg_srv.datos[4][3].valor, "44 44 44 44");
-sprintf(msg_srv.datos[4][4].valor, "2");
-
-sprintf(msg_srv.datos[5][0].valor, "44:44:00");
-sprintf(msg_srv.datos[5][1].valor, "24/04/2024");
-sprintf(msg_srv.datos[5][2].valor, "Cojonciado2");
-sprintf(msg_srv.datos[5][3].valor, "44 44 44 44");
-sprintf(msg_srv.datos[5][4].valor, "1");
-
-sprintf(msg_srv.datos[6][0].valor, "44:44:00");
-sprintf(msg_srv.datos[6][1].valor, "24/04/2024");
-sprintf(msg_srv.datos[6][2].valor, "Cojonciado3");
-sprintf(msg_srv.datos[6][3].valor, "44 44 44 44");
-sprintf(msg_srv.datos[6][4].valor, "0");
-
-sprintf(msg_srv.datos[7][0].valor, "44:44:00");
-sprintf(msg_srv.datos[7][1].valor, "24/04/2024");
-sprintf(msg_srv.datos[7][2].valor, "Cojonciado4");
-sprintf(msg_srv.datos[7][3].valor, "44 44 44 44");
-sprintf(msg_srv.datos[7][4].valor, "1");
-
-sprintf(msg_srv.datos[8][0].valor, "44:44:00");
-sprintf(msg_srv.datos[8][1].valor, "24/04/2024");
-sprintf(msg_srv.datos[8][2].valor, "Cojonciado5");
-sprintf(msg_srv.datos[8][3].valor, "44 44 44 44");
-sprintf(msg_srv.datos[8][4].valor, "2");
-
-msg_srv.datos[9][0].valor[0]='\0';
-
-
-  
+	msg_srv.eof=1;
   msg_srv.standBy=0;
 
+  osMessageQueuePut(get_id_MsgQueue_srv(), &msg_srv, NULL, 0U);
+  
 
-	while(1){
-   osMessageQueuePut(get_id_MsgQueue_srv(), &msg_srv, NULL, osWaitForever);
-		osDelay(2000);
-		sprintf(msg_srv.datos[j][0].valor, "44:44:00");
-    sprintf(msg_srv.datos[j][1].valor, "24/04/2024");
-    sprintf(msg_srv.datos[j][2].valor, "AAAAAHHHHH");
-    sprintf(msg_srv.datos[j][3].valor, "44 44 44 44");
-    sprintf(msg_srv.datos[j][4].valor, "2");
-		j++;
-	}
 }
 
 static void SystemClock_Config(void){
