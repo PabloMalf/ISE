@@ -157,7 +157,7 @@ static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
 
 
 static void Th_rtc(void *argument){
-  netInitialize();
+  //netInitialize(); SSS
 	init_rtc();
 	uint32_t flags;
 	while(1){

@@ -67,7 +67,6 @@ static void ttf_WR_RD(MSGQUEUE_OBJ_TTF_MOSI * mosi){
 	MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso = {.eof=0};
 	
 	if(fsOK != finit("M0:")) return;
-	//if(fsOK != fmount("M0:"))
 		if(fsOK != fmount("M0:")) return;
 	
 	
@@ -106,8 +105,8 @@ static void ttf_WR_RD(MSGQUEUE_OBJ_TTF_MOSI * mosi){
 						strcpy(msg_ttf_miso.datos[0][i].valor,token);
 						token = strtok(NULL, ",");
 					}
-					osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, 0, 0);
 				}
+				osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, 0, 0);
 			break;
 			
 				
@@ -125,7 +124,6 @@ static void ttf_WR_RD(MSGQUEUE_OBJ_TTF_MOSI * mosi){
 					if (j==20){ // enviar en bloques de 20
 						j=0;
 						while(0 == osMessageQueueGetSpace(id_MsgQueue_ttf_miso)) osThreadYield();
-						//osMessageQueuePut(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, 0, 0);
 						memset(msg_ttf_miso.datos, '\0', sizeof(msg_ttf_miso.datos));
 					}
 				}while(!feof(f));

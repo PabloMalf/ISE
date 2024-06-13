@@ -2,6 +2,9 @@
 #include "stm32f4xx_hal.h"
 #include <stdio.h>
 #include <string.h>
+#include "rl_net_lib.h"
+#include "rl_net.h"                     // Keil.MDK-Pro::Network:CORE
+
 
 //KKK dar de alta id nueva
 //kkk pin erroneo y salta color verde en vez de amarillo
@@ -123,7 +126,6 @@ static void WR_Register(INFO_REGISTRO_T registro){
 	         registro.acceso
 	         );
 	
-
 	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
 }
 
@@ -217,16 +219,6 @@ static char* centrar(const char cadena[]) {
 }
 
 
-static int get_persona(const char sNum [14]){
-	int i;
-	for(i = 0; i < sizeof(personas_autorizadas) / sizeof(personas_autorizadas[0]); i++){
-		if(strncmp(sNum, personas_autorizadas[i].sNum, sizeof(personas_autorizadas[i].sNum)) == 0)
-			return i;
-	}
-	return -1;
-}
-
-
 static char* get_str(uint8_t n) {
 	static char exit[1];
 	sprintf(exit, "%d", n);
@@ -258,30 +250,17 @@ static MSGQUEUE_OBJ_RGB to_rgb(uint8_t r, uint8_t g, uint8_t b){
 
 static void post_sv(void){
 	MSGQUEUE_OBJ_RGB rgb;
-	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi;
+	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi = {.cmd = RD, .fichero = REG};
   MSGQUEUE_OBJ_TTF_MISO msg_ttf_miso;
-	
-	//Leer fichero registros
-	msg_ttf_mosi.cmd = RD; 
-	msg_ttf_mosi.fichero = REG ;
-	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, 0U, 0U);
-	osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 4000);
-	osMessageQueuePut(get_id_MsgQueue_srv(), &msg_ttf_miso, 0U, 0U);
-	
-//	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, 0U);
-		
-//	do{
-//		osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 4000U);
-//		osMessageQueuePut(get_id_MsgQueue_srv(), &msg_ttf_miso, 0U, 0U);
-//		}while(msg_ttf_miso.eof!=1);
 
-	
-	//pillar adc
-	//osMessageQueuePut(get_id_MsgQueue_srv(), &msg_srv, 0U, 0U); //kkk sss
-	osMessageQueuePut(get_id_MsgQueue_srv(), &msg_ttf_miso, 0U, 0U); //kkk sss
 	rgb = to_rgb(0, 0, 255);
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb, 0U, 0U);
-	osDelay(100);
+	
+	osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, 0U, 0U);
+	osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 4000U);
+	osMessageQueuePut(get_id_MsgQueue_srv(), &msg_ttf_miso, 0U, 0U);
+	osMessageQueuePut(get_id_MsgQueue_srv(), &msg_ttf_miso, 0U, 0U); //kkk sss
+
 	rgb = to_rgb(0, 0, 0);
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb, 0U, 0U);
 }
@@ -290,7 +269,6 @@ static void mode_main_psu(void){
 	uint32_t flags;
 	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 	osThreadFlagsSet(get_id_Th_rtc(),FLAG_GET_HOUR);
-	//kkk copiar base datos tarjeta
 	post_sv();
 	
 	while(1){
@@ -343,23 +321,29 @@ static void registro_acceso(void){
 					reg_state = R_EXIT;
 				}
 				else{
-					// PUT cola mosi RD USER y sNum 
-					//aux = get_persona(msg_nfc.sNum); //iii
-					strcpy(msg_ttf_mosi.data,msg_nfc.sNum);
-					msg_ttf_mosi.cmd = RD, 
+					strcpy(msg_ttf_mosi.data, msg_nfc.sNum);
+					msg_ttf_mosi.cmd = RD; 
 					msg_ttf_mosi.fichero = USER ;
-					osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, osWaitForever);
-					if(osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 4000U)!=osOK) 
+					osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, 0U);
+					
+
+					if(osOK != osMessageQueueGet(get_id_MsgQueue_ttf_miso(), &msg_ttf_miso, NULL, 4000)){ //kkk add variable time max ttf change
+						//kkk pantalla de error 
+						
 						reg_state = R_EXIT;
+					}
 					else{
-						//if(aux != -1){ // Acceso autorizado
-						if(strncmp(msg_ttf_miso.datos[0][0].valor, "ID FAIL",7)!=0){ // Acceso autorizado
-							//info.persona = personas_autorizadas[aux];//iii
-							strcpy(info.persona.sNum,msg_ttf_miso.datos[0][0].valor);
+						if(strncmp(msg_ttf_miso.datos[0][0].valor, "ID FAIL", sizeof("ID FAIL"))!=0){ // Acceso autorizado
+							strcpy(info.persona.sNum, msg_ttf_miso.datos[0][0].valor);
 							strcpy(info.persona.nombre,msg_ttf_miso.datos[0][1].valor);
 							strcpy(info.persona.pin,msg_ttf_miso.datos[0][2].valor);
 							info.persona.sexo = (msg_ttf_miso.datos[0][3].valor[0] == 'H') ? H : M;
 
+							if(strcmp("Admin", info.persona.nombre)==0){ ///kkk mod
+									msg_ttf_mosi.cmd = DEL; 
+				  				osMessageQueuePut(get_id_MsgQueue_ttf_mosi(), &msg_ttf_mosi, NULL, 0U);
+							}
+							
 							msg_gestor.p = info.persona;
 							msg_gestor.pantallas = P_KEY;
 							msg_gestor.n_digitos = 0;
@@ -460,7 +444,6 @@ static void Th_gestor(void* arg){
 	while(1){
 		if((osOK == osMessageQueueGet(id_MsgQueue_gestor, &g, 0U, 0U)) || time_updated(&g)){
 			osMessageQueueReset(id_MsgQueue_gestor);
-			//kkk adc pillar dato
 			//kkk modificar todas las pantallas para mostrar consumo
 			switch(g.pantallas){
 				case P_OFF:
@@ -584,6 +567,7 @@ static void Th_principal(void *argument){
 	ali_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) ? MAIN_PSU : BATTERY_PSU;
 	switch(ali_state){
 		case MAIN_PSU:
+			netInitialize();
 			mode_main_psu();
 		break;
 		
@@ -595,7 +579,8 @@ static void Th_principal(void *argument){
 	rgb = to_rgb(255, 0, 255);
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
 	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_1, GPIO_PIN_RESET);
-	osDelay(100);
+	osDelay(1000);
 	
 	StandbyMode_Measure();
+	
 }

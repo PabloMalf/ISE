@@ -494,11 +494,6 @@
               <FilePath>.\Modulos\srv\Web\home.png</FilePath>
             </File>
             <File>
-              <FileName>index.htm</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Modulos\srv\Web\index.htm</FilePath>
-            </File>
-            <File>
               <FileName>keil.gif</FileName>
               <FileType>9</FileType>
               <FilePath>.\Modulos\srv\Web\keil.gif</FilePath>
@@ -557,6 +552,11 @@
               <FileName>ad.cgx</FileName>
               <FileType>9</FileType>
               <FilePath>.\Modulos\srv\Web\ad.cgx</FilePath>
+            </File>
+            <File>
+              <FileName>index.htm</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Modulos\srv\Web\index.htm</FilePath>
             </File>
           </Files>
         </Group>

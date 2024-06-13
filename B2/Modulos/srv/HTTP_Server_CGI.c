@@ -99,16 +99,16 @@ static void Th_srv (void *arg) {
   osStatus_t status;
 	uint8_t trys=0;
   while(1){
-   do{
+//   do{
 		status = osMessageQueueGet(id_MsgQueue_srv, &msg_srv, NULL, osWaitForever);
-		trys++;
-	 }while(status!=osOK && trys<4);
-	 if(trys>=4){
-			// notificacion de error
-		 printf("(-)No esta llegando ningun mensaje de la cola");
-		 osThreadYield();
-	 }
-	 trys = 0;
+//		trys++;
+//	 }while(status!=osOK && trys<4);
+//	 if(trys>=4){
+//			// notificacion de error
+//		 printf("(-)No esta llegando ningun mensaje de la cola");
+//		 osThreadYield();
+//	 }
+	 //trys = 0;
    if(status==osOK){ // innecesario pero para asegurar :)
 		  memset(entradas,  '\0', sizeof(entradas));
       while((msg_srv.datos[i][0].valor[0]!='\0') && (i<REGISTROS)) { 

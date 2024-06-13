@@ -3,7 +3,6 @@ checking.cgi,
 checking.cgx,
 descarga.jpg,
 home.png,
-index.htm,
 keil.gif,
 language.cgi,
 llblue.jpg,
@@ -13,5 +12,6 @@ registrados.cgx,
 xml_http.js,
 refrescar.png,
 ad.cgi,
-ad.cgx 
+ad.cgx,
+index.htm 
 TO Web.c RTE NOPRINT ROOT(.\Modulos\srv\Web)
