@@ -63,6 +63,25 @@ void Th_test(void *arg){
 	MSGQUEUE_OBJ_RGB msg_rgb;
   uint8_t time = 5;
 
+	while(1){
+		msg_rgb.r = 255;
+		msg_rgb.g = 0;
+		msg_rgb.b = 0;
+		osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0, 0);
+		osDelay(1000);
+		
+		msg_rgb.r = 0;
+		msg_rgb.g = 255;
+		msg_rgb.b = 0;
+		osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0, 0);
+		osDelay(1000);
+		
+		msg_rgb.r = 0;
+		msg_rgb.g = 0;
+		msg_rgb.b = 255;
+		osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0, 0);
+		osDelay(1000);
+	}
 	while(1){ //The test gotta swipe all the rgb spectrum with all the colors
     for(msg_rgb.g = 0; msg_rgb.g < 255; msg_rgb.g++){
       osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0, 0);

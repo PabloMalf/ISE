@@ -93,7 +93,8 @@ static void RTC_CalendarConfig(void){
 
 
 static void init_rtc(void){
- 
+//	__HAL_RCC_PWR_CLK_ENABLE();
+//	HAL_PWR_EnableBkUpAccess();
 	if (HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1) != 0x32F2){
 		  RtcHandle.Instance = RTC; 
 			RtcHandle.Init.HourFormat = RTC_HOURFORMAT_24;

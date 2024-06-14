@@ -61,14 +61,6 @@ typedef struct{
 	MSGQUEUE_OBJ_TTF_MISO ttf_miso;
 }msg_t;
 
-//static MSGQUEUE_OBJ_SRV msg_srv = {.adtos = {
-//		{"12:12:12"}, {"11/05/2024"}, {"Admin"},   {"111111111"}, {"permitido"},
-//		{"13:44:23"}, {"12/05/2024"}, {"Claudia"}, {"222222222"}, {"denegado"},
-//		{"13:45:11"}, {"12/05/2024"}, {"Maria"},   {"333333333"}, {"permitido"},
-//		{"22:40:11"}, {"14/05/2024"}, {"---"},     {"---"},       {"desconocido"},
-//		{"13:45:11"}, {"14/05/2024"}, {"Manuel"},  {"444444444"}, {"permitido"},
-//		{"22:30:31"}, {"15/05/2024"}, {"---"},     {"---"},       {"desconocido"}
-//}};
 
 const INFO_PERSONA_T personas_autorizadas [] = {
 	{.nombre = "Admin",		.sexo = poco, .pin = "*##*", .sNum = "83 6a 79 fa 6a"},
@@ -107,8 +99,10 @@ static void StandbyMode_Measure(void){
   HAL_PWR_EnableBkUpAccess();
   __HAL_RCC_BACKUPRESET_FORCE();
   __HAL_RCC_BACKUPRESET_RELEASE();
+
+	
   HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN1);
-  __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+	__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
   HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
   HAL_PWR_EnterSTANDBYMode();  
 }
@@ -267,8 +261,10 @@ static void post_sv(void){
 
 static void mode_main_psu(void){
 	uint32_t flags;
+	
+	netInitialize();
 	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-	osThreadFlagsSet(get_id_Th_rtc(),FLAG_GET_HOUR);
+	osThreadFlagsSet(get_id_Th_rtc(), FLAG_GET_HOUR);
 	post_sv();
 	
 	while(1){
@@ -289,9 +285,8 @@ static void mode_main_psu(void){
 
 
 static void registro_acceso(void){
-	MSGQUEUE_OBJ_GESTOR msg_gestor = {.intentos = NUM_INTENTOS, .time_out = INA_TIMEOUT};
+	MSGQUEUE_OBJ_GESTOR msg_gestor = {.pantallas = P_START, .intentos = NUM_INTENTOS, .time_out = INA_TIMEOUT};
 	MSGQUEUE_OBJ_NFC msg_nfc;
-	MSGQUEUE_OBJ_RGB msg_rgb;
 	MSGQUEUE_OBJ_KEY msg_key;
 	MSGQUEUE_OBJ_BUZ msg_buz = {750, 200, 5};
 	MSGQUEUE_OBJ_TTF_MOSI msg_ttf_mosi;
@@ -303,8 +298,7 @@ static void registro_acceso(void){
 	char pin [4] = "";
 	int i, aux;
 	reg_state_t reg_state = R_NFC;
-	
-	msg_gestor.pantallas = P_START;
+
 	osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 	
 	while(reg_state != R_EXIT){
@@ -316,8 +310,6 @@ static void registro_acceso(void){
 					
 					msg_gestor.pantallas = P_DESCONOCIDO;
 					osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
-					msg_rgb.r = 255;
-					osMessageQueuePut(get_id_MsgQueue_rgb(), &msg_rgb, 0U, 0U); //kkk revisar ya lo hacemos en el gestor
 					reg_state = R_EXIT;
 				}
 				else{
@@ -411,7 +403,6 @@ static void registro_acceso(void){
 						reg_state = R_EXIT;
 					}
 				}
-				
 				osMessageQueuePut(id_MsgQueue_gestor, &msg_gestor, 0U, 0U);
 			break;
 			
@@ -547,6 +538,7 @@ static void Th_gestor(void* arg){
 
 
 static void Th_principal(void *argument){
+	MSGQUEUE_OBJ_LCD lcd = {.state = OFF};
 	MSGQUEUE_OBJ_RGB rgb = {.r = 0, .g = 128, .b = 28};
 	ali_state_t ali_state;
 	ADC_Init();
@@ -567,7 +559,6 @@ static void Th_principal(void *argument){
 	ali_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) ? MAIN_PSU : BATTERY_PSU;
 	switch(ali_state){
 		case MAIN_PSU:
-			netInitialize();
 			mode_main_psu();
 		break;
 		
@@ -578,8 +569,8 @@ static void Th_principal(void *argument){
 	
 	rgb = to_rgb(255, 0, 255);
 	osMessageQueuePut(get_id_MsgQueue_rgb(), &rgb,0U, 0U);
-	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_1, GPIO_PIN_RESET);
-	osDelay(1000);
+	osMessageQueuePut(get_id_MsgQueue_lcd(), &lcd,0U, 0U);
+	osDelay(1500);
 	
 	StandbyMode_Measure();
 	
